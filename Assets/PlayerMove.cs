@@ -11,14 +11,11 @@ public class PlayerMove : MonoBehaviour
     public void OnMove(InputValue value)
     {
         inputVec = value.Get<Vector2>();
-        //Move();
+        
     }
-    void Move(Vector2 speed){
-        transform.Translate(speed);
-        inputVec = speed.normalized;
-    }
-    public void Update(){
-        Move(Vector2.left * Time.deltaTime * speed);
+    
+    void Update(){
+        transform.Translate(inputVec * Time.deltaTime);
     }
     
 }
