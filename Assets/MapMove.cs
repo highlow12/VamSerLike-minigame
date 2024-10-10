@@ -1,13 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+//using System.Diagnostics;
 using UnityEngine;
 
 public class MapMove : MonoBehaviour
 {
+    public float offset = 2;
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (!collision.CompareTag("Area"))
+        
+        if (!collision.CompareTag("Player"))
+        {
+            Debug.Log("player");
             return;
+        }
         //플레이어의 position
         Vector3 playerpos = GameManager.Instance.player.transform.position;
         //이 오브젝트의 position
@@ -24,30 +30,13 @@ public class MapMove : MonoBehaviour
         float dirX = playerDir.x < 0 ? -1 : 1;
         float dirY = playerDir.y < 0 ? -1 : 1;
 
-        switch (transform.tag)
+        if(diffX > diffY)
         {
-            case "Ground":
-                if(diffX > diffY)
-                {
-                    transform.Translate(Vector3.right * dirX * 40);
-                }
-                //이 조건에선 플레이어가 y축보다 x축으로 이동을 하고 있는 것이니 타일맵도 마찬가지로 x축으로 이동시켜준다
-                //Translate() : 지정된 값 만큼 현재위치에서 이동 
-                //어느정도만큼 이동하겠다는 것이기 때문에 좌표가 아닌 이동할 양을 알려주는 것
-                //
-                //방향은 무조건 Vector3. 
-                //Vector3.right에 마우스 올려놓으면 (1,0,0) 값 확인가능
-                //하지만 플레이어가 오른쪽뿐 아니라 왼쪽으로 갈 수 도 있기 때문에 아까 만든 dirX를 곱한다 (왼쪽이면 -1)
-                //타일맵 4개를 활용해 40X40사이즈이므로 *40
-                else if (diffX < diffY)
-                {
-                    transform.Translate(Vector3.up * dirY * 40);
-                }
-
-
-                break;
-            case "Enemy":
-
-                break;
+            transform.Translate(Vector3.right * dirX * offset);
         }
+        else if (diffX < diffY)
+        {
+            transform.Translate(Vector3.up * dirY * offset);
+        }
+    }
 }
