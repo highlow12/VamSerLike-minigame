@@ -6,16 +6,20 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    public Vector3 inputVec {get; private set;}
+    public Vector3 inputVec { get; private set; }
     public float speed;
     public void OnMove(InputValue value)
     {
         inputVec = value.Get<Vector2>();
-        
     }
-    
-    void Update(){
+    public void OnMoveWithVirtualJoystick(Vector2 value)
+    {
+        inputVec = value;
+    }
+
+    void Update()
+    {
         transform.Translate(inputVec * Time.deltaTime);
     }
-    
+
 }
