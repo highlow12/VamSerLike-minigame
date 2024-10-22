@@ -5,6 +5,6 @@ using UnityEngine;
 
 public interface IMovement
 {
-    Vector2 CalculateMovement(Vector2 currentPOsition, Vector2 targetPosition);
+    Vector2 CalculateMovement(Vector2 currentPosition, Vector2 targetPosition);
 }
 
