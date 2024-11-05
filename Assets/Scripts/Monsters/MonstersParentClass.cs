@@ -8,6 +8,7 @@ public abstract class Monster : MonoBehaviour
     [SerializeField] protected float damage;
     [SerializeField] protected float defense;
     [SerializeField] protected float detectionRange;
+    [SerializeField] protected float attackRange;
     protected bool isDead;
     protected Transform playerTransform;
 
@@ -44,12 +45,13 @@ public class NormalMonster : Monster
 {
     [SerializeField] private float moveSpeed;
     public IMovement movement/* = Enter Movement*/;
-    
+
     protected override void Start()
     {
         base.Start();
         // 일반 몬스터는 한 가지 이동 패턴만 사용
-        if(movement == null){
+        if (movement == null)
+        {
             Debug.LogError("Enter Movement");
             Destroy(this);
         }
@@ -69,13 +71,13 @@ public class NormalMonster : Monster
         if (Vector2.Distance(transform.position, playerTransform.position) <= detectionRange)
         {
             Vector2 movementVector = movement.CalculateMovement(
-                transform.position, 
+                transform.position,
                 playerTransform.position
             );
             transform.position += (Vector3)movementVector * Time.deltaTime;
         }
     }
-// Monster Attack
+    // Monster Attack
     protected virtual void CheckAttackRange()
     {
         throw new System.NotImplementedException();
@@ -151,11 +153,11 @@ public class BossMonster : Monster
             PerformStateAction();
         }
     }
-// Boss FSM
+    // Boss FSM
     private void UpdateState()
     {
         stateTimer -= Time.deltaTime;
-        
+
         // 상태 전환 조건 체크
         if (stateTimer <= 0)
         {
@@ -172,10 +174,10 @@ public class BossMonster : Monster
     private void ChooseNextState()
     {
         // 현재 체력과 상황에 따라 다음 상태 결정
-        BossState nextState = currentHealth <= phaseChangeHealthThreshold 
-            ? GetPhase2State() 
+        BossState nextState = currentHealth <= phaseChangeHealthThreshold
+            ? GetPhase2State()
             : GetPhase1State();
-            
+
         SetState(nextState);
     }
 
@@ -211,7 +213,7 @@ public class BossMonster : Monster
         if (stateMovements.TryGetValue(currentState, out IMovement movement) && movement != null)
         {
             Vector2 movementVector = movement.CalculateMovement(
-                transform.position, 
+                transform.position,
                 playerTransform.position
             );
             transform.position += (Vector3)movementVector * Time.deltaTime;
@@ -230,7 +232,7 @@ public class BossMonster : Monster
                 break;
         }
     }
-// Boss Attack
+    // Boss Attack
     protected void PerformAttack1()
     {
         throw new System.NotImplementedException();
@@ -249,11 +251,11 @@ public class BossMonster : Monster
     {
         throw new System.NotImplementedException();
     }
-// Boss Take Damage
+    // Boss Take Damage
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
-        
+
         // 보스 특수 피해 처리
         if (currentHealth <= phaseChangeHealthThreshold)
         {
