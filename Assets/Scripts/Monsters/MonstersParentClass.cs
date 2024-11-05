@@ -75,10 +75,10 @@ public class NormalMonster : Monster
             transform.position += (Vector3)movementVector * Time.deltaTime;
         }
     }
-
+// Monster Attack
     protected virtual void CheckAttackRange()
     {
-        // 공격 범위 체크 및 공격 로직
+        throw new System.NotImplementedException();
     }
 
     protected override void Attack()
@@ -95,6 +95,9 @@ public enum BossState
     Berserk,
     StunState
 }
+
+// 보스 몬스터
+
 public class BossMonster : Monster
 {
     [SerializeField] private float phaseChangeHealthThreshold;
@@ -148,7 +151,7 @@ public class BossMonster : Monster
             PerformStateAction();
         }
     }
-
+// Boss FSM
     private void UpdateState()
     {
         stateTimer -= Time.deltaTime;
@@ -227,22 +230,26 @@ public class BossMonster : Monster
                 break;
         }
     }
-
-    private void PerformAttack1()
+// Boss Attack
+    protected void PerformAttack1()
     {
-        // 공격 패턴 1 구현
+        throw new System.NotImplementedException();
     }
 
-    private void PerformAttack2()
+    protected void PerformAttack2()
     {
-        // 공격 패턴 2 구현
+        throw new System.NotImplementedException();
     }
 
-    private void PerformBerserkAttack()
+    protected void PerformBerserkAttack()
     {
-        // 광폭화 상태 공격 구현
+        throw new System.NotImplementedException();
     }
-
+    protected override void Attack()
+    {
+        throw new System.NotImplementedException();
+    }
+// Boss Take Damage
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
@@ -253,8 +260,5 @@ public class BossMonster : Monster
             // 페이즈 변경 로직
         }
     }
-    protected override void Attack()
-    {
-        // 기본 공격 구현
-    }
+
 }
