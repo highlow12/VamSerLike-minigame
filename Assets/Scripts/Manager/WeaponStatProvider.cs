@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[DefaultExecutionOrder(-100)]
 public class WeaponStatProvider : Singleton<WeaponStatProvider>
 {
     public struct WeaponStat
@@ -16,7 +17,7 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
 
 
     // Set weapon stats
-    private void Start()
+    private new void Awake()
     {
         WeaponStat shotgunStat = new()
         {
@@ -38,35 +39,27 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
             },
             attackRange = new Dictionary<Weapon.WeaponRare, int>
             {
-                {Weapon.WeaponRare.Common, 1 },
-                {Weapon.WeaponRare.Uncommon, 1 },
-                {Weapon.WeaponRare.Rare, 1 },
-                {Weapon.WeaponRare.Epic, 1 },
-                {Weapon.WeaponRare.Legendary, 1 }
-            },
-            attackTarget = new Dictionary<Weapon.WeaponRare, int>
-            {
-                {Weapon.WeaponRare.Common, 1 },
-                {Weapon.WeaponRare.Uncommon, 2 },
-                {Weapon.WeaponRare.Rare, 3 },
-                {Weapon.WeaponRare.Epic, 4 },
-                {Weapon.WeaponRare.Legendary, 5 }
+                {Weapon.WeaponRare.Common, 10 },
+                {Weapon.WeaponRare.Uncommon, 12 },
+                {Weapon.WeaponRare.Rare, 14 },
+                {Weapon.WeaponRare.Epic, 16 },
+                {Weapon.WeaponRare.Legendary, 18 }
             },
             projectileCount = new Dictionary<Weapon.WeaponRare, int>
             {
-                {Weapon.WeaponRare.Common, 1 },
-                {Weapon.WeaponRare.Uncommon, 2 },
-                {Weapon.WeaponRare.Rare, 3 },
-                {Weapon.WeaponRare.Epic, 4 },
-                {Weapon.WeaponRare.Legendary, 5 }
+                {Weapon.WeaponRare.Common, 7 },
+                {Weapon.WeaponRare.Uncommon, 8 },
+                {Weapon.WeaponRare.Rare, 9 },
+                {Weapon.WeaponRare.Epic, 10 },
+                {Weapon.WeaponRare.Legendary, 12 }
             },
             projectileSpeed = new Dictionary<Weapon.WeaponRare, int>
             {
-                {Weapon.WeaponRare.Common, 1 },
-                {Weapon.WeaponRare.Uncommon, 2 },
-                {Weapon.WeaponRare.Rare, 3 },
-                {Weapon.WeaponRare.Epic, 4 },
-                {Weapon.WeaponRare.Legendary, 5 }
+                {Weapon.WeaponRare.Common, 3 },
+                {Weapon.WeaponRare.Uncommon, 4 },
+                {Weapon.WeaponRare.Rare, 5 },
+                {Weapon.WeaponRare.Epic, 6 },
+                {Weapon.WeaponRare.Legendary, 7 }
             }
         };
         weaponsStat.Add(Weapon.WeaponType.Shotgun, shotgunStat);

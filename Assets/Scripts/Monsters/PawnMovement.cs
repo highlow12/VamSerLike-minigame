@@ -23,7 +23,6 @@ public class PawnMovement : Monster
 
     protected override void Attack()
     {
-        Debug.Log("Attack");
     }
 
     protected override void Start()

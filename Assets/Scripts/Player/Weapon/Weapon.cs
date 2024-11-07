@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections;
 
 public abstract class Weapon : MonoBehaviour
 {
@@ -15,14 +16,14 @@ public abstract class Weapon : MonoBehaviour
         HolyWater
     }
 
-    protected enum WeaponAttackRange
+    public enum WeaponAttackRange
     {
         Close,
         Medium,
         Long
     }
 
-    protected enum WeaponAttackTarget
+    public enum WeaponAttackTarget
     {
         Single,
         Multiple
@@ -37,32 +38,43 @@ public abstract class Weapon : MonoBehaviour
         Legendary
     }
 
+    public WeaponStatProvider.WeaponStat weaponStat;
+    public WeaponType weaponType;
+    public WeaponAttackRange weaponAttackRange;
+    public WeaponAttackTarget weaponAttackTarget;
+    public WeaponRare weaponRare;
+    public int attackDamage;
+    public int attackSpeed;
+    public int attackRange;
+    public int attackTarget;
+    public int projectileCount;
+    public int projectileSpeed;
+    public bool isAttackCooldown;
 
-    protected struct WeaponStruct
+    public virtual void InitStat(WeaponRare weaponRare)
     {
-        public WeaponType weaponType;
-        public WeaponAttackRange weaponAttackRange;
-        public WeaponAttackTarget weaponAttackTarget;
-        public WeaponRare weaponRare;
-        public int damage;
-        public int attackSpeed;
-        public int attackRange;
-        public int attackTarget;
-        public int projectileCount;
-        public int projectileSpeed;
+        weaponStat = WeaponStatProvider.Instance.weaponsStat[weaponType];
+        this.weaponRare = weaponRare;
+        attackDamage = weaponStat.attackDamage[weaponRare];
+        attackSpeed = weaponStat.attackSpeed[weaponRare];
+        attackRange = weaponStat.attackRange[weaponRare];
+        if (attackRange == (int)WeaponAttackRange.Close)
+        {
+            attackTarget = weaponStat.attackTarget[weaponRare];
+        }
+        if (attackRange >= (int)WeaponAttackRange.Medium)
+        {
+            projectileCount = weaponStat.projectileCount[weaponRare];
+            projectileSpeed = weaponStat.projectileSpeed[weaponRare];
+        }
+
     }
 
 
-
-
-    protected WeaponStruct weaponStruct;
-
-
-    protected virtual void Attack()
+    public virtual IEnumerator Attack(Vector2 attackDirection)
     {
         Debug.Log("Attack");
+        yield return null;
     }
-
-
 
 }
