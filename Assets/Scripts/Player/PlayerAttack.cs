@@ -14,7 +14,7 @@ public class PlayerAttack : MonoBehaviour
     void Start()
     {
         playerMove = GetComponent<PlayerMove>();
-        Weapon initWeapon = gameObject.AddComponent<Axe>();
+        Weapon initWeapon = gameObject.AddComponent<Shotgun>();
         initWeapon.InitStat(Weapon.WeaponRare.Common);
         weapon = initWeapon;
     }
