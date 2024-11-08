@@ -2,8 +2,8 @@ using UnityEngine;
 
 public abstract class Projectile : MonoBehaviour
 {
-    public int speed;
-    public int attackRange;
+    public float speed;
+    public float attackRange;
     public Vector2 initialPosition;
     protected Rigidbody2D _rb;
     protected float positionDelta;

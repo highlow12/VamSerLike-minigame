@@ -14,14 +14,13 @@ public class Shotgun : Weapon
         weaponType = WeaponType.Shotgun;
         weaponAttackRange = WeaponAttackRange.Medium;
         weaponAttackTarget = WeaponAttackTarget.Multiple;
+        weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
     }
 
     public override void InitStat(WeaponRare weaponRare)
     {
         base.InitStat(weaponRare);
     }
-
-
 
     public override IEnumerator Attack(Vector2 attackDirection)
     {

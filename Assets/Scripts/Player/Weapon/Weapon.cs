@@ -9,7 +9,7 @@ public abstract class Weapon : MonoBehaviour
     public enum WeaponType
     {
         Hammer,
-        Chain,
+        Axe,
         Cross,
         CrossBow,
         Shotgun,
@@ -29,6 +29,12 @@ public abstract class Weapon : MonoBehaviour
         Multiple
     }
 
+    public enum WeaponAttackDirectionType
+    {
+        Nearest,
+        Aim
+    }
+
     public enum WeaponRare
     {
         Common,
@@ -42,13 +48,14 @@ public abstract class Weapon : MonoBehaviour
     public WeaponType weaponType;
     public WeaponAttackRange weaponAttackRange;
     public WeaponAttackTarget weaponAttackTarget;
+    public WeaponAttackDirectionType weaponAttackDirectionType;
     public WeaponRare weaponRare;
     public int attackDamage;
-    public int attackSpeed;
-    public int attackRange;
+    public float attackSpeed;
+    public float attackRange;
     public int attackTarget;
     public int projectileCount;
-    public int projectileSpeed;
+    public float projectileSpeed;
     public bool isAttackCooldown;
 
     public virtual void InitStat(WeaponRare weaponRare)
@@ -58,11 +65,11 @@ public abstract class Weapon : MonoBehaviour
         attackDamage = weaponStat.attackDamage[weaponRare];
         attackSpeed = weaponStat.attackSpeed[weaponRare];
         attackRange = weaponStat.attackRange[weaponRare];
-        if (attackRange == (int)WeaponAttackRange.Close)
+        if (weaponAttackRange == WeaponAttackRange.Close)
         {
             attackTarget = weaponStat.attackTarget[weaponRare];
         }
-        if (attackRange >= (int)WeaponAttackRange.Medium)
+        if (weaponAttackRange >= WeaponAttackRange.Medium)
         {
             projectileCount = weaponStat.projectileCount[weaponRare];
             projectileSpeed = weaponStat.projectileSpeed[weaponRare];

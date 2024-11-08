@@ -74,7 +74,7 @@
                 {
                     "name": "2D Vector",
                     "id": "cd6319c0-8884-4649-a9c4-a6d2e8c73926",
-                    "path": "2DVector",
+                    "path": "2DVector(mode=2)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

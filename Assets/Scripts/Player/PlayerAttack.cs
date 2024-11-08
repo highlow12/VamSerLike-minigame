@@ -7,22 +7,51 @@ using System;
 public class PlayerAttack : MonoBehaviour
 {
     public Weapon weapon;
+    [SerializeField] private GameObject attackDirectionObject;
+    private PlayerMove playerMove;
+    private Vector2 attackDirection;
 
     void Start()
     {
-        Shotgun shotgun = gameObject.AddComponent<Shotgun>();
-        shotgun.InitStat(Weapon.WeaponRare.Common);
-        weapon = shotgun;
+        playerMove = GetComponent<PlayerMove>();
+        Weapon initWeapon = gameObject.AddComponent<Axe>();
+        initWeapon.InitStat(Weapon.WeaponRare.Common);
+        weapon = initWeapon;
     }
 
     void Update()
     {
+        attackDirection = CalculateAttackDirection(weapon.weaponAttackDirectionType);
+        attackDirectionObject.transform.rotation = CalculateAttackDirectionObjectRotation(attackDirection);
         if (!weapon.isAttackCooldown)
         {
-            GameObject[] mosnters = GameObject.FindGameObjectsWithTag("Monster");
-            GameObject nearestMonster = mosnters.OrderBy(x => Math.Abs(Vector2.Distance(x.transform.position, transform.position))).FirstOrDefault();
-            Vector2 attackDirection = nearestMonster.transform.position - transform.position;
             StartCoroutine(weapon.Attack(attackDirection));
         }
     }
+
+    private Vector2 CalculateAttackDirection(Weapon.WeaponAttackDirectionType weaponAttackDirectionType)
+    {
+        switch (weaponAttackDirectionType)
+        {
+            case Weapon.WeaponAttackDirectionType.Nearest:
+                GameObject[] mosnters = GameObject.FindGameObjectsWithTag("Monster");
+                GameObject nearestMonster = mosnters.OrderBy(x => Math.Abs(Vector2.Distance(x.transform.position, transform.position))).FirstOrDefault();
+                return nearestMonster.transform.position - transform.position;
+            case Weapon.WeaponAttackDirectionType.Aim:
+                if ((Vector2)playerMove.inputVec == Vector2.zero)
+                {
+                    return attackDirection;
+                }
+                return playerMove.inputVec;
+            default:
+                return Vector2.zero;
+        }
+    }
+
+    private Quaternion CalculateAttackDirectionObjectRotation(Vector2 attackDirection)
+    {
+        float angle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg - 90;
+        return Quaternion.Euler(new Vector3(0, 0, angle));
+    }
+
 }

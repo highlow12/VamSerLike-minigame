@@ -58,6 +58,11 @@ public class PawnMovement : Monster
         isMoveCooldown = false;
     }
 
+    public override void TakeDamage(float damage)
+    {
+        Debug.Log($"[{Time.time}] {name} takes {damage} damage");
+    }
+
     private void Move(float distance)
     {
         if (distance <= detectionRange && distance > attackRange)
