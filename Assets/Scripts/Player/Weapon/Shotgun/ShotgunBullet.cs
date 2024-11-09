@@ -23,4 +23,15 @@ public class ShotgunBullet : Projectile
             GetComponent<PoolAble>().ReleaseObject();
         }
     }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Monster"))
+        {
+            Monster monster = other.GetComponent<Monster>();
+            monster.TakeDamage(attackDamage);
+            GetComponent<PoolAble>().ReleaseObject();
+        }
+    }
+
 }

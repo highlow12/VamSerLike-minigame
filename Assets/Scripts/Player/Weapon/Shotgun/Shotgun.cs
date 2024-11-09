@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class Shotgun : Weapon
 {
     private ObjectPoolManager objectPoolManager;
+    [SerializeField] private float spreadDegree = 45f;
 
     private void Awake()
     {
@@ -25,7 +26,7 @@ public class Shotgun : Weapon
     public override IEnumerator Attack(Vector2 attackDirection)
     {
         isAttackCooldown = true;
-        float spreadDegree = 70f / projectileCount; // 퍼짐 정도를 조절
+        float spreadDegree = this.spreadDegree / projectileCount; // 퍼짐 정도를 조절
         for (int i = 0; i < projectileCount; i++)
         {
             GameObject bullet = objectPoolManager.GetGo("ShotgunBullet");
@@ -37,6 +38,7 @@ public class Shotgun : Weapon
             bulletComponent.speed = projectileSpeed;
             bulletComponent.attackRange = attackRange;
             bulletComponent.initialPosition = transform.position;
+            bulletComponent.attackDamage = attackDamage;
         }
 
         yield return new WaitForSeconds(1f / attackSpeed);

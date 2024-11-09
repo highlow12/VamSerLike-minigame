@@ -20,7 +20,7 @@ public class WeaponDebugButton : MonoBehaviour
 
     public void ChangeWeaponRare()
     {
-        weapon.InitStat(
+        weapon.weaponRare = (
             (Weapon.WeaponRare)(((int)weapon.weaponRare + 1) % System.Enum.GetValues(typeof(Weapon.WeaponRare)).Length)
         );
     }

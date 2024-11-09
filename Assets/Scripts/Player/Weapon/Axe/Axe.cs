@@ -30,15 +30,23 @@ public class Axe : Weapon
         RaycastHit2D[] hits = Physics2D.BoxCastAll(
             newOrigin,
             new Vector2(attackRange, attackRange),
-            0f, // 회전 각도
-            Vector2.zero, // 방향
+            0f,
+            Vector2.zero,
             0f,
             1 << LayerMask.NameToLayer("Monster")
         );
-        foreach (RaycastHit2D hit in hits)
+        hits = hits.OrderBy(x => Vector2.Distance(x.transform.position, transform.position)).ToArray();
+        if (hits.Length > 0)
         {
-            Monster monster = hit.collider.GetComponent<Monster>();
-            monster.TakeDamage(attackDamage);
+            for (int i = 0; i < attackTarget; i++)
+            {
+                if (i >= hits.Length)
+                {
+                    break;
+                }
+                Monster monster = hits[i].collider.GetComponent<Monster>();
+                monster.TakeDamage(attackDamage);
+            }
         }
         yield return new WaitForSeconds(1f / attackSpeed);
         isAttackCooldown = false;

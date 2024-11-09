@@ -14,8 +14,8 @@ TagManager:
   - UI
   - Ground
   - Monster
-  - 
-  - 
+  - Projectile
+  - AttackObject
   - 
   - 
   - 
@@ -45,8 +45,14 @@ TagManager:
   - name: Background
     uniqueID: 961136683
     locked: 0
+  - name: Splash
+    uniqueID: 1044788171
+    locked: 0
   - name: Character
     uniqueID: 4010729097
+    locked: 0
+  - name: AttackObject
+    uniqueID: 3989935729
     locked: 0
   - name: Projectile
     uniqueID: 1573350097

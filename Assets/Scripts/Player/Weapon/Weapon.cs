@@ -44,24 +44,32 @@ public abstract class Weapon : MonoBehaviour
         Legendary
     }
 
-    public WeaponStatProvider.WeaponStat weaponStat;
-    public WeaponType weaponType;
-    public WeaponAttackRange weaponAttackRange;
-    public WeaponAttackTarget weaponAttackTarget;
+    protected WeaponStatProvider.WeaponStat weaponStat;
+    protected WeaponType weaponType;
+    protected WeaponAttackRange weaponAttackRange;
+    protected WeaponAttackTarget weaponAttackTarget;
     public WeaponAttackDirectionType weaponAttackDirectionType;
-    public WeaponRare weaponRare;
-    public int attackDamage;
-    public float attackSpeed;
-    public float attackRange;
-    public int attackTarget;
-    public int projectileCount;
-    public float projectileSpeed;
+    private WeaponRare _weaponRare;
+    public WeaponRare weaponRare
+    {
+        get { return _weaponRare; }
+        set
+        {
+            _weaponRare = value;
+            InitStat(value);
+        }
+    }
+    protected int attackDamage;
+    protected float attackSpeed;
+    protected float attackRange;
+    protected int attackTarget;
+    protected int projectileCount;
+    protected float projectileSpeed;
     public bool isAttackCooldown;
 
     public virtual void InitStat(WeaponRare weaponRare)
     {
         weaponStat = WeaponStatProvider.Instance.weaponsStat[weaponType];
-        this.weaponRare = weaponRare;
         attackDamage = weaponStat.attackDamage[weaponRare];
         attackSpeed = weaponStat.attackSpeed[weaponRare];
         attackRange = weaponStat.attackRange[weaponRare];

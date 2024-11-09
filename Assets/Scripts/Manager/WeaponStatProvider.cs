@@ -91,14 +91,58 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
             attackTarget = new Dictionary<Weapon.WeaponRare, int>
             {
                 {Weapon.WeaponRare.Common, 1 },
-                {Weapon.WeaponRare.Uncommon, 2 },
-                {Weapon.WeaponRare.Rare, 3 },
-                {Weapon.WeaponRare.Epic, 4 },
-                {Weapon.WeaponRare.Legendary, 5 }
+                {Weapon.WeaponRare.Uncommon, 1 },
+                {Weapon.WeaponRare.Rare, 1 },
+                {Weapon.WeaponRare.Epic, 1 },
+                {Weapon.WeaponRare.Legendary, 1 }
+            }
+        };
+        WeaponStat holyWaterStat = new()
+        {
+            attackDamage = new Dictionary<Weapon.WeaponRare, int>
+            {
+                {Weapon.WeaponRare.Common, 10 },
+                {Weapon.WeaponRare.Uncommon, 15 },
+                {Weapon.WeaponRare.Rare, 20 },
+                {Weapon.WeaponRare.Epic, 25 },
+                {Weapon.WeaponRare.Legendary, 30 }
+            },
+            attackSpeed = new Dictionary<Weapon.WeaponRare, float>
+            {
+                {Weapon.WeaponRare.Common, 1 },
+                {Weapon.WeaponRare.Uncommon, 1.2f },
+                {Weapon.WeaponRare.Rare, 1.5f },
+                {Weapon.WeaponRare.Epic, 1.8f },
+                {Weapon.WeaponRare.Legendary, 2.1f }
+            },
+            attackRange = new Dictionary<Weapon.WeaponRare, float>
+            {
+                {Weapon.WeaponRare.Common, 1 },
+                {Weapon.WeaponRare.Uncommon, 1.5f },
+                {Weapon.WeaponRare.Rare, 2 },
+                {Weapon.WeaponRare.Epic, 2.5f },
+                {Weapon.WeaponRare.Legendary, 3f }
+            },
+            projectileCount = new Dictionary<Weapon.WeaponRare, int>
+            {
+                {Weapon.WeaponRare.Common, 1 },
+                {Weapon.WeaponRare.Uncommon, 1 },
+                {Weapon.WeaponRare.Rare, 1 },
+                {Weapon.WeaponRare.Epic, 1 },
+                {Weapon.WeaponRare.Legendary, 1 }
+            },
+            projectileSpeed = new Dictionary<Weapon.WeaponRare, float>
+            {
+                {Weapon.WeaponRare.Common, 5 },
+                {Weapon.WeaponRare.Uncommon, 6 },
+                {Weapon.WeaponRare.Rare, 7 },
+                {Weapon.WeaponRare.Epic, 8 },
+                {Weapon.WeaponRare.Legendary, 9 }
             }
         };
         weaponsStat.Add(Weapon.WeaponType.Shotgun, shotgunStat);
         weaponsStat.Add(Weapon.WeaponType.Axe, axeStat);
+        weaponsStat.Add(Weapon.WeaponType.HolyWater, holyWaterStat);
     }
 
 
