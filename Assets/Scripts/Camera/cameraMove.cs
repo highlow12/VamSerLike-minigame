@@ -7,6 +7,7 @@ public class cameraMove : MonoBehaviour
 {
     Vector2 pos;
     Vector2 offset = Vector2.zero;
+    [SerializeField] float offsetMult = 1;
     float dis = 1;
     // Start is called before the first frame update
     void Start()
@@ -18,13 +19,7 @@ public class cameraMove : MonoBehaviour
     void LateUpdate()
     {
         pos = GameManager.Instance.player.transform.position; 
+        offset = GameManager.Instance.player.inputVec.normalized * offsetMult;
         transform.position = new(pos.x + offset.x*dis,pos.y + offset.y*dis, transform.position.z);
-    }
-
-    public void OnLook(InputValue value){
-        var v = value.Get<Vector2>();
-        v = Camera.main.ScreenToWorldPoint(v);
-        var dir = v -(Vector2)transform.position;
-        offset = dir.normalized;
     }
 }
