@@ -7,10 +7,13 @@ public class WeaponDebugButton : MonoBehaviour
 {
     [SerializeField] private TMP_Text weaponRareLabel;
     private Weapon weapon;
+    private PlayerAttack playerAttack;
 
     void Start()
     {
-        weapon = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerAttack>().weapon;
+        var player = GameObject.FindGameObjectWithTag("Player");
+        weapon = player.GetComponent<PlayerAttack>().weapon;
+        playerAttack = player.GetComponent<PlayerAttack>();
     }
 
     void Update()
@@ -18,11 +21,11 @@ public class WeaponDebugButton : MonoBehaviour
         weaponRareLabel.text = weapon.weaponRare.ToString();
     }
 
-    public void ChangeWeaponRare()
+    public void ApplyWeaponRare()
     {
-        weapon.weaponRare = (
-            (Weapon.WeaponRare)(((int)weapon.weaponRare + 1) % System.Enum.GetValues(typeof(Weapon.WeaponRare)).Length)
-        );
+        Weapon.WeaponRare weaponRare = playerAttack.GetWeaponRare(weapon.weaponType);
+        weapon.weaponRare = weaponRare;
+        weapon.InitStat();
     }
 
 

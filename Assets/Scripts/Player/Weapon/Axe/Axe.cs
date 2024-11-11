@@ -17,9 +17,9 @@ public class Axe : Weapon
         weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
     }
 
-    public override void InitStat(WeaponRare weaponRare)
+    public override void InitStat()
     {
-        base.InitStat(weaponRare);
+        base.InitStat();
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)

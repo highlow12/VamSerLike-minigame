@@ -4,22 +4,9 @@ using BackEnd;
 using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
-using TMPro;
 
 public class UserAuth : MonoBehaviour
 {
-    BackendManager backendManager;
-
-    void Start()
-    {
-        backendManager = BackendManager.Instance;
-    }
-
-    void Update()
-    {
-
-    }
-
     public static bool CustomSignUp(ref PopUp.AuthInputForm inputForm)
     {
         string id = inputForm.id;
@@ -59,7 +46,9 @@ public class UserAuth : MonoBehaviour
                 {
                     if (callback.IsSuccess())
                     {
+                        AddStarterWeapon();
                         Debug.Log($"Email Update Success: {callback.GetStatusCode()}\n{callback.GetMessage()}\n{callback}");
+                        BackendManager.Instance.isSignedIn = true;
                     }
                     else
                     {
@@ -84,6 +73,31 @@ public class UserAuth : MonoBehaviour
         return result;
     }
 
+    private static bool AddStarterWeapon()
+    {
+        Param shotgunParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.Shotgun },
+            { "weaponRare", Weapon.WeaponRare.Common },
+            { "weaponAttackRange", Weapon.WeaponAttackRange.Medium },
+            { "weaponAttackTarget", Weapon.WeaponAttackTarget.Multiple },
+            { "weaponAttackDirectionType", Weapon.WeaponAttackDirectionType.Aim }
+        };
+
+        var bro = Backend.PlayerData.InsertData("Weapon", shotgunParam);
+        if (bro.IsSuccess())
+        {
+            Debug.Log($"Weapon Insert Success: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
+            return true;
+        }
+        else
+        {
+            Debug.LogError($"Weapon Insert Failed: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
+            return false;
+        }
+
+    }
+
     public static bool CustomSignIn(ref PopUp.AuthInputForm inputForm)
     {
         string id = inputForm.id;
@@ -96,6 +110,7 @@ public class UserAuth : MonoBehaviour
             if (callback.IsSuccess())
             {
                 Debug.Log($"SignIn Success: {callback.GetStatusCode()}\n{callback.GetMessage()}\n{callback}");
+                BackendManager.Instance.isSignedIn = true;
             }
             else
             {

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using BackEnd;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -14,8 +15,9 @@ public class PlayerAttack : MonoBehaviour
     void Start()
     {
         playerMove = GetComponent<PlayerMove>();
-        Weapon initWeapon = gameObject.AddComponent<HolyWater>();
-        initWeapon.weaponRare = Weapon.WeaponRare.Common;
+        Weapon initWeapon = gameObject.AddComponent<Shotgun>();
+        initWeapon.weaponRare = GetWeaponRare(initWeapon.weaponType);
+        initWeapon.InitStat();
         weapon = initWeapon;
     }
 
@@ -27,6 +29,24 @@ public class PlayerAttack : MonoBehaviour
         {
             StartCoroutine(weapon.Attack(attackDirection));
         }
+    }
+
+    public Weapon.WeaponRare GetWeaponRare(Weapon.WeaponType weaponType)
+    {
+        Where where = new();
+        where.Equal("weaponType", (int)weaponType);
+        var bro = Backend.GameData.GetMyData("Weapon", where);
+        if (bro.IsSuccess() == false)
+        {
+            Debug.LogError($"GetMyData Failed: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
+            return Weapon.WeaponRare.Common;
+        }
+        if (bro.GetReturnValuetoJSON()["rows"].Count == 0)
+        {
+            Debug.LogError("No weapon data");
+            return Weapon.WeaponRare.Common;
+        }
+        return (Weapon.WeaponRare)Enum.Parse(typeof(Weapon.WeaponRare), bro.Rows()[0]["weaponRare"]["N"].ToString());
     }
 
     private Vector2 CalculateAttackDirection(Weapon.WeaponAttackDirectionType weaponAttackDirectionType)
