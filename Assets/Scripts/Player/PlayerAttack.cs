@@ -34,7 +34,7 @@ public class PlayerAttack : MonoBehaviour
     public Weapon.WeaponRare GetWeaponRare(Weapon.WeaponType weaponType)
     {
         // 테스트 용 코드입니다.
-        if (!BackendManager.Instance.isSignedIn)
+        if (BackendManager.Instance != null && !BackendManager.Instance.isSignedIn)
         {
             Backend.BMember.CustomLogin("admin", "12345678");
         }

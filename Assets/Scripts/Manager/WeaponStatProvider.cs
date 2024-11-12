@@ -86,7 +86,10 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
     // Set weapon stats
     private new void Awake()
     {
-        GetCurrentWeaponStatChart();
+        if (Backend.IsInitialized)
+        {
+            GetCurrentWeaponStatChart();
+        }
     }
 
 
