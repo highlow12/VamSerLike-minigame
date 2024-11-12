@@ -11,7 +11,7 @@ public abstract class Weapon : MonoBehaviour
         Hammer,
         Axe,
         Cross,
-        CrossBow,
+        Machete,
         Shotgun,
         HolyWater
     }
@@ -44,13 +44,17 @@ public abstract class Weapon : MonoBehaviour
         Legendary
     }
 
+    public string displayName;
     public WeaponType weaponType;
     protected WeaponStatProvider.WeaponStat weaponStat;
+    public string displayWeaponAttackRange;
     protected WeaponAttackRange weaponAttackRange;
+    public string displayWeaponAttackTarget;
     protected WeaponAttackTarget weaponAttackTarget;
     public WeaponAttackDirectionType weaponAttackDirectionType;
+    public string displayWeaponRare;
     public WeaponRare weaponRare;
-    protected int attackDamage;
+    protected float attackDamage;
     protected float attackSpeed;
     protected float attackRange;
     protected int attackTarget;
@@ -60,20 +64,19 @@ public abstract class Weapon : MonoBehaviour
 
     public virtual void InitStat()
     {
-        weaponStat = WeaponStatProvider.Instance.weaponsStat[weaponType];
-        attackDamage = weaponStat.attackDamage[weaponRare];
-        attackSpeed = weaponStat.attackSpeed[weaponRare];
-        attackRange = weaponStat.attackRange[weaponRare];
-        if (weaponAttackRange == WeaponAttackRange.Close)
-        {
-            attackTarget = weaponStat.attackTarget[weaponRare];
-        }
-        if (weaponAttackRange >= WeaponAttackRange.Medium)
-        {
-            projectileCount = weaponStat.projectileCount[weaponRare];
-            projectileSpeed = weaponStat.projectileSpeed[weaponRare];
-        }
-
+        weaponStat = WeaponStatProvider.Instance.weaponStats.Find(x => x.weaponType == weaponType && x.weaponRare == weaponRare);
+        displayWeaponAttackRange = weaponStat.displayWeaponAttackRange;
+        displayWeaponAttackTarget = weaponStat.displayWeaponAttackTarget;
+        displayWeaponRare = weaponStat.displayWeaponRare;
+        displayName = weaponStat.displayName;
+        weaponAttackRange = weaponStat.weaponAttackRange;
+        weaponAttackTarget = weaponStat.weaponAttackTarget;
+        attackDamage = weaponStat.attackDamage;
+        attackSpeed = weaponStat.attackSpeed;
+        attackRange = weaponStat.attackRange;
+        attackTarget = weaponStat.attackTarget;
+        projectileCount = weaponStat.projectileCount;
+        projectileSpeed = weaponStat.projectileSpeed;
     }
 
 

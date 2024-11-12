@@ -75,26 +75,53 @@ public class UserAuth : MonoBehaviour
 
     private static bool AddStarterWeapon()
     {
+
+        Param hammerParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.Hammer },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
+        Param axeParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.Axe },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
+        Param crossParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.Cross },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
+        Param macheteParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.Machete },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
         Param shotgunParam = new()
         {
             { "weaponType", Weapon.WeaponType.Shotgun },
             { "weaponRare", Weapon.WeaponRare.Common },
-            { "weaponAttackRange", Weapon.WeaponAttackRange.Medium },
-            { "weaponAttackTarget", Weapon.WeaponAttackTarget.Multiple },
-            { "weaponAttackDirectionType", Weapon.WeaponAttackDirectionType.Aim }
         };
+        Param holyWaterParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.HolyWater },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
+        Param[] weapons = { hammerParam, axeParam, crossParam, macheteParam, shotgunParam, holyWaterParam };
+        foreach (var weapon in weapons)
+        {
+            var bro = Backend.PlayerData.InsertData("Weapon", weapon);
+            if (bro.IsSuccess())
+            {
+                Debug.Log($"Weapon Insert Success: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
+            }
+            else
+            {
+                Debug.LogError($"Weapon Insert Failed: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
+                return false;
+            }
+        }
+        return true;
 
-        var bro = Backend.PlayerData.InsertData("Weapon", shotgunParam);
-        if (bro.IsSuccess())
-        {
-            Debug.Log($"Weapon Insert Success: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
-            return true;
-        }
-        else
-        {
-            Debug.LogError($"Weapon Insert Failed: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
-            return false;
-        }
 
     }
 
