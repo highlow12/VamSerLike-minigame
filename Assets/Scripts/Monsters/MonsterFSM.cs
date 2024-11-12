@@ -15,7 +15,7 @@ public abstract class BaseState
 }
 public class MonsterFSM
 {
-    private BaseState currentState;
+    public BaseState currentState{get; private set;}
 
     public MonsterFSM(BaseState initState)
     {

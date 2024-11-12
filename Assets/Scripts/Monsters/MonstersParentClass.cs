@@ -90,9 +90,9 @@ public abstract class BossMonster : Monster
 {
     [SerializeField] private float phaseChangeHealthThreshold;
     [SerializeField] private float berserkHealthThreshold;
-    private Dictionary<int, BaseState> states;
+    protected Dictionary<int, BaseState> states;
     private float stateTimer;
-    MonsterFSM monsterFSM;
+    protected MonsterFSM monsterFSM;
 
 
     protected override void Start()
