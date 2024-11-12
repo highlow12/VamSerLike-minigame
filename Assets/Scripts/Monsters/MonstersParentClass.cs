@@ -83,32 +83,29 @@ public class NormalMonster : Monster
         throw new System.NotImplementedException();
     }
 }
-public enum BossState
-{
-    Idle,
-    Chase,
-    Attack1,
-    Attack2,
-    Berserk,
-    StunState
-}
 
 // 보스 몬스터
 
-public class BossMonster : Monster
+public abstract class BossMonster : Monster
 {
     [SerializeField] private float phaseChangeHealthThreshold;
     [SerializeField] private float berserkHealthThreshold;
-    private Dictionary<BossState, IMovement> stateMovements;
-    private BossState currentState;
+    private Dictionary<int, BaseState> states;
     private float stateTimer;
+    MonsterFSM monsterFSM;
 
-    // 각 상태별 지속 시간
-    private Dictionary<BossState, float> stateDurations;
 
     protected override void Start()
     {
         base.Start();
+        initState();
+    }
+    protected abstract void initState();
+    protected abstract void checkeState();
+    public void Update()
+    {
+        monsterFSM.UpdateState();
+        checkeState();
     }
 // Boss Take Damage
     public override void TakeDamage(float damage)
