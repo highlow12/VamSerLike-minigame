@@ -21,7 +21,7 @@ public class BackendManager : Singleton<BackendManager>
 
     public bool isSignedIn = false;
 
-    void Start()
+    public override void Awake()
     {
         bool bro = BackendInitialize();
         if (!bro)
