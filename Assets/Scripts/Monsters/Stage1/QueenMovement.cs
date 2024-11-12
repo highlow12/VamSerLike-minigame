@@ -54,7 +54,7 @@ class QueenIdle : BaseState
 
     public override void OnStateExit()
     {
-        monster.transform.DOMoveX(
+        
     }
 
     public override void OnStateUpdate()

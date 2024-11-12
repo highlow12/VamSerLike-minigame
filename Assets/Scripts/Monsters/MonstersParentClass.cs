@@ -42,7 +42,7 @@ public abstract class Monster : MonoBehaviour
 // 일반 몬스터 클래스
 public class NormalMonster : Monster
 {
-    [SerializeField] private float moveSpeed;
+    [SerializeField] protected float moveSpeed;
     protected IMovement movement/* = Enter Movement*/;
     
     protected override void Start()
@@ -71,6 +71,7 @@ public class NormalMonster : Monster
             playerTransform.position
         );
         transform.position += (Vector3)movementVector * Time.deltaTime * moveSpeed;
+        transform.localScale = new(Mathf.Sign(movementVector.x),transform.localScale.y,transform.localScale.z);
     }
 // Monster Attack
     protected virtual void CheckAttackRange()
