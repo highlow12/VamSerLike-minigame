@@ -1,0 +1,16 @@
+Usage:
+
+New Atlas >> 
+Searches the selected folder for .jpg/.png files and uses those to create a grid
+
+Last Atlas>> 
+Uses the last selected folder, if none is present a folder selection screen comes up
+
+Export PNG>>
+By default your exporting in .jpg format, if toggled on will export in .png format
+
+Atlas Normal>>
+Creates a normal map for your atlas after generation
+
+Open Image>>
+By default the image folder is open, if toggled on will open it in the default image editor
