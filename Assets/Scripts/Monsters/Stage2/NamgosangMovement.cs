@@ -16,6 +16,7 @@ class FloatMovement : IMovement
     float delta = 0;
     public FloatMovement(float frequency = 1, float amplitude = 1)
     {
+        frequency = frequency == 0 ? 1 : frequency; // Solve divide by 0
         this.frequency = frequency;
         amplitude = Mathf.Clamp01(amplitude);
         this.amplitude = amplitude;
@@ -24,7 +25,7 @@ class FloatMovement : IMovement
     {
         delta += Time.deltaTime;
 
-        var returnVec = new Vector2(0,Mathf.Sin(delta * Mathf.PI) * amplitude);
+        var returnVec = new Vector2(0,Mathf.Sin(delta * Mathf.PI / frequency) * amplitude);
         delta = delta >= frequency ? 0 : delta;
         var dir = targetPosition - currentPosition;
         dir.Normalize();
