@@ -74,7 +74,7 @@ public class NormalMonster : Monster
             playerTransform.position
         );
         transform.position += (Vector3)movementVector * Time.deltaTime * moveSpeed;
-        transform.localScale = new(Mathf.Sign(movementVector.x),transform.localScale.y,transform.localScale.z);
+        transform.localScale = new(Mathf.Abs(transform.localScale.x)*Mathf.Sign(movementVector.x),transform.localScale.y,transform.localScale.z);
     }
     // Monster Attack
     protected virtual void CheckAttackRange()
