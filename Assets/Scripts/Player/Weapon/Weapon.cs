@@ -44,6 +44,7 @@ public abstract class Weapon : MonoBehaviour
         Legendary
     }
 
+    public GameObject attackObject;
     public string displayName;
     public WeaponType weaponType;
     protected WeaponStatProvider.WeaponStat weaponStat;
