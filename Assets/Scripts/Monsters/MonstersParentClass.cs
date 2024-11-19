@@ -58,7 +58,7 @@ public class NormalMonster : Monster
         }
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (!isDead)
         {
@@ -67,6 +67,9 @@ public class NormalMonster : Monster
         }
     }
 
+    /// <summary>
+    /// Moves the monster based on the movement behavior.
+    /// </summary>
     private void Move()
     {
         Vector2 movementVector = movement.CalculateMovement(
@@ -74,14 +77,20 @@ public class NormalMonster : Monster
             playerTransform.position
         );
         transform.position += (Vector3)movementVector * Time.deltaTime * moveSpeed;
-        transform.localScale = new(Mathf.Abs(transform.localScale.x)*Mathf.Sign(movementVector.x),transform.localScale.y,transform.localScale.z);
+        transform.localScale = new(Mathf.Abs(transform.localScale.x) * Mathf.Sign(movementVector.x), transform.localScale.y, transform.localScale.z);
     }
-    // Monster Attack
+
+    /// <summary>
+    /// Checks if the player is within attack range.
+    /// </summary>
     protected virtual void CheckAttackRange()
     {
         throw new System.NotImplementedException();
     }
 
+    /// <summary>
+    /// Executes the monster's attack behavior.
+    /// </summary>
     protected override void Attack()
     {
         throw new System.NotImplementedException();
