@@ -12,7 +12,7 @@ public class CrossObject : MonoBehaviour
     }
 
 
-    void OnTriggerEneter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Monster"))
         {

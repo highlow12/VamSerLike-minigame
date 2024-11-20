@@ -44,6 +44,12 @@ public abstract class Weapon : MonoBehaviour
         Legendary
     }
 
+    public struct MonsterHit
+    {
+        public Monster monster;
+        public long hitTime;
+    }
+
     public GameObject attackObject;
     public string displayName;
     public WeaponType weaponType;

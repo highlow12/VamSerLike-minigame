@@ -46,13 +46,13 @@ public class HolyWater : Weapon
             Debug.Log($"[{Time.time}] Shoot to nearestMonsterDirection - angleDifference: {angleDifference}");
             Vector2 endValue = (Vector2)transform.position + nearestMonsterDirection;
             float newSpeed = attackSpeed * (nearestMonsterDirection.magnitude / (attackDirection * projectileSpeed).magnitude);
-            holyWaterObject.transform.DOMove(endValue, newSpeed).SetEase(Ease.Linear).OnComplete(holyWaterComponent.DisableProjectileSprite);
+            holyWaterObject.transform.DOMove(endValue, newSpeed).SetEase(Ease.Linear).OnComplete(holyWaterComponent.ChangeSprite);
         }
         else
         {
             Debug.Log($"[{Time.time}] Shoot to attackDirection - angleDifference: {angleDifference}");
             Vector2 endValue = (Vector2)transform.position + attackDirection * projectileSpeed;
-            holyWaterObject.transform.DOMove(endValue, attackSpeed).SetEase(Ease.Linear).OnComplete(holyWaterComponent.DisableProjectileSprite);
+            holyWaterObject.transform.DOMove(endValue, attackSpeed).SetEase(Ease.Linear).OnComplete(holyWaterComponent.ChangeSprite);
         }
 
         yield return new WaitForSeconds(1f / attackSpeed);
