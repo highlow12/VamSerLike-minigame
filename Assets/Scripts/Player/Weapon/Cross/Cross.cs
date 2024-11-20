@@ -6,7 +6,6 @@ using System.Linq;
 
 public class Cross : Weapon
 {
-    private float attackForwardDistance = 1f;
     private Animator attackObjectAnimator;
 
     private void Awake()
@@ -15,8 +14,6 @@ public class Cross : Weapon
         attackObject = Instantiate(attackObject, transform);
         attackObject.SetActive(false);
         weaponType = WeaponType.Cross;
-        weaponAttackRange = WeaponAttackRange.Close;
-        weaponAttackTarget = WeaponAttackTarget.Multiple;
         weaponAttackDirectionType = WeaponAttackDirectionType.Nearest;
     }
 
@@ -25,7 +22,6 @@ public class Cross : Weapon
         base.InitStat();
         attackObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
         attackObjectAnimator = attackObject.GetComponent<Animator>();
-        attackForwardDistance = Mathf.Sqrt(attackRange);
         attackObject.GetComponent<CrossObject>().attackDamage = attackDamage;
     }
 

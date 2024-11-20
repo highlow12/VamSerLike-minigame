@@ -4,14 +4,14 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Axe : Weapon
+public class Machete : Weapon
 {
     // 테스트용 변수
     Vector2 ad;
 
     private void Awake()
     {
-        weaponType = WeaponType.Axe;
+        weaponType = WeaponType.Machete;
         weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
     }
 

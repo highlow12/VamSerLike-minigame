@@ -12,8 +12,6 @@ public class HolyWater : Weapon
     private void Awake()
     {
         weaponType = WeaponType.HolyWater;
-        weaponAttackRange = WeaponAttackRange.Medium;
-        weaponAttackTarget = WeaponAttackTarget.Multiple;
         weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
     }
 
