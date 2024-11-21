@@ -13,8 +13,6 @@ public class Shotgun : Weapon
     {
         objectPoolManager = ObjectPoolManager.instance;
         weaponType = WeaponType.Shotgun;
-        weaponAttackRange = WeaponAttackRange.Medium;
-        weaponAttackTarget = WeaponAttackTarget.Multiple;
         weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
     }
 

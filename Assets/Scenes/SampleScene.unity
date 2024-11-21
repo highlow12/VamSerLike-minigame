@@ -282,11 +282,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af536bb068494534c9d0ec6eba8b26b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &201440460 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9199972372846630469, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
-  m_PrefabInstance: {fileID: 1826222685}
-  m_PrefabAsset: {fileID: 0}
 --- !u!50 &201440461
 Rigidbody2D:
   serializedVersion: 5
@@ -1864,10 +1859,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 9199972372846630469, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 370630035}
+    m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6727135283973004618, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
       insertIndex: -1

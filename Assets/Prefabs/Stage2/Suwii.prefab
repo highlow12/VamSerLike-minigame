@@ -192,9 +192,9 @@ GameObject:
   - component: {fileID: 2102612891070917465}
   - component: {fileID: 6760885277995861063}
   - component: {fileID: 43302031204044574}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Suwii
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -207,7 +207,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7577924051601286063}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.01582067, y: -0, z: -0, w: 0.9998749}
+  m_LocalRotation: {x: 0.015820764, y: 0, z: 0, w: 0.9998749}
   m_LocalPosition: {x: -0.617, y: -0.012, z: -1.7681168e-10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -256,8 +256,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -284238199
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 9146990253969503885, guid: 2b9660e928406a846b6a9bd15f19e1ab, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
