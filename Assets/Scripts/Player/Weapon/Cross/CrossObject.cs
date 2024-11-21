@@ -1,14 +1,17 @@
+using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
+
 
 public class CrossObject : MonoBehaviour
 {
     public float attackDamage;
-    public GameObject[] monstersHit;
+    public List<GameObject> monstersHit;
 
     void Start()
     {
-        monstersHit = default;
+        monstersHit = new List<GameObject>();
     }
 
 
@@ -16,9 +19,13 @@ public class CrossObject : MonoBehaviour
     {
         if (other.CompareTag("Monster"))
         {
+            if (monstersHit.Contains(other.gameObject))
+            {
+                return;
+            }
             Monster monster = other.GetComponent<Monster>();
             monster.TakeDamage(attackDamage);
-            monstersHit.Append(other.gameObject);
+            monstersHit = monstersHit.Append(other.gameObject).ToList();
         }
     }
 }

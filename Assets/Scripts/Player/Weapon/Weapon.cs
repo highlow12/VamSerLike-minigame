@@ -43,7 +43,7 @@ public abstract class Weapon : MonoBehaviour
         Epic,
         Legendary
     }
-
+    [Serializable]
     public struct MonsterHit
     {
         public Monster monster;

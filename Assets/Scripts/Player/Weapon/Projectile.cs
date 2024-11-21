@@ -10,11 +10,11 @@ public abstract class Projectile : MonoBehaviour
     public Vector2 initialPosition;
     protected Rigidbody2D _rb;
     protected float positionDelta;
-    protected List<Weapon.MonsterHit> monstersHit;
+    public List<Weapon.MonsterHit> monstersHit;
 
     protected virtual void Awake()
     {
-        monstersHit = default;
+        monstersHit = new List<Weapon.MonsterHit>();
         _rb = GetComponent<Rigidbody2D>();
     }
 

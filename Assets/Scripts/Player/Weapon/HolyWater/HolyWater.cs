@@ -30,7 +30,7 @@ public class HolyWater : Weapon
         holyWaterComponent.attackDamage = attackDamage;
 
         attackDirection = attackDirection.normalized;
-        Vector2 nearestMonsterDirection = CalculateVectorDistanceBetweenPlayerAndNearestMonster().normalized;
+        Vector2 nearestMonsterDirection = CalculateVectorDistanceBetweenPlayerAndNearestMonster();
 
         float nearestMosterAngle = Mathf.Atan2(nearestMonsterDirection.y, nearestMonsterDirection.x) * Mathf.Rad2Deg;
         float attackAngle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;

@@ -106,7 +106,15 @@ MonoBehaviour:
   attackRange: 0
   attackDamage: 0
   initialPosition: {x: 0, y: 0}
-  holyWaterSplashObject: {fileID: 0}
+  monstersHit: []
+  holyWaterSplashSprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
+  holyWaterProjectileSprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
+  projectileInitialScale: 0.3
+  isInSplashState: 0
+  hits: []
+  monsterLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &4682498593724451109
 MonoBehaviour:
   m_ObjectHideFlags: 0
