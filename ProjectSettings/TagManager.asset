@@ -2,8 +2,9 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
-  tags: []
+  serializedVersion: 3
+  tags:
+  - Monster
   layers:
   - Default
   - TransparentFX
@@ -12,9 +13,9 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
-  - 
+  - Monster
+  - Projectile
+  - AttackObject
   - 
   - 
   - 
@@ -41,3 +42,23 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 961136683
+    locked: 0
+  - name: Splash
+    uniqueID: 1044788171
+    locked: 0
+  - name: Character
+    uniqueID: 4010729097
+    locked: 0
+  - name: AttackObject
+    uniqueID: 3989935729
+    locked: 0
+  - name: Projectile
+    uniqueID: 1573350097
+    locked: 0
+  - name: UI
+    uniqueID: 2626510181
+    locked: 0
+  m_RenderingLayers:
+  - Default

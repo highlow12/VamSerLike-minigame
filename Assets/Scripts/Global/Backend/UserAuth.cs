@@ -4,22 +4,9 @@ using BackEnd;
 using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
-using TMPro;
 
 public class UserAuth : MonoBehaviour
 {
-    BackendManager backendManager;
-
-    void Start()
-    {
-        backendManager = BackendManager.Instance;
-    }
-
-    void Update()
-    {
-
-    }
-
     public static bool CustomSignUp(ref PopUp.AuthInputForm inputForm)
     {
         string id = inputForm.id;
@@ -59,7 +46,9 @@ public class UserAuth : MonoBehaviour
                 {
                     if (callback.IsSuccess())
                     {
+                        AddStarterWeapon();
                         Debug.Log($"Email Update Success: {callback.GetStatusCode()}\n{callback.GetMessage()}\n{callback}");
+                        BackendManager.Instance.isSignedIn = true;
                     }
                     else
                     {
@@ -84,6 +73,58 @@ public class UserAuth : MonoBehaviour
         return result;
     }
 
+    private static bool AddStarterWeapon()
+    {
+
+        Param hammerParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.Hammer },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
+        Param axeParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.Axe },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
+        Param crossParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.Cross },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
+        Param macheteParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.Machete },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
+        Param shotgunParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.Shotgun },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
+        Param holyWaterParam = new()
+        {
+            { "weaponType", Weapon.WeaponType.HolyWater },
+            { "weaponRare", Weapon.WeaponRare.Common },
+        };
+        Param[] weapons = { hammerParam, axeParam, crossParam, macheteParam, shotgunParam, holyWaterParam };
+        foreach (var weapon in weapons)
+        {
+            var bro = Backend.PlayerData.InsertData("Weapon", weapon);
+            if (bro.IsSuccess())
+            {
+                Debug.Log($"Weapon Insert Success: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
+            }
+            else
+            {
+                Debug.LogError($"Weapon Insert Failed: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
+                return false;
+            }
+        }
+        return true;
+
+
+    }
+
     public static bool CustomSignIn(ref PopUp.AuthInputForm inputForm)
     {
         string id = inputForm.id;
@@ -96,6 +137,7 @@ public class UserAuth : MonoBehaviour
             if (callback.IsSuccess())
             {
                 Debug.Log($"SignIn Success: {callback.GetStatusCode()}\n{callback.GetMessage()}\n{callback}");
+                BackendManager.Instance.isSignedIn = true;
             }
             else
             {

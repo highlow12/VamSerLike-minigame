@@ -51,7 +51,7 @@ class ChessBishopMovement : IMovement
 
         activeTween = DOVirtual.DelayedCall(delay, () =>
         {
-            tr.animator.SetTrigger("Start");
+            tr.animator.SetTrigger("StartTrigger");
             Vector2 startPosition = c; // 현재 위치
             Vector2 endPosition = t; // 목표 위치
             // Lerp와 유사한 트윈 설정

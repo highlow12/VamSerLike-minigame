@@ -7,6 +7,8 @@ public abstract class Monster : MonoBehaviour
     [SerializeField] protected float currentHealth;
     [SerializeField] protected float damage;
     [SerializeField] protected float defense;
+    [SerializeField] protected float detectionRange;
+    [SerializeField] protected float attackRange;
 
     protected bool isDead;
     protected Transform playerTransform;
@@ -44,18 +46,19 @@ public class NormalMonster : Monster
 {
     [SerializeField] protected float moveSpeed;
     protected IMovement movement/* = Enter Movement*/;
-    
+
     protected override void Start()
     {
         base.Start();
         // 일반 몬스터는 한 가지 이동 패턴만 사용
-        if(movement == null){
+        if (movement == null)
+        {
             Debug.LogError("Enter Movement");
             Destroy(this);
         }
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (!isDead)
         {
@@ -64,21 +67,30 @@ public class NormalMonster : Monster
         }
     }
 
+    /// <summary>
+    /// Moves the monster based on the movement behavior.
+    /// </summary>
     private void Move()
     {
         Vector2 movementVector = movement.CalculateMovement(
-            transform.position, 
+            transform.position,
             playerTransform.position
         );
         transform.position += (Vector3)movementVector * Time.deltaTime * moveSpeed;
-        transform.localScale = new(Mathf.Sign(movementVector.x),transform.localScale.y,transform.localScale.z);
+        transform.localScale = new(Mathf.Abs(transform.localScale.x) * Mathf.Sign(movementVector.x), transform.localScale.y, transform.localScale.z);
     }
-// Monster Attack
+
+    /// <summary>
+    /// Checks if the player is within attack range.
+    /// </summary>
     protected virtual void CheckAttackRange()
     {
         throw new System.NotImplementedException();
     }
 
+    /// <summary>
+    /// Executes the monster's attack behavior.
+    /// </summary>
     protected override void Attack()
     {
         throw new System.NotImplementedException();
@@ -108,11 +120,11 @@ public abstract class BossMonster : Monster
         monsterFSM.UpdateState();
         checkeState();
     }
-// Boss Take Damage
+    // Boss Take Damage
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
-        
+
         // 보스 특수 피해 처리
         if (currentHealth <= phaseChangeHealthThreshold)
         {

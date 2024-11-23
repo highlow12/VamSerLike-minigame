@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 using System;
 using BackEnd;
@@ -27,6 +28,7 @@ public class AuthPopUp : PopUp
     public TMP_InputField emailInput;
     public Button submitButton;
     public Button changeButton;
+    public Button confirmButton;
     public GameObject signInUi;
     public GameObject signUpUi;
     public AuthInputForm inputForm = new();
@@ -41,6 +43,7 @@ public class AuthPopUp : PopUp
         {
             submitButton.onClick.AddListener(() => OnClickSubmit());
             changeButton.onClick.AddListener(() => OnClickButton());
+            confirmButton.onClick.AddListener(() => OnClickConfirm());
         }
     }
 
@@ -75,6 +78,7 @@ public class AuthPopUp : PopUp
             changeButton.onClick.RemoveAllListeners();
             changeButton = Array.Find(signUpUi.GetComponentsInChildren<Button>(), x => x.name == "ChangeButton");
             changeButton.onClick.AddListener(() => OnClickButton());
+
 
             idInput = Array.Find(signUpUi.GetComponentsInChildren<TMP_InputField>(), x => x.name == "IdInput");
             passwordInput = Array.Find(signUpUi.GetComponentsInChildren<TMP_InputField>(), x => x.name == "PwInput");
@@ -120,6 +124,7 @@ public class AuthPopUp : PopUp
 
     public override void OnClickConfirm()
     {
+        SceneManager.LoadScene("SampleScene");
         Debug.Log("Confirm Button Clicked");
     }
 
