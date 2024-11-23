@@ -13,7 +13,7 @@ public class BishopMovement :  NormalMonster
 }
 class ChessBishopMovement : IMovement
 {
-    Sequence sq = null;
+    
     float length = 0;
     float delay = 0;
     float duration =0;
@@ -30,15 +30,15 @@ class ChessBishopMovement : IMovement
         this.duration = duration;
         this.tr =tr;
     }
-    public Vector2 CalculateMovement(Vector2 currentPosition, Vector2 targetPosition)
+    public void CalculateMovement(Transform transform)
     {
-        if (activeTween == null || (bool)!activeTween?.IsPlaying()) 
+        Vector2 currentPosition = transform.position;
+        Vector2 targetPosition = currentPosition + new Vector2(length, length); // 예제: 대각선 이동
+
+        if (activeTween == null || (bool)!activeTween?.IsPlaying())
         {
             startmotion(currentPosition, targetPosition);
         }
-        
-        return p;
-            
     }
     
     void startmotion(Vector2 currentPosition, Vector2 targetPosition)

@@ -72,12 +72,18 @@ public class NormalMonster : Monster
     /// </summary>
     private void Move()
     {
-        Vector2 movementVector = movement.CalculateMovement(
-            transform.position,
-            playerTransform.position
+        // Calculate movement using the movement interface
+        movement.CalculateMovement(transform);
+
+        // Assuming movementVector is updated within CalculateMovement
+        Vector2 movementVector = transform.position - (Vector3)playerTransform.position;
+        int sign = Mathf.Sign(transform.localScale.x) == Mathf.Sign(movementVector.x) ? 1 : -1 ;
+        // Update local scale based on movement direction
+        transform.localScale = new Vector3(
+            transform.localScale.x * sign,
+            transform.localScale.y,
+            transform.localScale.z
         );
-        transform.position += (Vector3)movementVector * Time.deltaTime * moveSpeed;
-        transform.localScale = new(Mathf.Abs(transform.localScale.x) * Mathf.Sign(movementVector.x), transform.localScale.y, transform.localScale.z);
     }
 
     /// <summary>

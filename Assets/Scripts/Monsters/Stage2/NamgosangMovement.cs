@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class NamgosangMovement : NormalMonster
 {
+    public Animator animator;
     protected override void Start()
     {
         movement = new FloatMovement();
@@ -14,24 +15,21 @@ class FloatMovement : IMovement
     float frequency = 0;
     float amplitude = 0;
     float delta = 0;
+
     public FloatMovement(float frequency = 1, float amplitude = 1)
     {
-        frequency = frequency == 0 ? 1 : frequency; // Solve divide by 0
-        this.frequency = frequency;
-        amplitude = Mathf.Clamp01(amplitude);
-        this.amplitude = amplitude;
+        this.frequency = frequency == 0 ? 1 : frequency; // 0으로 나누는 것을 방지
+        this.amplitude = Mathf.Clamp01(amplitude);
     }
-    public Vector2 CalculateMovement(Vector2 currentPosition, Vector2 targetPosition)
+
+    public void CalculateMovement(Transform transform)
     {
         delta += Time.deltaTime;
+        Vector2 currentPosition = transform.position;
 
-        var returnVec = new Vector2(0,Mathf.Sin(delta * Mathf.PI / frequency) * amplitude);
+        float offsetY = Mathf.Sin(delta * Mathf.PI / frequency) * amplitude;
         delta = delta >= frequency ? 0 : delta;
-        var dir = targetPosition - currentPosition;
-        dir.Normalize();
 
-        returnVec += dir;
-
-        return returnVec;
+        transform.position = new Vector2(currentPosition.x, currentPosition.y + offsetY);
     }
 }

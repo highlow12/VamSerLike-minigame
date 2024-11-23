@@ -44,6 +44,13 @@ public abstract class Weapon : MonoBehaviour
         Legendary
     }
 
+    public struct MonsterHit
+    {
+        public Monster monster;
+        public long hitTime;
+    }
+
+    public GameObject attackObject;
     public string displayName;
     public WeaponType weaponType;
     protected WeaponStatProvider.WeaponStat weaponStat;
@@ -57,6 +64,7 @@ public abstract class Weapon : MonoBehaviour
     protected float attackDamage;
     protected float attackSpeed;
     protected float attackRange;
+    protected float attackForwardDistance;
     protected int attackTarget;
     protected int projectileCount;
     protected float projectileSpeed;
@@ -74,6 +82,7 @@ public abstract class Weapon : MonoBehaviour
         attackDamage = weaponStat.attackDamage;
         attackSpeed = weaponStat.attackSpeed;
         attackRange = weaponStat.attackRange;
+        attackForwardDistance = Mathf.Sqrt(attackRange);
         attackTarget = weaponStat.attackTarget;
         projectileCount = weaponStat.projectileCount;
         projectileSpeed = weaponStat.projectileSpeed;
