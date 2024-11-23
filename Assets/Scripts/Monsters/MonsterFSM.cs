@@ -20,13 +20,12 @@ public class MonsterFSM
     public MonsterFSM(BaseState initState)
     {
         currentState = initState;
+        currentState.OnStateEnter();
     }
 
     public void ChangeState(BaseState nextState)
     {
-        if (currentState == nextState) return;
-
-        if(currentState != null) currentState.OnStateExit();
+        if (currentState != null) currentState.OnStateExit();
 
         currentState = nextState;
         currentState.OnStateEnter();

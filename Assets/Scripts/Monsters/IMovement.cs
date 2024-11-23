@@ -5,15 +5,15 @@ using UnityEngine;
 
 public interface IMovement
 {
-    Vector2 CalculateMovement(Vector2 currentPosition, Vector2 targetPosition);
+    void CalculateMovement(Transform transform);
 }
 
 public class StraightMovement : IMovement
 {
-    public Vector2 CalculateMovement(Vector2 currentPosition, Vector2 targetPosition)
+    public void CalculateMovement(Transform transform)
     {
-        var ret = targetPosition - currentPosition;
-        return ret.normalized;
+        var ret = GameManager.Instance.player.transform.position - transform.position;
+        transform.position += ret;
     }
 }
 
@@ -30,13 +30,13 @@ public class SinMovement : IMovement
         ResetTime();
     }
 
-    public Vector2 CalculateMovement(Vector2 currentPosition, Vector2 targetPosition)
+    public void CalculateMovement(Transform transform)
     {
         // 시간 업데이트
         elapsedTime += Time.deltaTime;
 
         // 기본 방향 계산
-        Vector2 directionToTarget = (targetPosition - currentPosition).normalized;
+        Vector2 directionToTarget = (GameManager.Instance.player.transform.position - transform.position).normalized;
         
         // 진행 방향에 수직인 벡터 계산 (2D에서는 90도 회전)
         Vector2 perpendicularDirection = new Vector2(-directionToTarget.y, directionToTarget.x);
@@ -49,7 +49,7 @@ public class SinMovement : IMovement
         finalDirection.Normalize();
         
         // 속도를 곱한 최종 이동 벡터 반환
-        return finalDirection;
+        transform.position += (Vector3)finalDirection;
     }
 
     // 필요한 경우 시간을 리셋하는 메서드
