@@ -60,7 +60,19 @@ public abstract class Weapon : MonoBehaviour
     protected WeaponAttackTarget weaponAttackTarget;
     public WeaponAttackDirectionType weaponAttackDirectionType;
     public string displayWeaponRare;
-    public WeaponRare weaponRare;
+    private WeaponRare _weaponRare;
+    public WeaponRare weaponRare
+    {
+        get
+        {
+            return _weaponRare;
+        }
+        set
+        {
+            _weaponRare = value;
+            InitStat();
+        }
+    }
     protected float attackDamage;
     protected float attackSpeed;
     protected float attackRange;

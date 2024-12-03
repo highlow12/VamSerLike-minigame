@@ -79,6 +79,7 @@ public class HolyWaterObject : Projectile
         else
         {
             hits.Clear();
+            monstersHit.Clear();
         }
     }
 

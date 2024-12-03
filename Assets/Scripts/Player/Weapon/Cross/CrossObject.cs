@@ -4,28 +4,40 @@ using System.Linq;
 using UnityEngine;
 
 
-public class CrossObject : MonoBehaviour
+public class CrossObject : AttackObject
 {
-    public float attackDamage;
-    public List<GameObject> monstersHit;
-
-    void Start()
+    public override void Init(float attackDamage, float attackRange, int attackIntervalInTicks = 0)
     {
-        monstersHit = new List<GameObject>();
+        base.Init(attackDamage, attackRange, attackIntervalInTicks);
     }
 
-
-    void OnTriggerEnter2D(Collider2D other)
+    protected override void Awake()
     {
-        if (other.CompareTag("Monster"))
+        base.Awake();
+        polygonCollider = GetComponentInChildren<PolygonCollider2D>();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+    }
+
+    public override void Attack()
+    {
+        Physics2D.OverlapCollider(polygonCollider, hits);
+        foreach (Collider2D hit in hits)
         {
-            if (monstersHit.Contains(other.gameObject))
+            if (hit == null)
             {
-                return;
+                break;
             }
-            Monster monster = other.GetComponent<Monster>();
+            Monster monster = hit.GetComponent<Monster>();
+            if (monster == null)
+            {
+                continue;
+            }
+            Debug.Log($"[{GameManager.Instance.gameTimer}] CrossObject hit {monster.name}");
             monster.TakeDamage(attackDamage);
-            monstersHit = monstersHit.Append(other.gameObject).ToList();
         }
     }
 }
