@@ -63,15 +63,15 @@ public class QueenMovement : BossMonster
 
 class QueenIdle : BaseState
 {
-    private QueenMovement monster;
+    private QueenMovement _monster;
     private Vector2 targetPos;
     private float idleRange;
     private float moveSpeed;
 
     // QueenIdle 상태를 초기화하는 생성자
-    public QueenIdle(Monster monster, float idleRange = 5, float moveSpeed = 5) : base(monster)
+    public QueenIdle(Monster _monster, float idleRange = 5, float moveSpeed = 5) : base(_monster)
     {
-        this.monster = (QueenMovement)monster;
+        this._monster = (QueenMovement)_monster;
         this.idleRange = idleRange;
         this.moveSpeed = moveSpeed;
     }
@@ -80,7 +80,7 @@ class QueenIdle : BaseState
     public override void OnStateEnter()
     {
         // 몬스터가 데미지를 받을 수 있도록 설정
-        monster.canTakeDamage = true;
+        _monster.canTakeDamage = true;
         // 목표 위치를 idleRange 내의 랜덤 위치로 설정
         targetPos = Random.insideUnitCircle * idleRange + (Vector2)GameManager.Instance.player.transform.position;
     }
@@ -95,30 +95,30 @@ class QueenIdle : BaseState
     public override void OnStateUpdate()
     {
         // 몬스터가 목표 위치에 거의 도달했는지 확인
-        if (Vector2.Distance(monster.transform.position, targetPos) < 0.1f)
+        if (Vector2.Distance(_monster.transform.position, targetPos) < 0.1f)
         {
             // 새로운 목표 위치를 idleRange 내의 랜덤 위치로 설정
             targetPos = Random.insideUnitCircle * idleRange + (Vector2)GameManager.Instance.player.transform.position;
         }
 
         // 몬스터를 목표 위치로 이동
-        monster.transform.position = Vector2.MoveTowards(monster.transform.position, targetPos, moveSpeed * Time.deltaTime);
+        _monster.transform.position = Vector2.MoveTowards(_monster.transform.position, targetPos, moveSpeed * Time.deltaTime);
         Debug.Log("Idle");
     }
 }
 class QueenChase : BaseState
 {
-    QueenMovement monster;
+    QueenMovement _monster;
     private float moveSpeed;
-    public QueenChase(Monster monster, float moveSpeed = 5) : base(monster)
+    public QueenChase(Monster _monster, float moveSpeed = 5) : base(_monster)
     {
-        this.monster = (QueenMovement)monster;
+        this._monster = (QueenMovement)_monster;
         this.moveSpeed = moveSpeed;
     }
 
     public override void OnStateEnter()
     {
-        monster.canTakeDamage = false;
+        _monster.canTakeDamage = false;
     }
 
     public override void OnStateExit()
@@ -128,10 +128,10 @@ class QueenChase : BaseState
 
     public override void OnStateUpdate()
     {
-        var dir = GameManager.Instance.player.transform.position - monster.transform.position;
+        var dir = GameManager.Instance.player.transform.position - _monster.transform.position;
         dir = dir.normalized;
 
-        monster.transform.position += dir * moveSpeed * Time.deltaTime;
+        _monster.transform.position += dir * moveSpeed * Time.deltaTime;
 
         Debug.Log("Chase");
     }
