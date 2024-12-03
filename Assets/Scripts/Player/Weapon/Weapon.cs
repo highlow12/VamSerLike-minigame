@@ -73,6 +73,7 @@ public abstract class Weapon : MonoBehaviour
             InitStat();
         }
     }
+    protected Animator attackObjectAnimator;
     protected float attackDamage;
     protected float attackSpeed;
     protected float attackRange;

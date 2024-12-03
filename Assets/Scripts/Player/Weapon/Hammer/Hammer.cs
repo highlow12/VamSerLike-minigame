@@ -11,6 +11,7 @@ public class Hammer : Weapon
 
     private void Awake()
     {
+        // attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/Hammer");
         weaponType = WeaponType.Hammer;
         weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
     }

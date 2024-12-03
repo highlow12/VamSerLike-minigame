@@ -12,10 +12,6 @@ public class HolyWaterObject : Projectile
     private SpriteRenderer spriteRenderer;
     [SerializeField] private bool isInSplashState = false;
     private readonly float attackIntervalInSeconds = 0.5f;
-    private int attackIntervalInTicks;
-    [SerializeField] private List<Collider2D> hits = new List<Collider2D>();
-    public LayerMask monsterLayer;
-    private ContactFilter2D contactFilter;
 
     protected override void Awake()
     {
@@ -23,12 +19,6 @@ public class HolyWaterObject : Projectile
         spriteRenderer = GetComponent<SpriteRenderer>();
         polygonCollider = GetComponent<PolygonCollider2D>();
         attackIntervalInTicks = (int)(attackIntervalInSeconds / Time.fixedDeltaTime);
-        contactFilter = new ContactFilter2D();
-        contactFilter.useLayerMask = true;
-        contactFilter.useTriggers = false;
-        contactFilter.SetLayerMask(monsterLayer);
-        Debug.Log($"Monster Layer: {monsterLayer.value}");
-
     }
 
     private void FixedUpdate()
@@ -36,7 +26,7 @@ public class HolyWaterObject : Projectile
         if (isInSplashState)
         {
             // contatctFilter is not working properly
-            Physics2D.OverlapCollider(polygonCollider, hits);
+            Physics2D.OverlapCollider(polygonCollider, contactFilter, hits);
             foreach (Collider2D hit in hits)
             {
                 if (hit == null)

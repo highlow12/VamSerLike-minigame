@@ -8,14 +8,19 @@ public abstract class AttackObject : MonoBehaviour
 {
     public float attackDamage;
     public int attackIntervalInTicks;
+    protected int attackTarget;
     protected List<Weapon.MonsterHit> monstersHit;
     protected List<Collider2D> hits;
-    protected PolygonCollider2D polygonCollider;
+    protected Collider2D attackCollider;
+    protected LayerMask monsterLayer;
+    protected ContactFilter2D contactFilter;
 
-    public virtual void Init(float attackDamage, float attackRange, int attackIntervalInTicks)
+
+    public virtual void Init(float attackDamage, float attackRange, int attackIntervalInTicks, int attackTarget)
     {
         this.attackDamage = attackDamage;
         this.attackIntervalInTicks = attackIntervalInTicks;
+        this.attackTarget = attackTarget;
         transform.localScale = new Vector3(attackRange, attackRange, 1);
     }
 
@@ -23,6 +28,11 @@ public abstract class AttackObject : MonoBehaviour
     {
         monstersHit = new List<Weapon.MonsterHit>();
         hits = new List<Collider2D>();
+        monsterLayer = 1 << LayerMask.NameToLayer("Monster");
+        contactFilter = new ContactFilter2D();
+        contactFilter.useLayerMask = true;
+        contactFilter.useTriggers = true;
+        contactFilter.SetLayerMask(monsterLayer);
     }
 
     protected virtual void Start()

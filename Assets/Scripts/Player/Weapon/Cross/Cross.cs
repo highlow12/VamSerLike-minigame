@@ -6,12 +6,11 @@ using System.Linq;
 
 public class Cross : Weapon
 {
-    private Animator attackObjectAnimator;
     [SerializeField] private float callibrationMultiplier = 0.4f;
 
     private void Awake()
     {
-        attackObject = Resources.Load<GameObject>("Prefabs/Player/AttackObject/Cross");
+        attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/Cross");
         attackObject = Instantiate(attackObject, transform);
         attackObject.SetActive(false);
         weaponType = WeaponType.Cross;
@@ -32,7 +31,7 @@ public class Cross : Weapon
     public override IEnumerator Attack(Vector2 attackDirection)
     {
         attackObject.SetActive(true);
-        attackObjectAnimator.SetFloat("FadeMultiplier", attackSpeed);
+        attackObjectAnimator.SetFloat("AttackSpeed", attackSpeed);
         isAttackCooldown = true;
         Vector3 normalizedDirection = attackDirection.normalized;
         float distanceMultiplier = (1 + (callibrationMultiplier / attackRange)) * Mathf.Sqrt(attackRange);
