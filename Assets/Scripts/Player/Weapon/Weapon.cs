@@ -51,6 +51,7 @@ public abstract class Weapon : MonoBehaviour
     }
 
     public GameObject attackObject;
+    protected AttackObject weaponScript;
     public string displayName;
     public WeaponType weaponType;
     protected WeaponStatProvider.WeaponStat weaponStat;
@@ -74,6 +75,8 @@ public abstract class Weapon : MonoBehaviour
         }
     }
     protected Animator attackObjectAnimator;
+    protected SpriteRenderer weaponSpriteRenderer;
+    protected float weaponPositionXOffset;
     protected float attackDamage;
     protected float attackSpeed;
     protected float attackRange;
@@ -101,6 +104,19 @@ public abstract class Weapon : MonoBehaviour
         projectileSpeed = weaponStat.projectileSpeed;
     }
 
+    protected virtual void Flip(float degree)
+    {
+        if (degree > 90 || degree < -90)
+        {
+            weaponSpriteRenderer.flipX = false;
+            attackObject.transform.localPosition = new Vector3(-weaponPositionXOffset, 0, 0);
+        }
+        else
+        {
+            weaponSpriteRenderer.flipX = true;
+            attackObject.transform.localPosition = new Vector3(weaponPositionXOffset, 0, 0);
+        }
+    }
 
     public virtual IEnumerator Attack(Vector2 attackDirection)
     {

@@ -10,7 +10,10 @@ public class Axe : Weapon
     {
         attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/Axe");
         attackObject = Instantiate(attackObject, transform);
-        attackObject.SetActive(false);
+        weaponPositionXOffset = 0.3f;
+        weaponSpriteRenderer = attackObject.GetComponent<SpriteRenderer>();
+        attackObject.transform.localPosition = new Vector3(weaponPositionXOffset, 0, 0);
+        weaponScript = attackObject.GetComponent<AttackObject>();
         weaponType = WeaponType.Axe;
         weaponAttackDirectionType = WeaponAttackDirectionType.Nearest;
     }
@@ -18,7 +21,7 @@ public class Axe : Weapon
     public override void InitStat()
     {
         base.InitStat();
-        attackObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
+        weaponScript.colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
         attackObjectAnimator = attackObject.GetComponent<Animator>();
         attackObject.GetComponent<AxeObject>().Init(
             attackDamage,
@@ -31,16 +34,21 @@ public class Axe : Weapon
 
     public override IEnumerator Attack(Vector2 attackDirection)
     {
-        attackObject.SetActive(true);
         attackObjectAnimator.SetFloat("AttackSpeed", attackSpeed);
         isAttackCooldown = true;
         Vector2 pos = (Vector2)transform.position + attackDirection.normalized * attackForwardDistance;
-        attackObject.transform.position = pos;
-        attackObject.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg);
+        float degree = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
+        weaponScript.colliderObject.transform.position = pos;
+        weaponScript.colliderObject.transform.rotation = Quaternion.Euler(0, 0, degree);
+        Flip(degree);
         yield return new WaitForSeconds(1f / attackSpeed);
-        attackObject.SetActive(false);
         isAttackCooldown = false;
         yield return null;
+    }
+
+    protected override void Flip(float degree)
+    {
+        base.Flip(degree);
     }
 
 }

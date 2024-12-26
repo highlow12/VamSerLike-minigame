@@ -8,6 +8,7 @@ public abstract class AttackObject : MonoBehaviour
 {
     public float attackDamage;
     public int attackIntervalInTicks;
+    public GameObject colliderObject;
     protected int attackTarget;
     protected List<Weapon.MonsterHit> monstersHit;
     protected List<Collider2D> hits;
@@ -21,7 +22,7 @@ public abstract class AttackObject : MonoBehaviour
         this.attackDamage = attackDamage;
         this.attackIntervalInTicks = attackIntervalInTicks;
         this.attackTarget = attackTarget;
-        transform.localScale = new Vector3(attackRange, attackRange, 1);
+        transform.localScale = new Vector3(0.5f, 0.5f, 1);
     }
 
     protected virtual void Awake()

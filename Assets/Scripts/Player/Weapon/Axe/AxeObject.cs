@@ -14,7 +14,7 @@ public class AxeObject : AttackObject
     protected override void Awake()
     {
         base.Awake();
-        attackCollider = GetComponent<BoxCollider2D>();
+        attackCollider = colliderObject.GetComponent<BoxCollider2D>();
     }
 
     protected override void Start()
