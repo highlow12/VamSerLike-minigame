@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class QueenMovement : BossMonster
 {
+    public Animator animator{get; private set;}
     float stateTimer;
     public bool canTakeDamage = false;
     public float[] chaseTimeRange = new float[2];
@@ -46,6 +47,8 @@ public class QueenMovement : BossMonster
 
     protected override void initState()
     {
+        animator = GetComponent<Animator>();
+
         states = new Dictionary<int, BaseState>
         {
             { (int)QueenAction.Idle, new QueenIdle(this) },
@@ -83,6 +86,8 @@ class QueenIdle : BaseState
         _monster.canTakeDamage = true;
         // 목표 위치를 idleRange 내의 랜덤 위치로 설정
         targetPos = Random.insideUnitCircle * idleRange + (Vector2)GameManager.Instance.player.transform.position;
+
+        _monster.animator.SetTrigger("Dance");
     }
 
     // 상태가 종료될 때 호출되는 메서드
@@ -119,6 +124,7 @@ class QueenChase : BaseState
     public override void OnStateEnter()
     {
         _monster.canTakeDamage = false;
+        _monster.animator.SetTrigger("Move");
     }
 
     public override void OnStateExit()
