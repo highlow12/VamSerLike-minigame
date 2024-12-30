@@ -6,6 +6,8 @@ public class QueenMovement : BossMonster
 {
     public Animator animator{get; private set;}
     float stateTimer;
+    [SerializeField] public float moveSpeed = 1;
+    [SerializeField] public float idleRange = 5;
     public bool canTakeDamage = false;
     public float[] chaseTimeRange = new float[2];
     public float[] idleTimerRange = new float[2];
@@ -51,8 +53,8 @@ public class QueenMovement : BossMonster
 
         states = new Dictionary<int, BaseState>
         {
-            { (int)QueenAction.Idle, new QueenIdle(this) },
-            { (int)QueenAction.Chase, new QueenChase(this) }
+            { (int)QueenAction.Idle, new QueenIdle(this, idleRange, moveSpeed) },
+            { (int)QueenAction.Chase, new QueenChase(this, moveSpeed) }
         };
         monsterFSM = new MonsterFSM(states[(int)QueenAction.Idle]);
     }
@@ -72,7 +74,7 @@ class QueenIdle : BaseState
     private float moveSpeed;
 
     // QueenIdle 상태를 초기화하는 생성자
-    public QueenIdle(Monster _monster, float idleRange = 5, float moveSpeed = 5) : base(_monster)
+    public QueenIdle(Monster _monster, float idleRange, float moveSpeed) : base(_monster)
     {
         this._monster = (QueenMovement)_monster;
         this.idleRange = idleRange;
@@ -115,7 +117,7 @@ class QueenChase : BaseState
 {
     QueenMovement _monster;
     private float moveSpeed;
-    public QueenChase(Monster _monster, float moveSpeed = 5) : base(_monster)
+    public QueenChase(Monster _monster, float moveSpeed) : base(_monster)
     {
         this._monster = (QueenMovement)_monster;
         this.moveSpeed = moveSpeed;
