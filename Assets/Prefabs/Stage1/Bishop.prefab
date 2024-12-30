@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 5172718507834586352}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.14, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -127,5 +127,7 @@ MonoBehaviour:
   currentHealth: 1
   damage: 1
   defense: 1
+  detectionRange: 0
+  attackRange: 0
   moveSpeed: 1
   animator: {fileID: 1041221459528180490}
