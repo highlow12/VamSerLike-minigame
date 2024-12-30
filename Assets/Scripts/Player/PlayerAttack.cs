@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using BackEnd;
+using System.Data;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class PlayerAttack : MonoBehaviour
     void Start()
     {
         playerMove = GetComponent<PlayerMove>();
-        Weapon initWeapon = gameObject.AddComponent<Axe>();
+        Weapon initWeapon = gameObject.AddComponent<HolyWater>();
         initWeapon.weaponRare = GetWeaponRare(initWeapon.weaponType);
         weapon = initWeapon;
     }

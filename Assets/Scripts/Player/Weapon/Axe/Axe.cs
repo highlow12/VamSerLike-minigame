@@ -6,23 +6,17 @@ using System.Collections.Generic;
 
 public class Axe : Weapon
 {
-    private void Awake()
+    protected override void Awake()
     {
-        attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/Axe");
-        attackObject = Instantiate(attackObject, transform);
-        weaponPositionXOffset = 0.3f;
-        weaponSpriteRenderer = attackObject.GetComponent<SpriteRenderer>();
-        attackObject.transform.localPosition = new Vector3(weaponPositionXOffset, 0, 0);
-        weaponScript = attackObject.GetComponent<AttackObject>();
         weaponType = WeaponType.Axe;
         weaponAttackDirectionType = WeaponAttackDirectionType.Nearest;
+        weaponPositionXOffset = 0.3f;
+        base.Awake();
     }
 
     public override void InitStat()
     {
         base.InitStat();
-        weaponScript.colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
-        attackObjectAnimator = attackObject.GetComponent<Animator>();
         attackObject.GetComponent<AxeObject>().Init(
             attackDamage,
             attackRange,

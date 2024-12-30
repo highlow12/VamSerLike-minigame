@@ -86,6 +86,15 @@ public abstract class Weapon : MonoBehaviour
     protected float projectileSpeed;
     public bool isAttackCooldown;
 
+    protected virtual void Awake()
+    {
+        attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/" + weaponType.ToString());
+        attackObject = Instantiate(attackObject, transform);
+        weaponSpriteRenderer = attackObject.GetComponent<SpriteRenderer>();
+        weaponScript = attackObject.GetComponent<AttackObject>();
+        attackObject.transform.localPosition = new Vector3(weaponPositionXOffset, 0, 0);
+    }
+
     public virtual void InitStat()
     {
         weaponStat = WeaponStatProvider.Instance.weaponStats.Find(x => x.weaponType == weaponType && x.weaponRare == weaponRare);
@@ -102,6 +111,11 @@ public abstract class Weapon : MonoBehaviour
         attackTarget = weaponStat.attackTarget;
         projectileCount = weaponStat.projectileCount;
         projectileSpeed = weaponStat.projectileSpeed;
+        if (attackObject != null)
+        {
+            weaponScript.colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
+            attackObjectAnimator = attackObject.GetComponent<Animator>();
+        }
     }
 
     protected virtual void Flip(float degree)

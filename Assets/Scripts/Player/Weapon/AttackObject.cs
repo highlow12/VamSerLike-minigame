@@ -22,7 +22,6 @@ public abstract class AttackObject : MonoBehaviour
         this.attackDamage = attackDamage;
         this.attackIntervalInTicks = attackIntervalInTicks;
         this.attackTarget = attackTarget;
-        transform.localScale = new Vector3(0.5f, 0.5f, 1);
     }
 
     protected virtual void Awake()
@@ -34,6 +33,8 @@ public abstract class AttackObject : MonoBehaviour
         contactFilter.useLayerMask = true;
         contactFilter.useTriggers = true;
         contactFilter.SetLayerMask(monsterLayer);
+        attackCollider = colliderObject.GetComponent<Collider2D>() ?? new Collider2D();
+
     }
 
     protected virtual void Start()
@@ -44,7 +45,29 @@ public abstract class AttackObject : MonoBehaviour
 
     public virtual void Attack()
     {
-
+        Start();
+        Physics2D.OverlapCollider(attackCollider, contactFilter, hits);
+        hits = hits.OrderBy(x => Vector2.Distance(x.transform.position, transform.position)).ToList();
+        int count = 0;
+        foreach (Collider2D hit in hits)
+        {
+            if (hit == null)
+            {
+                break;
+            }
+            if (count >= attackTarget)
+            {
+                break;
+            }
+            Monster monster = hit.GetComponent<Monster>();
+            if (monster == null)
+            {
+                continue;
+            }
+            Debug.Log($"[{GameManager.Instance.gameTimer}] hit {monster.name}");
+            monster.TakeDamage(attackDamage);
+            count++;
+        }
     }
 
 }

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5022055879831313154}
   - component: {fileID: 4682498593724451109}
   - component: {fileID: 2154735477512778440}
+  - component: {fileID: 586208184160430830}
   m_Layer: 8
   m_Name: HolyWater
   m_TagString: Untagged
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,12 +80,12 @@ SpriteRenderer:
   m_SortingLayerID: 1573350097
   m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
+  m_Sprite: {fileID: -5824092377655198212, guid: 75e0b6897ea80443dab17fd4a35e736e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.31, y: 2.01}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -102,19 +103,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d77ae7a11d511437a8746bb6e10f139c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackDamage: 0
+  attackIntervalInTicks: 0
+  colliderObject: {fileID: 6814831322662165562}
   speed: 0
   attackRange: 0
-  attackDamage: 0
   initialPosition: {x: 0, y: 0}
-  monstersHit: []
-  holyWaterSplashSprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  holyWaterProjectileSprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
-  projectileInitialScale: 0.3
+  projectileInitialScale: 1
   isInSplashState: 0
-  hits: []
-  monsterLayer:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!114 &4682498593724451109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,8 +161,8 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 0.142, y: 0.2}
+    newSize: {x: 1.31, y: 2.01}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -214,3 +210,25 @@ PolygonCollider2D:
       - {x: 0.14453125, y: -0.484375}
       - {x: 0.19921875, y: -0.46875}
   m_UseDelaunayMesh: 0
+--- !u!95 &586208184160430830
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6814831322662165562}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3f741441597224cfe985c5f9d1038560, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

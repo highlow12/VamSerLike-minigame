@@ -14,7 +14,6 @@ public class CrossObject : AttackObject
     protected override void Awake()
     {
         base.Awake();
-        attackCollider = GetComponentInChildren<PolygonCollider2D>();
     }
 
     protected override void Start()
@@ -24,20 +23,6 @@ public class CrossObject : AttackObject
 
     public override void Attack()
     {
-        Physics2D.OverlapCollider(attackCollider, hits);
-        foreach (Collider2D hit in hits)
-        {
-            if (hit == null)
-            {
-                break;
-            }
-            Monster monster = hit.GetComponent<Monster>();
-            if (monster == null)
-            {
-                continue;
-            }
-            Debug.Log($"[{GameManager.Instance.gameTimer}] CrossObject hit {monster.name}");
-            monster.TakeDamage(attackDamage);
-        }
+        base.Attack();
     }
 }

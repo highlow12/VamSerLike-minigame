@@ -9,7 +9,7 @@ public class Shotgun : Weapon
     private ObjectPoolManager objectPoolManager;
     [SerializeField] private float spreadDegree = 45f;
 
-    private void Awake()
+    protected override void Awake()
     {
         objectPoolManager = ObjectPoolManager.instance;
         weaponType = WeaponType.Shotgun;

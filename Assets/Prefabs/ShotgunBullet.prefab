@@ -78,7 +78,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1573350097
-  m_SortingLayer: 3
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -115,9 +115,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1994bf10434b44d45863f1f6e7efa27b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackDamage: 0
+  attackIntervalInTicks: 0
+  colliderObject: {fileID: 6311800377638777129}
   speed: 0
   attackRange: 0
-  attackDamage: 0
   initialPosition: {x: 0, y: 0}
 --- !u!50 &-6147780185340549280
 Rigidbody2D:

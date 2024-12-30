@@ -9,7 +9,7 @@ public class Machete : Weapon
     // 테스트용 변수
     Vector2 ad;
 
-    private void Awake()
+    protected override void Awake()
     {
         weaponType = WeaponType.Machete;
         weaponAttackDirectionType = WeaponAttackDirectionType.Aim;

@@ -5,27 +5,30 @@ using UnityEngine;
 
 public class HolyWaterObject : Projectile
 {
-    [SerializeField] private Sprite holyWaterSplashSprite;
-    [SerializeField] private Sprite holyWaterProjectileSprite;
     [SerializeField] private float projectileInitialScale;
     private PolygonCollider2D polygonCollider;
     private SpriteRenderer spriteRenderer;
     [SerializeField] private bool isInSplashState = false;
-    private readonly float attackIntervalInSeconds = 0.5f;
+    private Animator animator;
+
+    public override void Init(float attackDamage, float attackRange, int attackIntervalInTicks = 0, int attackTarget = 0)
+    {
+        base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
+        this.attackRange = attackRange;
+    }
 
     protected override void Awake()
     {
         base.Awake();
         spriteRenderer = GetComponent<SpriteRenderer>();
         polygonCollider = GetComponent<PolygonCollider2D>();
-        attackIntervalInTicks = (int)(attackIntervalInSeconds / Time.fixedDeltaTime);
+        animator = GetComponent<Animator>();
     }
 
     private void FixedUpdate()
     {
         if (isInSplashState)
         {
-            // contatctFilter is not working properly
             Physics2D.OverlapCollider(polygonCollider, contactFilter, hits);
             foreach (Collider2D hit in hits)
             {
@@ -76,7 +79,7 @@ public class HolyWaterObject : Projectile
     public void ChangeSprite()
     {
         isInSplashState = true;
-        spriteRenderer.sprite = holyWaterSplashSprite;
+        animator.SetBool("Splash", true);
         spriteRenderer.sortingLayerName = "Splash";
         // update polygon collider
         polygonCollider.TryUpdateShapeToAttachedSprite();
@@ -91,7 +94,7 @@ public class HolyWaterObject : Projectile
     {
         yield return new WaitForSeconds(3f);
         transform.localScale = new Vector3(projectileInitialScale, projectileInitialScale, 1);
-        spriteRenderer.sprite = holyWaterProjectileSprite;
+        animator.SetBool("Splash", false);
         spriteRenderer.sortingLayerName = "Projectile";
         // update polygon collider
         polygonCollider.TryUpdateShapeToAttachedSprite();
