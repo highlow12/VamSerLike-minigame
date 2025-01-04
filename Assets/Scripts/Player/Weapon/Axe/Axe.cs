@@ -17,7 +17,7 @@ public class Axe : Weapon
     public override void InitStat()
     {
         base.InitStat();
-        attackObject.GetComponent<AxeObject>().Init(
+        weaponScript.Init(
             attackDamage,
             attackRange,
             0,

@@ -19,7 +19,7 @@ public class Cross : Weapon
     public override void InitStat()
     {
         base.InitStat();
-        attackObject.GetComponent<CrossObject>().Init(
+        weaponScript.Init(
             attackDamage,
             attackRange,
             0,

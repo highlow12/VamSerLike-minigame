@@ -3,45 +3,45 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class Shotgun : Weapon
 {
-    private ObjectPoolManager objectPoolManager;
     [SerializeField] private float spreadDegree = 45f;
 
     protected override void Awake()
     {
-        objectPoolManager = ObjectPoolManager.instance;
         weaponType = WeaponType.Shotgun;
         weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
+        weaponPositionXOffset = 0.3f;
+        base.Awake();
     }
 
     public override void InitStat()
     {
         base.InitStat();
+        weaponScript.Init(
+            attackDamage,
+            attackRange,
+            0,
+            attackTarget
+        );
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
     {
         isAttackCooldown = true;
+        float baseAngle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
         float spreadDegree = this.spreadDegree / projectileCount; // 퍼짐 정도를 조절
-        for (int i = 0; i < projectileCount; i++)
-        {
-            GameObject bullet = objectPoolManager.GetGo("ShotgunBullet");
-            float baseAngle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
-            float spreadAngle = (i - (projectileCount - 1) / 2f) * spreadDegree;
-            Quaternion rotation = Quaternion.Euler(0, 0, baseAngle + spreadAngle);
-            bullet.transform.SetPositionAndRotation(transform.position, rotation);
-            Projectile bulletComponent = bullet.GetComponent<Projectile>();
-            bulletComponent.speed = projectileSpeed;
-            bulletComponent.attackRange = attackRange;
-            bulletComponent.initialPosition = transform.position;
-            bulletComponent.attackDamage = attackDamage;
-        }
-
+        Flip(baseAngle);
+        weaponScript.Setup(baseAngle, spreadDegree, projectileCount, projectileSpeed, attackSpeed);
         yield return new WaitForSeconds(1f / attackSpeed);
         isAttackCooldown = false;
         yield return null;
 
+    }
+    protected override void Flip(float degree)
+    {
+        base.Flip(degree);
     }
 }

@@ -11,12 +11,12 @@ public class PlayerAttack : MonoBehaviour
     public Weapon weapon;
     [SerializeField] private GameObject attackDirectionObject;
     private PlayerMove playerMove;
-    private Vector2 attackDirection;
+    private Vector2 attackDirection = new(0, 1);
 
     void Start()
     {
         playerMove = GetComponent<PlayerMove>();
-        Weapon initWeapon = gameObject.AddComponent<Machete>();
+        Weapon initWeapon = gameObject.AddComponent<Shotgun>();
         initWeapon.weaponRare = GetWeaponRare(initWeapon.weaponType);
         weapon = initWeapon;
     }

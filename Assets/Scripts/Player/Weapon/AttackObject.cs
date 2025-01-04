@@ -7,6 +7,7 @@ using System.Linq;
 public abstract class AttackObject : MonoBehaviour
 {
     public float attackDamage;
+    public float attackRange;
     public int attackIntervalInTicks;
     public GameObject colliderObject;
     protected int attackTarget;
@@ -16,12 +17,17 @@ public abstract class AttackObject : MonoBehaviour
     protected LayerMask monsterLayer;
     protected ContactFilter2D contactFilter;
 
+    public virtual void Setup(float baseAngle, float spreadDegree, int projectileCount, float projectileSpeed, float attackSpeed)
+    {
+
+    }
 
     public virtual void Init(float attackDamage, float attackRange, int attackIntervalInTicks, int attackTarget)
     {
         this.attackDamage = attackDamage;
         this.attackIntervalInTicks = attackIntervalInTicks;
         this.attackTarget = attackTarget;
+        this.attackRange = attackRange;
     }
 
     protected virtual void Awake()

@@ -17,7 +17,7 @@ public class Machete : Weapon
     public override void InitStat()
     {
         base.InitStat();
-        attackObject.GetComponent<MacheteObject>().Init(
+        weaponScript.Init(
             attackDamage,
             attackRange,
             0,

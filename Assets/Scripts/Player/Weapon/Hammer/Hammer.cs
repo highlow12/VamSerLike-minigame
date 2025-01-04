@@ -17,7 +17,7 @@ public class Hammer : Weapon
     public override void InitStat()
     {
         base.InitStat();
-        attackObject.GetComponent<HammerObject>().Init(
+        weaponScript.Init(
             attackDamage,
             attackRange,
             0,
