@@ -6,14 +6,22 @@ using UnityEngine;
 public interface IMovement
 {
     void CalculateMovement(Transform transform);
+
 }
 
 public class StraightMovement : IMovement
 {
+    float speed = 5f;
+    
+    public StraightMovement(float speed)
+    {
+        this.speed = speed;
+        
+    }
     public void CalculateMovement(Transform transform)
     {
-        var ret = GameManager.Instance.player.transform.position - transform.position;
-        transform.position += ret;
+        transform.position = Vector2.MoveTowards(transform.position, GameManager.Instance.player.transform.position, speed * Time.deltaTime);
+        
     }
 }
 
