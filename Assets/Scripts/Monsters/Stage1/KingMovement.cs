@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class KingMovement : BossMonster
 {
     public Animator animator { get; private set; }
-    
+
     [SerializeField] public float moveSpeed = 1;
     enum KingAction
     {
@@ -63,7 +63,7 @@ public class KingMove : BaseState
 
     public override void OnStateExit()
     {
-        
+
     }
 
     public override void OnStateUpdate()
@@ -81,7 +81,7 @@ public class KingAttack : BaseState
     public KingAttack(BossMonster bossMonster) : base(bossMonster)
     {
         _monster = (KingMovement)bossMonster;
-        
+
     }
     public override void OnStateEnter()
     {
@@ -90,7 +90,7 @@ public class KingAttack : BaseState
 
     public override void OnStateExit()
     {
-        
+
     }
 
     public override void OnStateUpdate()
