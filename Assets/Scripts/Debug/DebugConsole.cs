@@ -41,7 +41,7 @@ public class DebugConsole : MonoBehaviour
         Shared
     }
 
-    enum LineType
+    public enum LineType
     {
         Info,
         Warning,
@@ -52,10 +52,9 @@ public class DebugConsole : MonoBehaviour
     {
         public string text;
         public MessageType messageType;
-        public int tick;
+        public long tick;
 
     }
-
     public struct Command
     {
         public string name;
@@ -65,7 +64,7 @@ public class DebugConsole : MonoBehaviour
         // these properties are used for tool tip
         public string description;
         public string usage;
-        public List<string> availableParameters;
+        public List<List<string>> availableParameters;
     }
 
     // Commands
@@ -86,7 +85,17 @@ public class DebugConsole : MonoBehaviour
         usage = "changeWeapon [weaponType]",
         successMessage = "Changed weapon to {argument1}",
         parameters = new List<string>(),
-        availableParameters = new List<string>()
+        availableParameters = new List<List<string>>()
+    };
+
+    private Command spawn = new()
+    {
+        name = "spawn",
+        description = "Spawn monster, dropItem, etc.",
+        usage = "spawn [objectName]",
+        successMessage = "Spawned {argument1}",
+        parameters = new List<string>(),
+        availableParameters = new List<List<string>>()
     };
 
 
@@ -98,15 +107,28 @@ public class DebugConsole : MonoBehaviour
         // add commands
         commands[0] = help;
         commands[1] = changeWeapon;
+        commands[2] = spawn;
     }
 
     void Start()
     {
         // Initialize weapon types
+        List<string> parameters = new();
         for (int i = 0; i < Enum.GetNames(typeof(Weapon.WeaponType)).Length; i++)
         {
-            changeWeapon.availableParameters.Add(Enum.GetName(typeof(Weapon.WeaponType), i));
+            parameters.Add(Enum.GetName(typeof(Weapon.WeaponType), i));
         }
+        changeWeapon.availableParameters.Add(parameters.ToList());
+        parameters.Clear();
+
+        UnityEngine.Object[] resources = Resources.LoadAll("Prefabs/In-game");
+        parameters.AddRange(
+            from obj in resources
+            let gameObject = obj as GameObject
+            select $"{$"{gameObject?.tag}/" ?? ""}{obj.name}");
+        spawn.availableParameters.Add(parameters.ToList());
+        parameters.Clear();
+
     }
     void Update()
     {
@@ -270,12 +292,36 @@ public class DebugConsole : MonoBehaviour
         {
             text = newLine,
             messageType = messageType,
-            tick = (int)GameManager.Instance.gameTimer
+            tick = GameManager.Instance.gameTimer
         });
     }
 
-    public void MergeLine(Line line)
+    public void MergeLine(Line line, LineType lineType = LineType.Info)
     {
+        switch (lineType)
+        {
+            case LineType.Info:
+                line.text = $"<b><color=#FFFFFF>{line.text}</color></b>";
+                break;
+            case LineType.Warning:
+                line.text = $"<color=#FFFF00>{line.text}</color>";
+                break;
+            case LineType.Error:
+                line.text = $"<b><color=#FF0000>{line.text}</color></b>";
+                break;
+        }
+        lines.Add(line);
+        if (showLogCoroutine != null)
+        {
+            StopCoroutine(showLogCoroutine);
+        }
+        showLogCoroutine = StartCoroutine(ShowLog());
+    }
+
+    // overload function for merge line with custom color
+    public void MergeLine(Line line, string color)
+    {
+        line.text = $"<b><color={color}>{line.text}</color></b>";
         lines.Add(line);
         if (showLogCoroutine != null)
         {
@@ -370,10 +416,11 @@ public class DebugConsole : MonoBehaviour
         string displayToolTipText = "";
         if (toolTipCommand.name != null)
         {
+            int wordsCount = splitCommand.Count;
             // display tool tip
             toolTipObject.SetActive(true);
             // if no parameters given, display command description
-            if (splitCommand.Count == 1)
+            if (wordsCount == 1)
             {
                 matchedOptions.Clear();
                 matchedOptions.Add(toolTipCommand.name);
@@ -387,7 +434,7 @@ public class DebugConsole : MonoBehaviour
                 {
                     matchedOptionCursor = 0;
                     matchedOptions.Clear();
-                    foreach (string parameter in toolTipCommand.availableParameters)
+                    foreach (string parameter in toolTipCommand.availableParameters[Math.Max(wordsCount - 2, 0)])
                     {
                         Match match = Regex.Match(parameter, splitCommand.Last(), RegexOptions.IgnoreCase);
                         if (match.Success)
@@ -423,6 +470,9 @@ public class DebugConsole : MonoBehaviour
                 break;
             case "changeWeapon":
                 result = ChangeWeaponCommand(command.parameters);
+                break;
+            case "spawn":
+                result = SpawnCommand(command.parameters);
                 break;
             default:
                 AddLine("Command not found", LineType.Error);
@@ -483,6 +533,29 @@ public class DebugConsole : MonoBehaviour
         }
         catch
         {
+            return false;
+        }
+    }
+
+    bool SpawnCommand(List<string> parameters)
+    {
+        try
+        {
+            // get object name
+            string objectName = parameters[0];
+            // get object from resources
+            GameObject obj = Resources.Load<GameObject>($"Prefabs/In-game/{objectName}");
+            // get player position
+            Vector3 playerPosition = localPlayer.transform.position;
+            // get player rotation
+            Quaternion playerRotation = localPlayer.transform.rotation;
+            // instantiate object
+            Instantiate(obj, playerPosition + Vector3.right, playerRotation);
+            return true;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
             return false;
         }
     }

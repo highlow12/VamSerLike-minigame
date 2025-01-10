@@ -12,6 +12,7 @@ public class GameManager : Singleton<GameManager>
           GameOver
      }
 
+     public Player playerScript;
      public PlayerMove player;
      public GameState gameState;
      public long gameTimer;
