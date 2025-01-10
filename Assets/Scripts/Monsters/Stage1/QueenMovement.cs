@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class QueenMovement : BossMonster
 {
-    public Animator animator{get; private set;}
+    public Animator animator { get; private set; }
     float stateTimer;
     [SerializeField] public float moveSpeed = 1;
     [SerializeField] public float idleRange = 5;
