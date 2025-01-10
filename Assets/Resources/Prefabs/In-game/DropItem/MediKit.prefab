@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4214983655525949637}
   - component: {fileID: 7959467261894157575}
   - component: {fileID: 8141706844477791879}
+  - component: {fileID: -4334754439163956358}
   m_Layer: 7
   m_Name: MediKit
   m_TagString: DropItem
@@ -146,11 +147,63 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.116, y: 1.048}
+    oldSize: {x: 0.558, y: 0.524}
     newSize: {x: 1.116, y: 1.048}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.116, y: 1.048}
+  m_Size: {x: 0.558, y: 0.524}
   m_EdgeRadius: 0
+--- !u!114 &-4334754439163956358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6338815786346453224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShadowGroup: 0
+  m_Priority: 0
+  m_ComponentVersion: 5
+  m_HasRenderer: 1
+  m_UseRendererSilhouette: 1
+  m_CastsShadows: 1
+  m_SelfShadows: 0
+  m_AlphaCutoff: 0.1
+  m_ApplyToSortingLayers: 000000002bc84939a1036163cb33463e89de0eef7196d1edd16ac75d655d8d9c
+  m_ShapePath:
+  - {x: -0.3, y: -0.3, z: 0}
+  - {x: 0.3, y: -0.3, z: 0}
+  - {x: 0.3, y: -0.25, z: 0}
+  - {x: -0.29999995, y: -0.25, z: 0}
+  m_ShapePathHash: -2057951513
+  m_InstanceId: 0
+  m_ShadowShape2DComponent: {fileID: 0}
+  m_ShadowShape2DProvider:
+    rid: -2
+  m_ShadowCastingSource: 1
+  m_ShadowMesh:
+    m_Mesh: {fileID: 0}
+    m_LocalBounds:
+      m_Center: {x: 0, y: -0.275, z: 0}
+      m_Extent: {x: 0.3, y: 0.025000006, z: 0}
+    m_EdgeProcessing: 1
+    m_TrimEdge: 0.02
+    m_FlipX: 0
+    m_FlipY: 0
+    m_InitialTrim: 0
+  m_CastingOption: 1
+  m_PreviousTrimEdge: 0.02
+  m_PreviousEdgeProcessing: 1
+  m_PreviousShadowCastingSource: 1
+  m_PreviousShadowShape2DSource: {fileID: 4214983655525949637}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
