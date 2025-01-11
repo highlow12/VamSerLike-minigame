@@ -57,7 +57,7 @@ public class SinMovement : IMovement
         finalDirection.Normalize();
         
         // 속도를 곱한 최종 이동 벡터 반환
-        transform.position += (Vector3)finalDirection;
+        transform.position += (Vector3)finalDirection * Time.deltaTime;
     }
 
     // 필요한 경우 시간을 리셋하는 메서드

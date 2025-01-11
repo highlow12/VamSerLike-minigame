@@ -1,18 +1,17 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class ChckrachMovement : NormalMonster
+public class FlyMovement :NormalMonster
 {
     public int angleOffset = 90;
     protected override void Start()
     {
-        movement = new StraightMovement(moveSpeed);
+        movement = new SinMovement(1,1,moveSpeed);
         base.Start();
     }
 
     protected override void Update()
     {
-        transform.localRotation = Quaternion.Euler(0, 0, GetZRotation(transform.position, GameManager.Instance.player.transform.position) - angleOffset);
+        //transform.localRotation = Quaternion.Euler(0, 0, GetZRotation(transform.position, GameManager.Instance.player.transform.position) - angleOffset);
         base.Update();
         
     }
@@ -28,4 +27,3 @@ public class ChckrachMovement : NormalMonster
         return angle;
     }
 }
-
