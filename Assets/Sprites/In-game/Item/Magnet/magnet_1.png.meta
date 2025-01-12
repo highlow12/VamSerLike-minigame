@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f8951d30e97134775b87d433a8431773
+guid: b074fffbbb76243e9aa7435e91c7fc79
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7453379744291583414
-    second: medikit_1_0
+      213: 319412062480141759
+    second: magnet_1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,27 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: medikit_1_0
+      name: magnet_1_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 558
-        height: 524
+        width: 631
+        height: 670
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
-      physicsShape:
-      - - {x: -279, y: -262}
-        - {x: 279, y: -262}
-        - {x: 278, y: -201}
-        - {x: -279, y: -198}
-      tessellationDetail: 0
+      physicsShape: []
+      tessellationDetail: -1
       bones: []
-      spriteID: 6b577924369bf6760800000000000000
-      internalID: 7453379744291583414
+      spriteID: fbd8a191497ce6400800000000000000
+      internalID: 319412062480141759
       vertices: []
       indices: 
       edges: []
@@ -155,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 1b7f24935af7a4341879fc4ad703d5db
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -165,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      medikit_1_0: 7453379744291583414
+      magnet_1_0: 319412062480141759
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
