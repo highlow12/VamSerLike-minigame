@@ -26,7 +26,7 @@ public class PlayerMove : MonoBehaviour
 
     public float CheckDebuff()
     {
-        Debug.Log(SpeedDebuff);
+        //Debug.Log(SpeedDebuff);
         float returnvar = 1;
         returnvar *= SpeedDebuff ? speedDebuffReduce : 1;
         SpeedDebuff = false; // reset check var

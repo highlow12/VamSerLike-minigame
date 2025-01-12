@@ -9,6 +9,7 @@ public class Teacher : BossMonster
     public int NeckMinimumLenght = 30;
     public int NeckMaximumLenght = 50;
     public int NeckRandomLenght{get; private set;}
+    public float HeadRotateTime = 0.25f;
 
     protected override void checkeState()
     {
@@ -20,7 +21,7 @@ public class Teacher : BossMonster
         NeckRandomLenght = NeckMaximumLenght - NeckMinimumLenght;
         states = new Dictionary<int, BaseState>
         {
-            {1,new MoveHeadState(this)} // it has one state
+            {1,new MoveHeadState(this, HeadRotateTime)} // it has one state
         };
         monsterFSM = new MonsterFSM(states[1]);
     }
@@ -32,10 +33,12 @@ class MoveHeadState : BaseState
     float timer = 0.0f;
     float time = 0.0f;
     Transform newNeck;
-    public MoveHeadState(Teacher monster) : base(monster)
+    float repeatTime;
+    public MoveHeadState(Teacher monster,float repeatTime) : base(monster)
     {
         this.monster = monster;
         newNeck = monster.Neck;
+        this.repeatTime = repeatTime;
     }
 
     public override void OnStateEnter()
@@ -77,7 +80,7 @@ class MoveHeadState : BaseState
 
 
             timer += Time.deltaTime;
-            if (timer >= time)
+            if (timer >= repeatTime)
             {
                 state = 0;
                 timer = 0.0f;
