@@ -6,46 +6,38 @@ using System.Linq;
 
 public class Cross : Weapon
 {
-    [SerializeField] private float callibrationMultiplier = 0.4f;
+    private Animator attackObjectAnimator;
 
-    protected override void Awake()
+    private void Awake()
     {
+        attackObject = Resources.Load<GameObject>("Prefabs/Player/AttackObject/Cross");
+        attackObject = Instantiate(attackObject, transform);
+        attackObject.SetActive(false);
         weaponType = WeaponType.Cross;
         weaponAttackDirectionType = WeaponAttackDirectionType.Nearest;
-        weaponPositionXOffset = 0.2f;
-        base.Awake();
     }
 
     public override void InitStat()
     {
         base.InitStat();
-        weaponScript.Init(
-            attackDamage,
-            attackRange,
-            0,
-            attackTarget
-        );
+        attackObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
+        attackObjectAnimator = attackObject.GetComponent<Animator>();
+        attackObject.GetComponent<CrossObject>().attackDamage = attackDamage;
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
     {
-        attackObjectAnimator.SetFloat("AttackSpeed", attackSpeed);
+        attackObject.SetActive(true);
+        attackObjectAnimator.SetFloat("FadeMultiplier", attackSpeed);
         isAttackCooldown = true;
-        Vector3 normalizedDirection = attackDirection.normalized;
-        float distanceMultiplier = (1 + (callibrationMultiplier / attackRange)) * Mathf.Sqrt(attackRange);
-        float degree = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
-        weaponScript.colliderObject.transform.position = transform.position + (distanceMultiplier * attackForwardDistance * normalizedDirection);
-        weaponScript.colliderObject.transform.rotation = Quaternion.Euler(0, 0, degree - 90);
-        Flip(degree);
+        attackObject.transform.position = transform.position + ((Vector3)attackDirection.normalized * attackForwardDistance);
+        attackObject.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg);
         yield return new WaitForSeconds(1f / attackSpeed);
+        attackObject.SetActive(false);
         isAttackCooldown = false;
         yield return null;
     }
 
-    protected override void Flip(float degree)
-    {
-        base.Flip(degree);
-    }
 
 }
 

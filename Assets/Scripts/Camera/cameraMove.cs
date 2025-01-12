@@ -12,14 +12,14 @@ public class cameraMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
     void LateUpdate()
     {
-        pos = GameManager.Instance.player.transform.position;
+        pos = GameManager.Instance.player.transform.position; 
         offset = GameManager.Instance.player.inputVec.normalized * offsetMult;
-        transform.position = new(pos.x + offset.x, pos.y + offset.y, transform.position.z);
+        transform.position = new(pos.x + offset.x,pos.y + offset.y, transform.position.z);
     }
 }

@@ -77,7 +77,7 @@ public class NormalMonster : Monster
 
         // Assuming movementVector is updated within CalculateMovement
         Vector2 movementVector = transform.position - (Vector3)playerTransform.position;
-        int sign = Mathf.Sign(transform.localScale.x) == Mathf.Sign(movementVector.x) ? 1 : -1;
+        int sign = Mathf.Sign(transform.localScale.x) == Mathf.Sign(movementVector.x) ? 1 : -1 ;
         // Update local scale based on movement direction
         transform.localScale = new Vector3(
             transform.localScale.x * sign,

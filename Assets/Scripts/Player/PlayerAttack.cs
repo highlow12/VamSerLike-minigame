@@ -4,20 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using BackEnd;
-using System.Data;
 
 public class PlayerAttack : MonoBehaviour
 {
     public Weapon weapon;
     [SerializeField] private GameObject attackDirectionObject;
     private PlayerMove playerMove;
-    private Vector2 attackDirection = new(0, 1);
+    private Vector2 attackDirection;
 
     void Start()
     {
         playerMove = GetComponent<PlayerMove>();
-        Weapon initWeapon = gameObject.AddComponent<Shotgun>();
+        Weapon initWeapon = gameObject.AddComponent<Cross>();
         initWeapon.weaponRare = GetWeaponRare(initWeapon.weaponType);
+        initWeapon.InitStat();
         weapon = initWeapon;
     }
 

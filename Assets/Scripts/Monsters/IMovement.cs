@@ -37,17 +37,17 @@ public class SinMovement : IMovement
 
         // 기본 방향 계산
         Vector2 directionToTarget = (GameManager.Instance.player.transform.position - transform.position).normalized;
-
+        
         // 진행 방향에 수직인 벡터 계산 (2D에서는 90도 회전)
         Vector2 perpendicularDirection = new Vector2(-directionToTarget.y, directionToTarget.x);
-
+        
         // 사인파를 이용한 좌우 움직임 계산
         float zigzagOffset = Mathf.Sin(elapsedTime * frequency) * amplitude;
-
+        
         // 최종 방향 계산 (기본 방향 + 좌우 움직임)
         Vector2 finalDirection = directionToTarget + (perpendicularDirection * zigzagOffset);
         finalDirection.Normalize();
-
+        
         // 속도를 곱한 최종 이동 벡터 반환
         transform.position += (Vector3)finalDirection;
     }

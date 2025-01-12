@@ -8,14 +8,11 @@ using DG.Tweening;
 public class HolyWater : Weapon
 {
     [SerializeField] private float nearestMonsterTargetingDegreeThreshold = 45f;
-    private readonly float attackIntervalInSeconds = 0.5f;
-    private readonly float holdTime = 0.25f;
 
-    protected override void Awake()
+    private void Awake()
     {
         weaponType = WeaponType.HolyWater;
         weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
-        weaponPositionXOffset = 0.2f;
     }
 
     public override void InitStat()
@@ -27,15 +24,13 @@ public class HolyWater : Weapon
     {
         isAttackCooldown = true;
         GameObject holyWaterObject = ObjectPoolManager.instance.GetGo("HolyWater");
-        holyWaterObject.transform.parent = transform;
-        weaponSpriteRenderer = holyWaterObject.GetComponent<SpriteRenderer>();
-        attackObject = holyWaterObject;
         HolyWaterObject holyWaterComponent = holyWaterObject.GetComponent<HolyWaterObject>();
-        Animator holyWaterAnimator = holyWaterObject.GetComponent<Animator>();
-        holyWaterAnimator.SetFloat("AttackSpeed", attackSpeed);
-        holyWaterComponent.Init(attackDamage, attackRange, (int)(attackIntervalInSeconds / Time.fixedDeltaTime), attackTarget);
+        holyWaterObject.transform.position = transform.position;
+        holyWaterComponent.attackRange = attackRange;
+        holyWaterComponent.attackDamage = attackDamage;
+
         attackDirection = attackDirection.normalized;
-        Vector2 nearestMonsterDirection = CalculateVectorDistanceBetweenPlayerAndNearestMonster();
+        Vector2 nearestMonsterDirection = CalculateVectorDistanceBetweenPlayerAndNearestMonster().normalized;
 
         float nearestMosterAngle = Mathf.Atan2(nearestMonsterDirection.y, nearestMonsterDirection.x) * Mathf.Rad2Deg;
         float attackAngle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
@@ -51,18 +46,12 @@ public class HolyWater : Weapon
             Debug.Log($"[{Time.time}] Shoot to nearestMonsterDirection - angleDifference: {angleDifference}");
             Vector2 endValue = (Vector2)transform.position + nearestMonsterDirection;
             float newSpeed = attackSpeed * (nearestMonsterDirection.magnitude / (attackDirection * projectileSpeed).magnitude);
-            Flip(nearestMosterAngle);
-            yield return new WaitForSeconds(holdTime / attackSpeed);
-            holyWaterObject.transform.parent = null;
             holyWaterObject.transform.DOMove(endValue, newSpeed).SetEase(Ease.Linear).OnComplete(holyWaterComponent.ChangeSprite);
         }
         else
         {
             Debug.Log($"[{Time.time}] Shoot to attackDirection - angleDifference: {angleDifference}");
             Vector2 endValue = (Vector2)transform.position + attackDirection * projectileSpeed;
-            Flip(attackAngle);
-            yield return new WaitForSeconds(holdTime / attackSpeed);
-            holyWaterObject.transform.parent = null;
             holyWaterObject.transform.DOMove(endValue, attackSpeed).SetEase(Ease.Linear).OnComplete(holyWaterComponent.ChangeSprite);
         }
 
@@ -75,11 +64,6 @@ public class HolyWater : Weapon
         GameObject[] mosnters = GameObject.FindGameObjectsWithTag("Monster");
         GameObject nearestMonster = mosnters.OrderBy(x => Math.Abs(Vector2.Distance(x.transform.position, transform.position))).FirstOrDefault();
         return nearestMonster.transform.position - transform.position;
-    }
-
-    protected override void Flip(float degree)
-    {
-        base.Flip(degree);
     }
 
 }

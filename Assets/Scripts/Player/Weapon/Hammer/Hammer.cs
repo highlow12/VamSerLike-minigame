@@ -6,43 +6,58 @@ using System.Collections.Generic;
 
 public class Hammer : Weapon
 {
-    protected override void Awake()
+    // 테스트용 변수
+    Vector2 ad;
+
+    private void Awake()
     {
         weaponType = WeaponType.Hammer;
-        weaponAttackDirectionType = WeaponAttackDirectionType.Nearest;
-        weaponPositionXOffset = 0.3f;
-        base.Awake();
+        weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
     }
 
     public override void InitStat()
     {
         base.InitStat();
-        weaponScript.Init(
-            attackDamage,
-            attackRange,
-            0,
-            attackTarget
-        );
-
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
     {
-        attackObjectAnimator.SetFloat("AttackSpeed", attackSpeed);
+        ad = attackDirection;
         isAttackCooldown = true;
-        Vector2 pos = (Vector2)transform.position + attackDirection.normalized * attackForwardDistance;
-        float degree = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
-        weaponScript.colliderObject.transform.position = pos;
-        weaponScript.colliderObject.transform.rotation = Quaternion.Euler(0, 0, degree);
-        Flip(degree);
+        Vector2 newOrigin = (Vector2)transform.position + attackDirection.normalized * attackForwardDistance;
+        RaycastHit2D[] hits = Physics2D.BoxCastAll(
+            newOrigin,
+            new Vector2(attackRange, attackRange),
+            0f,
+            Vector2.zero,
+            0f,
+            1 << LayerMask.NameToLayer("Monster")
+        );
+        hits = hits.OrderBy(x => Vector2.Distance(x.transform.position, transform.position)).ToArray();
+        if (hits.Length > 0)
+        {
+            for (int i = 0; i < attackTarget; i++)
+            {
+                if (i >= hits.Length)
+                {
+                    break;
+                }
+                Monster monster = hits[i].collider.GetComponent<Monster>();
+                monster.TakeDamage(attackDamage);
+            }
+        }
         yield return new WaitForSeconds(1f / attackSpeed);
         isAttackCooldown = false;
         yield return null;
     }
 
-    protected override void Flip(float degree)
+    void OnDrawGizmos()
     {
-        base.Flip(degree);
+        Vector2 newOrigin = (Vector2)transform.position + ad.normalized * attackRange;
+        Gizmos.color = Color.red;
+        Gizmos.DrawCube(
+            newOrigin,
+            new Vector3(attackRange, attackRange, 0)
+        );
     }
-
 }

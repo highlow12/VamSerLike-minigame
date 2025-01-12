@@ -25,6 +25,7 @@ public class WeaponDebugButton : MonoBehaviour
     {
         Weapon.WeaponRare weaponRare = playerAttack.GetWeaponRare(weapon.weaponType);
         weapon.weaponRare = weaponRare;
+        weapon.InitStat();
     }
 
 

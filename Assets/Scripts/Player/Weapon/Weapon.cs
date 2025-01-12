@@ -43,7 +43,7 @@ public abstract class Weapon : MonoBehaviour
         Epic,
         Legendary
     }
-    [Serializable]
+
     public struct MonsterHit
     {
         public Monster monster;
@@ -51,7 +51,6 @@ public abstract class Weapon : MonoBehaviour
     }
 
     public GameObject attackObject;
-    protected AttackObject weaponScript;
     public string displayName;
     public WeaponType weaponType;
     protected WeaponStatProvider.WeaponStat weaponStat;
@@ -61,22 +60,7 @@ public abstract class Weapon : MonoBehaviour
     protected WeaponAttackTarget weaponAttackTarget;
     public WeaponAttackDirectionType weaponAttackDirectionType;
     public string displayWeaponRare;
-    private WeaponRare _weaponRare;
-    public WeaponRare weaponRare
-    {
-        get
-        {
-            return _weaponRare;
-        }
-        set
-        {
-            _weaponRare = value;
-            InitStat();
-        }
-    }
-    protected Animator attackObjectAnimator;
-    protected SpriteRenderer weaponSpriteRenderer;
-    protected float weaponPositionXOffset;
+    public WeaponRare weaponRare;
     protected float attackDamage;
     protected float attackSpeed;
     protected float attackRange;
@@ -85,15 +69,6 @@ public abstract class Weapon : MonoBehaviour
     protected int projectileCount;
     protected float projectileSpeed;
     public bool isAttackCooldown;
-
-    protected virtual void Awake()
-    {
-        attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/" + weaponType.ToString());
-        attackObject = Instantiate(attackObject, transform);
-        weaponSpriteRenderer = attackObject.GetComponent<SpriteRenderer>();
-        weaponScript = attackObject.GetComponent<AttackObject>();
-        attackObject.transform.localPosition = new Vector3(weaponPositionXOffset, 0, 0);
-    }
 
     public virtual void InitStat()
     {
@@ -111,26 +86,8 @@ public abstract class Weapon : MonoBehaviour
         attackTarget = weaponStat.attackTarget;
         projectileCount = weaponStat.projectileCount;
         projectileSpeed = weaponStat.projectileSpeed;
-        if (attackObject != null)
-        {
-            weaponScript.colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
-            attackObjectAnimator = attackObject.GetComponent<Animator>();
-        }
     }
 
-    protected virtual void Flip(float degree)
-    {
-        if (degree > 90 || degree < -90)
-        {
-            weaponSpriteRenderer.flipX = false;
-            attackObject.transform.localPosition = new Vector3(-weaponPositionXOffset, 0, 0);
-        }
-        else
-        {
-            weaponSpriteRenderer.flipX = true;
-            attackObject.transform.localPosition = new Vector3(weaponPositionXOffset, 0, 0);
-        }
-    }
 
     public virtual IEnumerator Attack(Vector2 attackDirection)
     {
