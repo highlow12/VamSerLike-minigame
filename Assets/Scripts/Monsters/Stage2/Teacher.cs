@@ -61,6 +61,7 @@ class MoveHeadState : BaseState
             monster.Head.localRotation = Quaternion.Euler(targetDir);
 
             // Make the neck look at the player
+            newNeck.localScale = new(0.1f,0.1f,0.1f);
             newNeck.localRotation = Quaternion.Euler(targetDir);
 
             state = 1;
