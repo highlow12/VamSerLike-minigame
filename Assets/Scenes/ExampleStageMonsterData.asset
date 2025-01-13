@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad55ba1d155b5d2458e60592940c7d2b, type: 3}
+  m_Name: ExampleStageMonsterData
+  m_EditorClassIdentifier: 
+  monsters:
+  - monsterName: Monster1
+    monsterPrefab: {fileID: 617479939269493722, guid: 714397ae0478af84dbf46551869f0e0d, type: 3}
+    spawnRate: 1
+  - monsterName: Monster2
+    monsterPrefab: {fileID: 6562870605056823676, guid: 09062a7c529a01040aff43b0068d87c2, type: 3}
+    spawnRate: 2
+  - monsterName: Monster3
+    monsterPrefab: {fileID: 4271344494346562848, guid: 9812626eebd652c43a68f601cd3a460a, type: 3}
+    spawnRate: 3
