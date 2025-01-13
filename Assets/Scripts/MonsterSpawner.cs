@@ -28,7 +28,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
             Debug.LogWarning("StageMonsterData is not set!");
             return;
         }
-
+        MonsterPoolManager.Instance.UpdateStageMonsterData(stageMonsterData);
         StartSpawning();
     }
     // StartSpawning()에서 monsterData별 코루틴을 만들어 몬스터를 스폰합니다.
@@ -75,8 +75,8 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
             if (monster != null)
             {
                 var SpawnDir = Random.insideUnitCircle.normalized;
-                var spawnPos = SpawnDir * Random.Range(MinimumSpawnRadius, MaximumSpawnRadius);
-                monster.transform.position = new Vector3(spawnPos.x, spawnPos.y, 0);
+                var spawnPos = SpawnDir * Random.Range(MinimumSpawnRadius, MaximumSpawnRadius) ;
+                monster.transform.position = new Vector3(spawnPos.x, spawnPos.y, 0) + GameManager.Instance.player.transform.position;
             }
         }
     }

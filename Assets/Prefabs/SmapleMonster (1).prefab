@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2212366306412052272}
   - component: {fileID: 8036510980780201874}
   - component: {fileID: -4739589035396718969}
+  - component: {fileID: 7642089164871895397}
   m_Layer: 0
   m_Name: SmapleMonster (1)
   m_TagString: Untagged
@@ -113,3 +114,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2ce5ab6858294598b041be71b90f01b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7642089164871895397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 617479939269493722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67b0bf636834f13498890f453ba3891d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterName: Monster1
