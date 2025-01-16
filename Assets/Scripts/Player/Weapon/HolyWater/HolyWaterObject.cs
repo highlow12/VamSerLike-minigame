@@ -5,32 +5,30 @@ using UnityEngine;
 
 public class HolyWaterObject : Projectile
 {
-    [SerializeField] private Sprite holyWaterSplashSprite;
     [SerializeField] private float projectileInitialScale;
-    [SerializeField] private float projectileScale;
     private PolygonCollider2D polygonCollider;
     private SpriteRenderer spriteRenderer;
-    private bool isInSplashState = false;
-    private readonly float attackIntervalInSeconds = 0.5f;
-    private int attackIntervalInTicks;
-    private List<Collider2D> hits = new List<Collider2D>();
+    [SerializeField] private bool isInSplashState = false;
+    private Animator animator;
+
+    public override void Init(float attackDamage, float attackRange, int attackIntervalInTicks = 0, int attackTarget = 0)
+    {
+        base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
+        this.attackRange = attackRange;
+    }
 
     protected override void Awake()
     {
         base.Awake();
         spriteRenderer = GetComponent<SpriteRenderer>();
         polygonCollider = GetComponent<PolygonCollider2D>();
-        attackIntervalInTicks = (int)(attackIntervalInSeconds / Time.fixedDeltaTime);
+        animator = GetComponent<Animator>();
     }
 
     private void FixedUpdate()
     {
         if (isInSplashState)
         {
-            hits.Clear();
-            ContactFilter2D contactFilter = new();
-            contactFilter.useLayerMask = true;
-            contactFilter.layerMask = LayerMask.GetMask("Monster");
             Physics2D.OverlapCollider(polygonCollider, contactFilter, hits);
             foreach (Collider2D hit in hits)
             {
@@ -48,6 +46,7 @@ public class HolyWaterObject : Projectile
                 {
                     continue;
                 }
+                Debug.Log($"[{GameManager.Instance.gameTimer}] HolyWaterObject hit {monster.name}");
                 Weapon.MonsterHit appendedMonsterHit = monstersHit.FirstOrDefault(x => x.monster == monster);
                 if (default(Weapon.MonsterHit).Equals(appendedMonsterHit))
                 {
@@ -70,15 +69,22 @@ public class HolyWaterObject : Projectile
                 monster.TakeDamage(attackDamage);
             }
         }
+        else
+        {
+            hits.Clear();
+            monstersHit.Clear();
+        }
     }
 
     public void ChangeSprite()
     {
         isInSplashState = true;
-        spriteRenderer.sprite = holyWaterSplashSprite;
+        animator.SetBool("Splash", true);
+        spriteRenderer.sortingLayerName = "Splash";
         // update polygon collider
         polygonCollider.TryUpdateShapeToAttachedSprite();
-        float scale = 1 / transform.localScale.x * attackRange;
+        float scale = attackRange;
+        Debug.Log($"localScale: {transform.localScale.x}, attackRange: {attackRange}, scale: {scale}");
         transform.localScale = new Vector3(scale, scale, 1);
         StartCoroutine(Despawn());
     }
@@ -88,10 +94,11 @@ public class HolyWaterObject : Projectile
     {
         yield return new WaitForSeconds(3f);
         transform.localScale = new Vector3(projectileInitialScale, projectileInitialScale, 1);
+        animator.SetBool("Splash", false);
+        spriteRenderer.sortingLayerName = "Projectile";
         // update polygon collider
         polygonCollider.TryUpdateShapeToAttachedSprite();
         isInSplashState = false;
-        transform.localScale = new Vector3(projectileScale, projectileScale, 1);
         if (TryGetComponent<PoolAble>(out var poolAble))
         {
             poolAble.ReleaseObject();

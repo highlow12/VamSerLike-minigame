@@ -1,24 +1,28 @@
+using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
-public class CrossObject : MonoBehaviour
-{
-    public float attackDamage;
-    public GameObject[] monstersHit;
 
-    void Start()
+public class CrossObject : AttackObject
+{
+    public override void Init(float attackDamage, float attackRange, int attackIntervalInTicks = 0, int attackTarget = 0)
     {
-        monstersHit = default;
+        base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
     }
 
-
-    void OnTriggerEnter2D(Collider2D other)
+    protected override void Awake()
     {
-        if (other.CompareTag("Monster"))
-        {
-            Monster monster = other.GetComponent<Monster>();
-            monster.TakeDamage(attackDamage);
-            monstersHit.Append(other.gameObject);
-        }
+        base.Awake();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+    }
+
+    public override void Attack()
+    {
+        base.Attack();
     }
 }

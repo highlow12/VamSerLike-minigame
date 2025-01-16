@@ -7,11 +7,6 @@ public class ShotgunBullet : Projectile
         base.Awake();
     }
 
-    void Start()
-    {
-
-    }
-
     void FixedUpdate()
     {
         float yVelocity = Mathf.Sin(Mathf.Deg2Rad * transform.rotation.eulerAngles.z) * speed;

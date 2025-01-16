@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Monster
+  - DropItem
   layers:
   - Default
   - TransparentFX
@@ -13,11 +14,11 @@ TagManager:
   - Water
   - UI
   - Ground
+  - Item
   - Monster
   - Projectile
   - AttackObject
-  - 
-  - 
+  - MuseTextureLayer
   - 
   - 
   - 
@@ -44,6 +45,9 @@ TagManager:
     locked: 0
   - name: Background
     uniqueID: 961136683
+    locked: 0
+  - name: Item
+    uniqueID: 1667302305
     locked: 0
   - name: Splash
     uniqueID: 1044788171
