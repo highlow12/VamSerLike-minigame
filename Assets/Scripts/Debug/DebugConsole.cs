@@ -114,9 +114,9 @@ public class DebugConsole : MonoBehaviour
     {
         // Initialize weapon types
         List<string> parameters = new();
-        for (int i = 0; i < Enum.GetNames(typeof(Weapon.WeaponType)).Length; i++)
+        for (int i = 0; i < Enum.GetNames(typeof(Weapon.MainWeapon.WeaponType)).Length; i++)
         {
-            parameters.Add(Enum.GetName(typeof(Weapon.WeaponType), i));
+            parameters.Add(Enum.GetName(typeof(Weapon.MainWeapon.WeaponType), i));
         }
         changeWeapon.availableParameters.Add(parameters.ToList());
         parameters.Clear();
@@ -502,25 +502,25 @@ public class DebugConsole : MonoBehaviour
         try
         {
             // parse string to enum
-            Weapon.WeaponType weaponType = (Weapon.WeaponType)Enum.Parse(typeof(Weapon.WeaponType), parameters[0]);
+            Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(typeof(Weapon.MainWeapon.WeaponType), parameters[0]);
             PlayerAttack playerAttack = localPlayer.GetComponent<PlayerAttack>();
             // remove component
             try
             {
-                Destroy(playerAttack.weapon.attackObject);
-                Destroy(playerAttack.weapon);
+                Destroy(playerAttack.mainWeapon.attackObject);
+                Destroy(playerAttack.mainWeapon);
             }
             catch
             {
                 AddLine("No weapon to remove", LineType.Warning);
             }
-            playerAttack.weapon = null;
+            playerAttack.mainWeapon = null;
             // Find weapon class that named same as weaponType
             Type weaponClassType = Type.GetType(weaponType.ToString());
-            Weapon initWeapon;
+            Weapon.MainWeapon initWeapon;
             if (weaponClassType != null)
             {
-                initWeapon = (Weapon)localPlayer.AddComponent(weaponClassType);
+                initWeapon = (Weapon.MainWeapon)localPlayer.AddComponent(weaponClassType);
             }
             else
             {
@@ -528,7 +528,7 @@ public class DebugConsole : MonoBehaviour
                 return false;
             }
             initWeapon.weaponRare = playerAttack.GetWeaponRare(weaponType);
-            playerAttack.weapon = initWeapon;
+            playerAttack.mainWeapon = initWeapon;
             return true;
         }
         catch

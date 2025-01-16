@@ -4,12 +4,12 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Hammer : Weapon
+public class Machete : Weapon.MainWeapon
 {
     protected override void Awake()
     {
-        weaponType = WeaponType.Hammer;
-        weaponAttackDirectionType = WeaponAttackDirectionType.Nearest;
+        weaponType = WeaponType.Machete;
+        weaponAttackDirectionType = Weapon.WeaponAttackDirectionType.Nearest;
         weaponPositionXOffset = 0.3f;
         base.Awake();
     }

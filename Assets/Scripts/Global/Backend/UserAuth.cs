@@ -78,32 +78,32 @@ public class UserAuth : MonoBehaviour
 
         Param hammerParam = new()
         {
-            { "weaponType", Weapon.WeaponType.Hammer },
+            { "weaponType", Weapon.MainWeapon.WeaponType.Hammer },
             { "weaponRare", Weapon.WeaponRare.Common },
         };
         Param axeParam = new()
         {
-            { "weaponType", Weapon.WeaponType.Axe },
+            { "weaponType", Weapon.MainWeapon.WeaponType.Axe },
             { "weaponRare", Weapon.WeaponRare.Common },
         };
         Param crossParam = new()
         {
-            { "weaponType", Weapon.WeaponType.Cross },
+            { "weaponType", Weapon.MainWeapon.WeaponType.Cross },
             { "weaponRare", Weapon.WeaponRare.Common },
         };
         Param macheteParam = new()
         {
-            { "weaponType", Weapon.WeaponType.Machete },
+            { "weaponType", Weapon.MainWeapon.WeaponType.Machete },
             { "weaponRare", Weapon.WeaponRare.Common },
         };
         Param shotgunParam = new()
         {
-            { "weaponType", Weapon.WeaponType.Shotgun },
+            { "weaponType", Weapon.MainWeapon.WeaponType.Shotgun },
             { "weaponRare", Weapon.WeaponRare.Common },
         };
         Param holyWaterParam = new()
         {
-            { "weaponType", Weapon.WeaponType.HolyWater },
+            { "weaponType", Weapon.MainWeapon.WeaponType.HolyWater },
             { "weaponRare", Weapon.WeaponRare.Common },
         };
         Param[] weapons = { hammerParam, axeParam, crossParam, macheteParam, shotgunParam, holyWaterParam };

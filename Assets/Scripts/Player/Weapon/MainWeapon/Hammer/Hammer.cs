@@ -1,18 +1,16 @@
 using UnityEngine;
+using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
-
-public class Cross : Weapon
+public class Hammer : Weapon.MainWeapon
 {
-    [SerializeField] private float callibrationMultiplier = 0.4f;
-
     protected override void Awake()
     {
-        weaponType = WeaponType.Cross;
-        weaponAttackDirectionType = WeaponAttackDirectionType.Nearest;
-        weaponPositionXOffset = 0.2f;
+        weaponType = WeaponType.Hammer;
+        weaponAttackDirectionType = Weapon.WeaponAttackDirectionType.Nearest;
+        weaponPositionXOffset = 0.3f;
         base.Awake();
     }
 
@@ -25,17 +23,17 @@ public class Cross : Weapon
             0,
             attackTarget
         );
+
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
     {
         attackObjectAnimator.SetFloat("AttackSpeed", attackSpeed);
         isAttackCooldown = true;
-        Vector3 normalizedDirection = attackDirection.normalized;
-        float distanceMultiplier = (1 + (callibrationMultiplier / attackRange)) * Mathf.Sqrt(attackRange);
+        Vector2 pos = (Vector2)transform.position + attackDirection.normalized * attackForwardDistance;
         float degree = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
-        weaponScript.colliderObject.transform.position = transform.position + (distanceMultiplier * attackForwardDistance * normalizedDirection);
-        weaponScript.colliderObject.transform.rotation = Quaternion.Euler(0, 0, degree - 90);
+        weaponScript.colliderObject.transform.position = pos;
+        weaponScript.colliderObject.transform.rotation = Quaternion.Euler(0, 0, degree);
         Flip(degree);
         yield return new WaitForSeconds(1f / attackSpeed);
         isAttackCooldown = false;
@@ -48,5 +46,3 @@ public class Cross : Weapon
     }
 
 }
-
-
