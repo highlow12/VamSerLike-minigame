@@ -6,13 +6,13 @@ using TMPro;
 public class WeaponDebugButton : MonoBehaviour
 {
     [SerializeField] private TMP_Text weaponRareLabel;
-    private Weapon weapon;
+    private Weapon.MainWeapon weapon;
     private PlayerAttack playerAttack;
 
     void Start()
     {
         var player = GameObject.FindGameObjectWithTag("Player");
-        weapon = player.GetComponent<PlayerAttack>().weapon;
+        weapon = player.GetComponent<PlayerAttack>().mainWeapon;
         playerAttack = player.GetComponent<PlayerAttack>();
     }
 

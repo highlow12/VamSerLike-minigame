@@ -10,7 +10,7 @@ public class VirtualJoystick : MonoBehaviour
     void Start()
     {
         _joystick = GetComponent<Joystick>();
-        _playerMove = FindObjectOfType<PlayerMove>();
+        _playerMove = FindFirstObjectByType<PlayerMove>();
     }
 
     void Update()

@@ -23,6 +23,8 @@ public class GameManager : Singleton<GameManager>
      public float dragDistanceMultiplier = 1.0f;
      public float dragSpeedMultiplier = 1.0f;
      public float playerExperienceMultiplier = 1.0f;
+     public float experienceToLevelUp = 100;
+     public float expereinceToLevelUpMultiplier = 1.05f;
      public float playerExperience = 0;
      public long playerLevel = 1;
      // expereince item values
@@ -78,10 +80,11 @@ public class GameManager : Singleton<GameManager>
      {
           playerExperience += experience * playerExperienceMultiplier;
           // Leveling logic - needs to be edited
-          if (playerExperience >= 100)
+          if (playerExperience >= experienceToLevelUp)
           {
-               playerExperience -= 100;
-               playerLevel += 1;
+               playerExperience -= experienceToLevelUp;
+               experienceToLevelUp *= expereinceToLevelUpMultiplier;
+               LevelUp();
                DebugConsole.Line levelUpLog = new()
                {
                     text = $"[{gameTimer}] Player leveled up to {playerLevel}",
@@ -90,6 +93,11 @@ public class GameManager : Singleton<GameManager>
                };
                DebugConsole.Instance.MergeLine(levelUpLog, "#00FF00");
           }
+     }
+
+     private void LevelUp()
+     {
+          playerLevel++;
      }
 
 

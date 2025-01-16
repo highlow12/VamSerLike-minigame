@@ -8,7 +8,7 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
     public struct WeaponStat
     {
         public string displayName;
-        public Weapon.WeaponType weaponType;
+        public Weapon.MainWeapon.WeaponType weaponType;
         public string displayWeaponRare;
         public Weapon.WeaponRare weaponRare;
         public float attackDamage;
@@ -64,7 +64,7 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
             WeaponStat weaponStat = new()
             {
                 displayName = chartData[i]["displayName"]["S"].ToString(),
-                weaponType = (Weapon.WeaponType)int.Parse(chartData[i]["weaponType"]["S"].ToString()),
+                weaponType = (Weapon.MainWeapon.WeaponType)int.Parse(chartData[i]["weaponType"]["S"].ToString()),
                 displayWeaponRare = chartData[i]["displayWeaponRare"]["S"].ToString(),
                 weaponRare = (Weapon.WeaponRare)int.Parse(chartData[i]["weaponRare"]["S"].ToString()),
                 attackDamage = float.Parse(chartData[i]["attackDamage"]["S"].ToString()),

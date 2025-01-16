@@ -47,10 +47,10 @@ public class HolyWaterObject : Projectile
                     continue;
                 }
                 Debug.Log($"[{GameManager.Instance.gameTimer}] HolyWaterObject hit {monster.name}");
-                Weapon.MonsterHit appendedMonsterHit = monstersHit.FirstOrDefault(x => x.monster == monster);
-                if (default(Weapon.MonsterHit).Equals(appendedMonsterHit))
+                Weapon.MainWeapon.MonsterHit appendedMonsterHit = monstersHit.FirstOrDefault(x => x.monster == monster);
+                if (default(Weapon.MainWeapon.MonsterHit).Equals(appendedMonsterHit))
                 {
-                    Weapon.MonsterHit monsterHit = new()
+                    Weapon.MainWeapon.MonsterHit monsterHit = new()
                     {
                         monster = monster,
                         hitTime = GameManager.Instance.gameTimer
@@ -60,7 +60,7 @@ public class HolyWaterObject : Projectile
                 int index = monstersHit.FindIndex(x => x.monster == monster);
                 if (index != -1)
                 {
-                    monstersHit[index] = new Weapon.MonsterHit
+                    monstersHit[index] = new Weapon.MainWeapon.MonsterHit
                     {
                         monster = monster,
                         hitTime = GameManager.Instance.gameTimer
