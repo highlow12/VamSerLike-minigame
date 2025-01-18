@@ -2,19 +2,16 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 
-public abstract class Projectile : MonoBehaviour
+public abstract class Projectile : AttackObject
 {
     public float speed;
-    public float attackRange;
-    public float attackDamage;
     public Vector2 initialPosition;
     protected Rigidbody2D _rb;
     protected float positionDelta;
-    protected List<Weapon.MonsterHit> monstersHit;
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
-        monstersHit = default;
+        base.Awake();
         _rb = GetComponent<Rigidbody2D>();
     }
 
