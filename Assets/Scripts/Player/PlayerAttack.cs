@@ -4,39 +4,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using BackEnd;
+using System.Data;
 
 public class PlayerAttack : MonoBehaviour
 {
-    public Weapon weapon;
+    public Weapon.MainWeapon mainWeapon;
+    public List<Weapon.SubWeapon> subWeapons = new();
     [SerializeField] private GameObject attackDirectionObject;
     private PlayerMove playerMove;
-    private Vector2 attackDirection;
+    private Vector2 attackDirection = new(0, 1);
 
     void Start()
     {
         playerMove = GetComponent<PlayerMove>();
-        Weapon initWeapon = gameObject.AddComponent<Cross>();
+        Weapon.MainWeapon initWeapon = gameObject.AddComponent<Shotgun>();
         initWeapon.weaponRare = GetWeaponRare(initWeapon.weaponType);
-        initWeapon.InitStat();
-        weapon = initWeapon;
+        mainWeapon = initWeapon;
+        subWeapons.Add(gameObject.AddComponent<PaperPlane>());
     }
 
     void Update()
     {
-        attackDirection = CalculateAttackDirection(weapon.weaponAttackDirectionType);
+        attackDirection = CalculateAttackDirection(mainWeapon.weaponAttackDirectionType);
         attackDirectionObject.transform.rotation = CalculateAttackDirectionObjectRotation(attackDirection);
-        if (!weapon.isAttackCooldown)
+        if (!mainWeapon.isAttackCooldown)
         {
-            StartCoroutine(weapon.Attack(attackDirection));
+            StartCoroutine(mainWeapon.Attack(attackDirection));
+        }
+        foreach (Weapon.SubWeapon subWeapon in subWeapons)
+        {
+            if (!subWeapon.isAttackCooldown)
+            {
+                Vector2 subWeaponAttackDirection = CalculateAttackDirection(subWeapon.weaponAttackDirectionType);
+                StartCoroutine(subWeapon.Attack(subWeaponAttackDirection));
+            }
         }
     }
 
-    public Weapon.WeaponRare GetWeaponRare(Weapon.WeaponType weaponType)
+    public Weapon.WeaponRare GetWeaponRare(Weapon.MainWeapon.WeaponType weaponType)
     {
         // 테스트 용 코드입니다.
         if (BackendManager.Instance != null && !BackendManager.Instance.isSignedIn)
         {
             Backend.BMember.CustomLogin("admin", "12345678");
+            BackendManager.Instance.isSignedIn = true;
         }
         Where where = new();
         where.Equal("weaponType", (int)weaponType);
