@@ -39,7 +39,9 @@ public class PaperPlane : Weapon.SubWeapon
             attackObjects.Add(attackObject);
         }
         weaponScript = attackObject.GetComponent<AttackObject>();
+        weaponScript.subWeaponSO = weaponData;
         weaponScript.Init(attackDamage, attackRange, 0, attackTarget);
+        weaponScript.SubWeaponInit();
         yield return new WaitForSeconds(1f / attackSpeed);
         isAttackCooldown = false;
     }

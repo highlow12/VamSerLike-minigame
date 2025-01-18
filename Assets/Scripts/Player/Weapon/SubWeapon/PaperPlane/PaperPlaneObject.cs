@@ -16,11 +16,21 @@ public class PaperPlaneObject : AttackObject
     {
         base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
         this.attackRange = attackRange;
+        if (subWeaponSO.weaponGrade == 0)
+        {
+            // if weapon grade is 0, set the attackCollider itself
+            attackCollider = GetComponent<Collider2D>();
+        }
+        if (animation.GetClip("Attack") != null)
+        {
+            animation.Play("Attack");
+        }
     }
 
     protected override void Awake()
     {
         base.Awake();
+        animation = GetComponent<Animation>();
         colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
     }
 
@@ -38,8 +48,13 @@ public class PaperPlaneObject : AttackObject
         if (targetMonster == null || !targetMonster.activeSelf)
         {
             // Set target monster to the nearest monster
-            GameObject[] mosnters = GameObject.FindGameObjectsWithTag("Monster");
-            targetMonster = mosnters.OrderBy(x => Math.Abs(Vector2.Distance(x.transform.position, transform.position))).FirstOrDefault();
+            GameObject[] monsters = GameObject.FindGameObjectsWithTag("Monster");
+            if (monsters.Length == 0)
+            {
+                FlyBeforeRetarget();
+                return;
+            }
+            targetMonster = monsters.OrderBy(x => Math.Abs(Vector2.Distance(x.transform.position, transform.position))).FirstOrDefault();
             targetPosition = targetMonster.transform.position;
             targetDistance = Vector2.Distance(targetPosition, transform.position);
             if (targetDistance > maxTargetDistance)
@@ -63,6 +78,10 @@ public class PaperPlaneObject : AttackObject
             if (targetDistance < 0.1f)
             {
                 Attack();
+                if (animation.GetClip("Hit") != null)
+                {
+                    animation.Play("Hit");
+                }
                 Despawn();
             }
         }
@@ -73,7 +92,7 @@ public class PaperPlaneObject : AttackObject
         waitingFlyBeforeRetarget = true;
         Vector3 center = GameManager.Instance.player.transform.position;
         float radius = 1f;
-        float angle = Time.time * 5f * UnityEngine.Random.Range(0.5f, 1.5f);
+        float angle = 100f * UnityEngine.Random.Range(0.5f, 1.5f);
         Vector3 orbit = new(
             center.x + radius * Mathf.Cos(angle),
             center.y + radius * Mathf.Sin(angle),

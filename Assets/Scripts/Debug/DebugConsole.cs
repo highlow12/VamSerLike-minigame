@@ -98,6 +98,25 @@ public class DebugConsole : MonoBehaviour
         availableParameters = new List<List<string>>()
     };
 
+    private Command addSubWeapon = new()
+    {
+        name = "addSubWeapon",
+        description = "Add sub weapon to player",
+        usage = "addSubWeapon [subWeaponType]",
+        successMessage = "Added sub weapon {argument1}",
+        parameters = new List<string>(),
+        availableParameters = new List<List<string>>()
+    };
+
+    private Command modifySubWeaponGrade = new()
+    {
+        name = "modifySubWeaponGrade",
+        description = "Modify sub weapon grade",
+        usage = "modifySubWeaponGrade [subWeaponType] [grade]",
+        successMessage = "Modified sub weapon {argument1} grade to {argument2}",
+        parameters = new List<string>(),
+        availableParameters = new List<List<string>>()
+    };
 
     void Awake()
     {
@@ -108,6 +127,8 @@ public class DebugConsole : MonoBehaviour
         commands[0] = help;
         commands[1] = changeWeapon;
         commands[2] = spawn;
+        commands[3] = addSubWeapon;
+        commands[4] = modifySubWeaponGrade;
     }
 
     void Start()
@@ -120,7 +141,7 @@ public class DebugConsole : MonoBehaviour
         }
         changeWeapon.availableParameters.Add(parameters.ToList());
         parameters.Clear();
-
+        // Initialize object names
         UnityEngine.Object[] resources = Resources.LoadAll("Prefabs/In-game");
         parameters.AddRange(
             from obj in resources
@@ -128,6 +149,16 @@ public class DebugConsole : MonoBehaviour
             select $"{$"{gameObject?.tag}/" ?? ""}{obj.name}");
         spawn.availableParameters.Add(parameters.ToList());
         parameters.Clear();
+        // Initialize sub weapon types
+        for (int i = 0; i < Enum.GetNames(typeof(Weapon.SubWeapon.WeaponType)).Length; i++)
+        {
+            parameters.Add(Enum.GetName(typeof(Weapon.SubWeapon.WeaponType), i));
+        }
+        addSubWeapon.availableParameters.Add(parameters.ToList());
+        modifySubWeaponGrade.availableParameters.Add(parameters.ToList());
+        modifySubWeaponGrade.availableParameters.Add(new List<string> { "0", "1", "2", "3", "4", "5" });
+        parameters.Clear();
+
 
     }
     void Update()
@@ -474,6 +505,12 @@ public class DebugConsole : MonoBehaviour
             case "spawn":
                 result = SpawnCommand(command.parameters);
                 break;
+            case "addSubWeapon":
+                result = AddSubWeaponCommand(command.parameters);
+                break;
+            case "modifySubWeaponGrade":
+                result = ModifySubWeaponGradeCommand(command.parameters);
+                break;
             default:
                 AddLine("Command not found", LineType.Error);
                 break;
@@ -551,6 +588,53 @@ public class DebugConsole : MonoBehaviour
             Quaternion playerRotation = localPlayer.transform.rotation;
             // instantiate object
             Instantiate(obj, playerPosition + Vector3.right, playerRotation);
+            return true;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
+            return false;
+        }
+    }
+
+    bool AddSubWeaponCommand(List<string> parameters)
+    {
+        try
+        {
+            // parse string to enum
+            Weapon.SubWeapon.WeaponType weaponType = (Weapon.SubWeapon.WeaponType)Enum.Parse(typeof(Weapon.SubWeapon.WeaponType), parameters[0]);
+            PlayerAttack playerAttack = localPlayer.GetComponent<PlayerAttack>();
+            // check if sub weapon already exists
+            if (playerAttack.subWeapons.Exists(x => x.weaponType == weaponType))
+            {
+                AddLine($"SubWeapon {weaponType} already exists", LineType.Warning);
+                return false;
+            }
+            playerAttack.AddSubWeapon(weaponType, 0);
+            return true;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
+            return false;
+        }
+    }
+
+    bool ModifySubWeaponGradeCommand(List<string> parameters)
+    {
+        try
+        {
+            // parse string to enum
+            Weapon.SubWeapon.WeaponType weaponType = (Weapon.SubWeapon.WeaponType)Enum.Parse(typeof(Weapon.SubWeapon.WeaponType), parameters[0]);
+            int grade = int.Parse(parameters[1]);
+            PlayerAttack playerAttack = localPlayer.GetComponent<PlayerAttack>();
+            // check if sub weapon exists
+            if (!playerAttack.subWeapons.Exists(x => x.weaponType == weaponType))
+            {
+                AddLine($"SubWeapon {weaponType} not found", LineType.Warning);
+                return false;
+            }
+            playerAttack.ModifySubWeaponGrade(weaponType, grade);
             return true;
         }
         catch (Exception e)

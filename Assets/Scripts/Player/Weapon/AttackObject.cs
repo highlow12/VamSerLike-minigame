@@ -10,12 +10,16 @@ public abstract class AttackObject : MonoBehaviour
     public float attackRange;
     public int attackIntervalInTicks;
     public GameObject colliderObject;
+    public SubWeaponSO subWeaponSO;
     protected int attackTarget;
     protected List<Weapon.MainWeapon.MonsterHit> monstersHit;
     protected List<Collider2D> hits;
     protected Collider2D attackCollider;
     protected LayerMask monsterLayer;
     protected ContactFilter2D contactFilter;
+    // Sub weapon properties
+    protected new Animation animation;
+    protected SpriteRenderer spriteRenderer;
 
     public virtual void Setup(float baseAngle, float spreadDegree, int projectileCount, float projectileSpeed, float attackSpeed)
     {
@@ -28,6 +32,21 @@ public abstract class AttackObject : MonoBehaviour
         this.attackIntervalInTicks = attackIntervalInTicks;
         this.attackTarget = attackTarget;
         this.attackRange = attackRange;
+    }
+
+    public virtual void SubWeaponInit()
+    {
+        animation = GetComponent<Animation>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = subWeaponSO.weaponSprite;
+        if (subWeaponSO.attackAnimation != null)
+        {
+            animation.AddClip(subWeaponSO.attackAnimation, "Attack");
+        }
+        if (subWeaponSO.hitAnimation != null)
+        {
+            animation.AddClip(subWeaponSO.hitAnimation, "Hit");
+        }
     }
 
     protected virtual void Awake()

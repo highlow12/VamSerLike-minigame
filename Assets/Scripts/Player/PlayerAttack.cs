@@ -20,7 +20,6 @@ public class PlayerAttack : MonoBehaviour
         Weapon.MainWeapon initWeapon = gameObject.AddComponent<Shotgun>();
         initWeapon.weaponRare = GetWeaponRare(initWeapon.weaponType);
         mainWeapon = initWeapon;
-        subWeapons.Add(gameObject.AddComponent<PaperPlane>());
     }
 
     void Update()
@@ -39,6 +38,81 @@ public class PlayerAttack : MonoBehaviour
                 StartCoroutine(subWeapon.Attack(subWeaponAttackDirection));
             }
         }
+    }
+
+    public void AddSubWeapon(Weapon.SubWeapon.WeaponType weaponType, int initialWeaponGrade = 0)
+    {
+        Type type = Type.GetType(weaponType.ToString());
+        // Error handling for invalid weapon type
+        if (type == null)
+        {
+            Debug.LogError($"Type {weaponType} not found");
+            DebugConsole.Line errorLine = new()
+            {
+                text = $"Type {weaponType} not found",
+                messageType = DebugConsole.MessageType.Local,
+                tick = GameManager.Instance.gameTimer
+            };
+            DebugConsole.Instance.MergeLine(errorLine, "#FF0000");
+            return;
+        }
+        // Error handling for duplicate subweapons
+        if (subWeapons.Exists(x => x.weaponType == weaponType))
+        {
+            Debug.LogError($"SubWeapon {weaponType} already exists");
+            DebugConsole.Line errorLine = new()
+            {
+                text = $"SubWeapon {weaponType} already exists",
+                messageType = DebugConsole.MessageType.Local,
+                tick = GameManager.Instance.gameTimer
+            };
+            DebugConsole.Instance.MergeLine(errorLine, "#FF0000");
+            return;
+        }
+        // Add subweapon
+        Weapon.SubWeapon subWeapon = gameObject.AddComponent(type) as Weapon.SubWeapon;
+        subWeapon.weaponGrade = initialWeaponGrade;
+        subWeapons.Add(subWeapon);
+    }
+
+    public void ModifySubWeaponGrade(Weapon.SubWeapon.WeaponType weaponType, int weaponGrade)
+    {
+        Weapon.SubWeapon subWeapon = subWeapons.Find(x => x.weaponType == weaponType);
+        // Error handling for invalid weapon type
+        if (subWeapon == null)
+        {
+            Debug.LogError($"SubWeapon {weaponType} not found");
+            DebugConsole.Line errorLine = new()
+            {
+                text = $"SubWeapon {weaponType} not found",
+                messageType = DebugConsole.MessageType.Local,
+                tick = GameManager.Instance.gameTimer
+            };
+            DebugConsole.Instance.MergeLine(errorLine, "#FF0000");
+            return;
+        }
+        subWeapon.weaponGrade = weaponGrade;
+    }
+
+    public void RemoveSubWeapon(Weapon.SubWeapon.WeaponType weaponType)
+    {
+        Weapon.SubWeapon subWeapon = subWeapons.Find(x => x.weaponType == weaponType);
+        // Error handling for invalid weapon type
+        if (subWeapon == null)
+        {
+            Debug.LogError($"SubWeapon {weaponType} not found");
+            DebugConsole.Line errorLine = new()
+            {
+                text = $"SubWeapon {weaponType} not found",
+                messageType = DebugConsole.MessageType.Local,
+                tick = GameManager.Instance.gameTimer
+            };
+            DebugConsole.Instance.MergeLine(errorLine, "#FF0000");
+            return;
+        }
+        subWeapons.Remove(subWeapon);
+        Destroy(subWeapon.attackObject);
+        Destroy(subWeapon);
     }
 
     public Weapon.WeaponRare GetWeaponRare(Weapon.MainWeapon.WeaponType weaponType)
@@ -71,6 +145,10 @@ public class PlayerAttack : MonoBehaviour
         {
             case Weapon.WeaponAttackDirectionType.Nearest:
                 GameObject[] mosnters = GameObject.FindGameObjectsWithTag("Monster");
+                if (mosnters.Length == 0)
+                {
+                    return attackDirection;
+                }
                 GameObject nearestMonster = mosnters.OrderBy(x => Math.Abs(Vector2.Distance(x.transform.position, transform.position))).FirstOrDefault();
                 return nearestMonster.transform.position - transform.position;
             case Weapon.WeaponAttackDirectionType.Aim:
