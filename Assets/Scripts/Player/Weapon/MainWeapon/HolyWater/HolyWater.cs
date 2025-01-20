@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 
-public class HolyWater : Weapon
+public class HolyWater : Weapon.MainWeapon
 {
     [SerializeField] private float nearestMonsterTargetingDegreeThreshold = 45f;
     private readonly float attackIntervalInSeconds = 0.5f;
@@ -14,7 +14,7 @@ public class HolyWater : Weapon
     protected override void Awake()
     {
         weaponType = WeaponType.HolyWater;
-        weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
+        weaponAttackDirectionType = Weapon.WeaponAttackDirectionType.Aim;
         weaponPositionXOffset = 0.2f;
     }
 

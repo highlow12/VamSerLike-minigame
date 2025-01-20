@@ -11,7 +11,7 @@ public abstract class AttackObject : MonoBehaviour
     public int attackIntervalInTicks;
     public GameObject colliderObject;
     protected int attackTarget;
-    protected List<Weapon.MonsterHit> monstersHit;
+    protected List<Weapon.MainWeapon.MonsterHit> monstersHit;
     protected List<Collider2D> hits;
     protected Collider2D attackCollider;
     protected LayerMask monsterLayer;
@@ -32,7 +32,7 @@ public abstract class AttackObject : MonoBehaviour
 
     protected virtual void Awake()
     {
-        monstersHit = new List<Weapon.MonsterHit>();
+        monstersHit = new List<Weapon.MainWeapon.MonsterHit>();
         hits = new List<Collider2D>();
         monsterLayer = 1 << LayerMask.NameToLayer("Monster");
         contactFilter = new ContactFilter2D();

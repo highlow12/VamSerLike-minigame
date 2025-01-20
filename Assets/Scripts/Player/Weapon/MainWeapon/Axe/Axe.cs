@@ -3,16 +3,13 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
-public class Shotgun : Weapon
+public class Axe : Weapon.MainWeapon
 {
-    [SerializeField] private float spreadDegree = 45f;
-
     protected override void Awake()
     {
-        weaponType = WeaponType.Shotgun;
-        weaponAttackDirectionType = WeaponAttackDirectionType.Aim;
+        weaponType = WeaponType.Axe;
+        weaponAttackDirectionType = Weapon.WeaponAttackDirectionType.Nearest;
         weaponPositionXOffset = 0.3f;
         base.Awake();
     }
@@ -26,22 +23,26 @@ public class Shotgun : Weapon
             0,
             attackTarget
         );
+
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
     {
+        attackObjectAnimator.SetFloat("AttackSpeed", attackSpeed);
         isAttackCooldown = true;
-        float baseAngle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
-        float spreadDegree = this.spreadDegree / projectileCount; // 퍼짐 정도를 조절
-        Flip(baseAngle);
-        weaponScript.Setup(baseAngle, spreadDegree, projectileCount, projectileSpeed, attackSpeed);
+        Vector2 pos = (Vector2)transform.position + attackDirection.normalized * attackForwardDistance;
+        float degree = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
+        weaponScript.colliderObject.transform.position = pos;
+        weaponScript.colliderObject.transform.rotation = Quaternion.Euler(0, 0, degree);
+        Flip(degree);
         yield return new WaitForSeconds(1f / attackSpeed);
         isAttackCooldown = false;
         yield return null;
-
     }
+
     protected override void Flip(float degree)
     {
         base.Flip(degree);
     }
+
 }
