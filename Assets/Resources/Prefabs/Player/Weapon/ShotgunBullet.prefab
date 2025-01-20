@@ -119,6 +119,7 @@ MonoBehaviour:
   attackRange: 0
   attackIntervalInTicks: 0
   colliderObject: {fileID: 6311800377638777129}
+  subWeaponSO: {fileID: 0}
   speed: 0
   initialPosition: {x: 0, y: 0}
 --- !u!50 &-6147780185340549280
@@ -178,7 +179,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

@@ -42,34 +42,7 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
     // Get main weapon stat chart
     private void GetCurrentWeaponStatChart()
     {
-        // Get latest weapon stat chart file id
-
-        Where where = new();
-        where.Equal("columnType", "currentWeaponStatChartFileId");
-        var chartFileIdBro = Backend.GameData.Get("Global", where);
-        if (!chartFileIdBro.IsSuccess())
-        {
-            Debug.LogError("Get currentWeaponStatChartFileId failed");
-            return;
-        }
-        if (chartFileIdBro.GetReturnValuetoJSON()["rows"].Count <= 0)
-        {
-            Debug.LogError("No currentWeaponStatChartFileId data");
-            return;
-        }
-        string currentWeaponStatChartFileId = chartFileIdBro.Rows()[0]["data"]["N"].ToString();
-
-        // Get weapon stat chart
-
-        var chartBro = Backend.Chart.GetChartContents(currentWeaponStatChartFileId);
-        if (!chartBro.IsSuccess())
-        {
-            Debug.LogError("Get weapon stat chart failed");
-            Debug.LogError(chartBro);
-            return;
-        }
-        Debug.Log("Get weapon stat chart success");
-        LitJson.JsonData chartData = chartBro.GetReturnValuetoJSON()["rows"];
+        LitJson.JsonData chartData = BackendManager.Instance.GetChartData("WeaponStats");
         weaponStats.Clear();
 
         // Set weapon stats
@@ -97,37 +70,11 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
         }
 
     }
+
     // Get sub weapon stat chart
     private void GetCurrentSubWeaponStatChart()
     {
-        // Get latest sub weapon stat chart file id
-
-        Where where = new();
-        where.Equal("columnType", "currentSubWeaponStatChartFileId");
-        var chartFileIdBro = Backend.GameData.Get("Global", where);
-        if (!chartFileIdBro.IsSuccess())
-        {
-            Debug.LogError("Get currentSubWeaponStatChartFileId failed");
-            return;
-        }
-        if (chartFileIdBro.GetReturnValuetoJSON()["rows"].Count <= 0)
-        {
-            Debug.LogError("No currentSubWeaponStatChartFileId data");
-            return;
-        }
-        string currentSubWeaponStatChartFileId = chartFileIdBro.Rows()[0]["data"]["N"].ToString();
-
-        // Get sub weapon stat chart
-
-        var chartBro = Backend.Chart.GetChartContents(currentSubWeaponStatChartFileId);
-        if (!chartBro.IsSuccess())
-        {
-            Debug.LogError("Get sub weapon stat chart failed");
-            Debug.LogError(chartBro);
-            return;
-        }
-        Debug.Log("Get sub weapon stat chart success");
-        LitJson.JsonData chartData = chartBro.GetReturnValuetoJSON()["rows"];
+        LitJson.JsonData chartData = BackendManager.Instance.GetChartData("SubWeaponStats");
         subWeaponStats.Clear();
 
         // Set sub weapon stats
@@ -151,6 +98,7 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
             subWeaponStats.Add(subWeaponStat);
         }
     }
+
     // Set weapon stats
     private new void Awake()
     {

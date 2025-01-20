@@ -9,12 +9,6 @@ public class PaperPlane : Weapon.SubWeapon
     protected override void Awake()
     {
         weaponType = WeaponType.PaperPlane;
-        // test value
-        attackSpeed = 1f;
-        attackDamage = 20f;
-        attackRange = 1f;
-        attackTarget = 10;
-        weaponAttackDirectionType = Weapon.WeaponAttackDirectionType.Nearest;
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
