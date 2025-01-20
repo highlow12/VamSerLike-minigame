@@ -9,7 +9,8 @@ namespace Weapon
         protected WeaponStatProvider.SubWeaponStat weaponStat;
         public enum WeaponType
         {
-            PaperPlane
+            PaperPlane,
+            TeddyBear,
         }
         public WeaponType weaponType;
         public string displayName;
@@ -55,7 +56,7 @@ namespace Weapon
         public bool isAttackCooldown = false;
         protected virtual void Awake()
         {
-            attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/" + weaponType.ToString());
+            attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/SubWeapon/" + weaponType.ToString());
             attackObject = Instantiate(attackObject, transform);
             weaponScript = attackObject.GetComponent<AttackObject>();
         }
