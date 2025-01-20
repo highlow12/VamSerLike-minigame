@@ -22,39 +22,28 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
         public int projectileCount;
         public float projectileSpeed;
     }
+    public struct SubWeaponStat
+    {
+        public string displayName;
+        public Weapon.SubWeapon.WeaponType weaponType;
+        public int weaponGrade;
+        public int maxWeaponGrade;
+        public string displayWeaponAttackDirectionType;
+        public Weapon.WeaponAttackDirectionType weaponAttackDirectionType;
+        public float attackDamage;
+        public float attackRange;
+        public float attackSpeed;
+        public float attackIntervalInSeconds;
+        public int attackTarget;
+    }
     public List<WeaponStat> weaponStats = new();
+    public List<SubWeaponStat> subWeaponStats = new();
+
 
 
     private void GetCurrentWeaponStatChart()
     {
-        // Get latest weapon stat chart file id
-
-        Where where = new();
-        where.Equal("columnType", "currentWeaponStatChartFileId");
-        var chartFileIdBro = Backend.GameData.Get("Global", where);
-        if (!chartFileIdBro.IsSuccess())
-        {
-            Debug.LogError("Get currentWeaponStatChartFileId failed");
-            return;
-        }
-        if (chartFileIdBro.GetReturnValuetoJSON()["rows"].Count <= 0)
-        {
-            Debug.LogError("No currentWeaponStatChartFileId data");
-            return;
-        }
-        string currentWeaponStatChartFileId = chartFileIdBro.Rows()[0]["data"]["N"].ToString();
-
-        // Get weapon stat chart
-
-        var chartBro = Backend.Chart.GetChartContents(currentWeaponStatChartFileId);
-        if (!chartBro.IsSuccess())
-        {
-            Debug.LogError("Get weapon stat chart failed");
-            Debug.LogError(chartBro);
-            return;
-        }
-        Debug.Log("Get weapon stat chart success");
-        LitJson.JsonData chartData = chartBro.GetReturnValuetoJSON()["rows"];
+        LitJson.JsonData chartData = BackendManager.Instance.GetChartData("WeaponStats");
         weaponStats.Clear();
 
         // Set weapon stats
@@ -83,12 +72,41 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
 
     }
 
+    // Get sub weapon stat chart
+    private void GetCurrentSubWeaponStatChart()
+    {
+        LitJson.JsonData chartData = BackendManager.Instance.GetChartData("SubWeaponStats");
+        subWeaponStats.Clear();
+
+        // Set sub weapon stats
+
+        for (int i = 0; i < chartData.Count; i++)
+        {
+            SubWeaponStat subWeaponStat = new()
+            {
+                displayName = chartData[i]["displayName"]["S"].ToString(),
+                weaponType = (Weapon.SubWeapon.WeaponType)int.Parse(chartData[i]["weaponType"]["S"].ToString()),
+                weaponGrade = int.Parse(chartData[i]["weaponGrade"]["S"].ToString()),
+                maxWeaponGrade = int.Parse(chartData[i]["maxWeaponGrade"]["S"].ToString()),
+                displayWeaponAttackDirectionType = chartData[i]["displayWeaponAttackDirectionType"]["S"].ToString(),
+                weaponAttackDirectionType = (Weapon.WeaponAttackDirectionType)int.Parse(chartData[i]["weaponAttackDirectionType"]["S"].ToString()),
+                attackDamage = float.Parse(chartData[i]["attackDamage"]["S"].ToString()),
+                attackRange = float.Parse(chartData[i]["attackRange"]["S"].ToString()),
+                attackSpeed = float.Parse(chartData[i]["attackSpeed"]["S"].ToString()),
+                attackIntervalInSeconds = float.Parse(chartData[i]["attackIntervalInSeconds"]["S"].ToString()),
+                attackTarget = int.Parse(chartData[i]["attackTarget"]["S"].ToString())
+            };
+            subWeaponStats.Add(subWeaponStat);
+        }
+    }
+
     // Set weapon stats
     private new void Awake()
     {
         if (Backend.IsInitialized)
         {
             GetCurrentWeaponStatChart();
+            GetCurrentSubWeaponStatChart();
         }
     }
 

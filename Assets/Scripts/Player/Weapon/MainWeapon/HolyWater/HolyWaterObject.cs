@@ -7,7 +7,7 @@ public class HolyWaterObject : Projectile
 {
     [SerializeField] private float projectileInitialScale;
     private PolygonCollider2D polygonCollider;
-    private SpriteRenderer spriteRenderer;
+    private new SpriteRenderer spriteRenderer;
     [SerializeField] private bool isInSplashState = false;
     private Animator animator;
 
