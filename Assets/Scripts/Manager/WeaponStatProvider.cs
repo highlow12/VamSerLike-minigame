@@ -38,8 +38,7 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
     public List<WeaponStat> weaponStats = new();
     public List<SubWeaponStat> subWeaponStats = new();
 
-
-
+    // Get main weapon stat chart
     private void GetCurrentWeaponStatChart()
     {
         LitJson.JsonData chartData = BackendDataManager.Instance.GetChartData("WeaponStats");

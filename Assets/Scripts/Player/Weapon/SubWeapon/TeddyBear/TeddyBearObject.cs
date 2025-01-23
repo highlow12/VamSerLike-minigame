@@ -4,24 +4,18 @@ using System;
 using System.Collections;
 using DG.Tweening;
 
-public class PaperPlaneObject : AttackObject
+public class TeddyBearObject : AttackObject
 {
     public GameObject targetMonster;
     public Vector3 targetPosition;
     public float targetDistance;
     private float maxTargetDistance = 5f;
-    public bool waitingFlyBeforeRetarget = false;
 
     public override void Init(float attackDamage, float attackRange, int attackIntervalInTicks = 0, int attackTarget = 0)
     {
         base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
-        this.attackRange = attackRange;
         colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
-        if (subWeaponSO.weaponGrade == 0)
-        {
-            // if weapon grade is 0, set the attackCollider itself
-            attackCollider = GetComponent<Collider2D>();
-        }
+        this.attackRange = attackRange;
         if (animation.GetClip("Attack") != null)
         {
             animation.Play("Attack");
@@ -40,7 +34,7 @@ public class PaperPlaneObject : AttackObject
         targetMonster = null;
         targetPosition = Vector3.zero;
         targetDistance = 0;
-        waitingFlyBeforeRetarget = false;
+        transform.parent = GameManager.Instance.player.transform;
     }
 
     private void FixedUpdate()
@@ -51,7 +45,6 @@ public class PaperPlaneObject : AttackObject
             GameObject[] monsters = GameObject.FindGameObjectsWithTag("Monster");
             if (monsters.Length == 0)
             {
-                FlyBeforeRetarget();
                 return;
             }
             targetMonster = monsters.OrderBy(x => Math.Abs(Vector2.Distance(x.transform.position, transform.position))).FirstOrDefault();
@@ -60,14 +53,6 @@ public class PaperPlaneObject : AttackObject
             if (targetDistance > maxTargetDistance)
             {
                 targetMonster = null;
-                if (!waitingFlyBeforeRetarget)
-                {
-                    FlyBeforeRetarget();
-                }
-            }
-            else
-            {
-                transform.DOPause();
             }
         }
         else
@@ -77,6 +62,7 @@ public class PaperPlaneObject : AttackObject
             targetDistance = Vector2.Distance(targetPosition, transform.position);
             if (targetDistance < 0.1f)
             {
+                transform.parent = null;
                 Attack();
                 if (animation.GetClip("Hit") != null)
                 {
@@ -87,23 +73,6 @@ public class PaperPlaneObject : AttackObject
         }
     }
 
-    private void FlyBeforeRetarget()
-    {
-        waitingFlyBeforeRetarget = true;
-        Vector3 center = GameManager.Instance.player.transform.position;
-        float radius = 1f;
-        float angle = 100f * UnityEngine.Random.Range(0.5f, 1.5f);
-        Vector3 orbit = new(
-            center.x + radius * Mathf.Cos(angle),
-            center.y + radius * Mathf.Sin(angle),
-            center.z
-        );
-        transform.DOMove(orbit, 1f).SetEase(Ease.Linear).OnComplete(() =>
-        {
-            waitingFlyBeforeRetarget = false;
-        });
-    }
-
     private void Despawn()
     {
         if (TryGetComponent<PoolAble>(out var poolAble))
@@ -111,6 +80,4 @@ public class PaperPlaneObject : AttackObject
             poolAble.ReleaseObject();
         }
     }
-
-
 }

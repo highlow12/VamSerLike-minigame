@@ -2,13 +2,12 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PaperPlane : Weapon.SubWeapon
+public class TeddyBear : Weapon.SubWeapon
 {
     public List<GameObject> attackObjects = new();
-
     protected override void Awake()
     {
-        weaponType = WeaponType.PaperPlane;
+        weaponType = WeaponType.TeddyBear;
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
@@ -21,12 +20,12 @@ public class PaperPlane : Weapon.SubWeapon
                 attackObjects.RemoveAt(i);
             }
         }
-        if (attackObjects.Count > 2) // 3개까지만 생성
+        if (attackObjects.Count > 0)
         {
             isAttackCooldown = false;
             yield break;
         }
-        attackObject = ObjectPoolManager.instance.GetGo("PaperPlane");
+        attackObject = ObjectPoolManager.instance.GetGo("TeddyBear");
         attackObject.transform.position = transform.position + (Vector3)attackDirection.normalized;
         if (attackObjects.Find(x => x == attackObject) == null)
         {

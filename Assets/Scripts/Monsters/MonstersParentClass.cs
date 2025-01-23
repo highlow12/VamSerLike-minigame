@@ -33,8 +33,16 @@ public abstract class Monster : MonoBehaviour
     protected virtual void Die()
     {
         isDead = true;
+        Destroy(gameObject);
         // 사망 처리 로직
-        //DropLoot();
+        DropLoot();
+    }
+
+    protected virtual void DropLoot()
+    {
+        // 임시 로직
+        GameObject exp = ObjectPoolManager.instance.GetGo("Experience");
+        exp.transform.position = transform.position;
     }
 
     //protected abstract void DropLoot();

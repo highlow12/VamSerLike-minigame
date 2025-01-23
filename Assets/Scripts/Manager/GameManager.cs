@@ -18,6 +18,7 @@ public class GameManager : Singleton<GameManager>
      public Player playerScript;
      public Light2D playerLight;
      public PlayerMove player;
+     public PlayerAttack playerAttack;
      public GameState gameState;
      public long gameTimer;
      public float dragDistanceMultiplier = 1.0f;

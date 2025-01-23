@@ -60,7 +60,7 @@ namespace Weapon
 
         protected virtual void Awake()
         {
-            attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/" + weaponType.ToString());
+            attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/MainWeapon/" + weaponType.ToString());
             attackObject = Instantiate(attackObject, transform);
             weaponSpriteRenderer = attackObject.GetComponent<SpriteRenderer>();
             weaponScript = attackObject.GetComponent<AttackObject>();
