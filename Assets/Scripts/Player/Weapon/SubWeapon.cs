@@ -11,6 +11,7 @@ namespace Weapon
         {
             PaperPlane,
             TeddyBear,
+            FamillyPicture,
         }
         public WeaponType weaponType;
         public string displayName;

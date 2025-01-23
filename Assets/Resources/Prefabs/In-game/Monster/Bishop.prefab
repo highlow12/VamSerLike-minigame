@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1041221459528180490}
   - component: {fileID: 4595492353744574149}
   - component: {fileID: -6082047200592140400}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Bishop
   m_TagString: Monster
   m_Icon: {fileID: 0}

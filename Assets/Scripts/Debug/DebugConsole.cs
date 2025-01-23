@@ -23,6 +23,7 @@ public class DebugConsole : MonoBehaviour
     public int historyCursor = -1;
     public bool isFocused = false;
     public bool requireParse = false;
+    public bool requireRender = false;
     public TMP_InputField inputField;
     public TMP_Text consoleText;
     public GameObject toolTipObject;
@@ -165,7 +166,10 @@ public class DebugConsole : MonoBehaviour
     {
         if (isFocused)
         {
-            RenderLines();
+            if (requireRender)
+            {
+                RenderLines();
+            }
             if (requireParse)
             {
                 currentCommand = ParseCommand();
@@ -325,6 +329,7 @@ public class DebugConsole : MonoBehaviour
             messageType = messageType,
             tick = GameManager.Instance.gameTimer
         });
+        requireRender = true;
     }
 
     public void MergeLine(Line line, LineType lineType = LineType.Info)
@@ -347,6 +352,7 @@ public class DebugConsole : MonoBehaviour
             StopCoroutine(showLogCoroutine);
         }
         showLogCoroutine = StartCoroutine(ShowLog());
+        requireRender = true;
     }
 
     // overload function for merge line with custom color
@@ -359,6 +365,7 @@ public class DebugConsole : MonoBehaviour
             StopCoroutine(showLogCoroutine);
         }
         showLogCoroutine = StartCoroutine(ShowLog());
+        requireRender = true;
     }
 
     void RenderLines()
@@ -366,11 +373,20 @@ public class DebugConsole : MonoBehaviour
         // render all lines
         consoleText.text = "";
         // sort lines by tick
-        lines.Sort((a, b) => a.tick.CompareTo(b.tick));
+        lines.Sort((a, b) =>
+        {
+            if (a.tick == b.tick)
+            {
+                return a.text.CompareTo(b.text);
+            }
+            return a.tick.CompareTo(b.tick);
+
+        });
         foreach (Line line in lines)
         {
             consoleText.text += line.text + "\n";
         }
+        requireRender = false;
     }
 
     void CommandHistory()

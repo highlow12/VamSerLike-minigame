@@ -15,7 +15,6 @@ public class PaperPlaneObject : AttackObject
     public override void Init(float attackDamage, float attackRange, int attackIntervalInTicks = 0, int attackTarget = 0)
     {
         base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
-        this.attackRange = attackRange;
         colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
         if (subWeaponSO.weaponGrade == 0)
         {
@@ -68,6 +67,7 @@ public class PaperPlaneObject : AttackObject
             else
             {
                 transform.DOPause();
+                waitingFlyBeforeRetarget = false;
             }
         }
         else
