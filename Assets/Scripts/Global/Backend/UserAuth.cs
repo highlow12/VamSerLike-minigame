@@ -48,7 +48,7 @@ public class UserAuth : MonoBehaviour
                     {
                         AddStarterWeapon();
                         Debug.Log($"Email Update Success: {callback.GetStatusCode()}\n{callback.GetMessage()}\n{callback}");
-                        BackendManager.Instance.isSignedIn = true;
+                        BackendDataManager.Instance.isSignedIn = true;
                     }
                     else
                     {
@@ -137,7 +137,7 @@ public class UserAuth : MonoBehaviour
             if (callback.IsSuccess())
             {
                 Debug.Log($"SignIn Success: {callback.GetStatusCode()}\n{callback.GetMessage()}\n{callback}");
-                BackendManager.Instance.isSignedIn = true;
+                BackendDataManager.Instance.isSignedIn = true;
             }
             else
             {

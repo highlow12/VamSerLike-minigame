@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using BackEnd;
 
-[DefaultExecutionOrder(-100)]
 public class WeaponStatProvider : Singleton<WeaponStatProvider>
 {
     public struct WeaponStat
@@ -43,7 +42,7 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
 
     private void GetCurrentWeaponStatChart()
     {
-        LitJson.JsonData chartData = BackendManager.Instance.GetChartData("WeaponStats");
+        LitJson.JsonData chartData = BackendDataManager.Instance.GetChartData("WeaponStats");
         weaponStats.Clear();
 
         // Set weapon stats
@@ -75,7 +74,7 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
     // Get sub weapon stat chart
     private void GetCurrentSubWeaponStatChart()
     {
-        LitJson.JsonData chartData = BackendManager.Instance.GetChartData("SubWeaponStats");
+        LitJson.JsonData chartData = BackendDataManager.Instance.GetChartData("SubWeaponStats");
         subWeaponStats.Clear();
 
         // Set sub weapon stats
@@ -101,13 +100,14 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
     }
 
     // Set weapon stats
-    private new void Awake()
+    public override void Awake()
     {
         if (Backend.IsInitialized)
         {
             GetCurrentWeaponStatChart();
             GetCurrentSubWeaponStatChart();
         }
+        base.Awake();
     }
 
 
