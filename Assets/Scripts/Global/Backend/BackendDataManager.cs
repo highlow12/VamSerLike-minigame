@@ -29,6 +29,20 @@ public class BackendDataManager : Singleton<BackendDataManager>
         }
     }
 
+    public class ProbabilityCardV2
+    {
+        public string probabilityName; // 차트이름
+        public string probabilityExplain; // 차트 설명
+        public string selectedProbabilityFileId;// 차트 파일 아이디
+
+        public override string ToString()
+        {
+            return $"probabilityName: {probabilityName}\n" +
+            $"probabilityExplain: {probabilityExplain}\n" +
+            $"selectedProbabilityFileId: {selectedProbabilityFileId}\n";
+        }
+    }
+
     private bool _isSignedIn;
     public bool isSignedIn
     {
@@ -42,11 +56,13 @@ public class BackendDataManager : Singleton<BackendDataManager>
             if (_isSignedIn)
             {
                 GetChartList();
+                GetProbabilityCardList();
             }
         }
     }
 
     public List<ChartCardV2> chartCardList = new();
+    public List<ProbabilityCardV2> probabilityCardList = new();
 
     public static UserData GetUserData()
     {
@@ -85,6 +101,31 @@ public class BackendDataManager : Singleton<BackendDataManager>
         }
     }
 
+    public void GetProbabilityCardList()
+    {
+        var bro = Backend.Probability.GetProbabilityCardListV2();
+
+        if (!bro.IsSuccess())
+        {
+            Debug.LogError($"GetChartListV2 Failed: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
+            return;
+        }
+
+        LitJson.JsonData json = bro.FlattenRows();
+
+        for (int i = 0; i < json.Count; i++)
+        {
+            ProbabilityCardV2 probabilityCard = new ProbabilityCardV2
+            {
+                probabilityName = json[i]["probabilityName"].ToString(),
+                probabilityExplain = json[i]["probabilityExplain"].ToString(),
+                selectedProbabilityFileId = json[i]["selectedProbabilityFileId"].ToString()
+            };
+
+            probabilityCardList.Add(probabilityCard);
+        }
+    }
+
     public LitJson.JsonData GetChartData(string chartName)
     {
         Debug.Log($"GetChartData: {chartName}");
@@ -95,8 +136,20 @@ public class BackendDataManager : Singleton<BackendDataManager>
             Debug.LogError($"GetChartContents Failed: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
             return null;
         }
-        LitJson.JsonData chartData = new();
-        chartData = bro.GetReturnValuetoJSON()["rows"];
+        LitJson.JsonData chartData = bro.GetReturnValuetoJSON()["rows"];
         return chartData;
+    }
+
+    public LitJson.JsonData GetProbabilityData(string selectedProbabilityFileId)
+    {
+        Debug.Log($"GetProbabilityData: {selectedProbabilityFileId}");
+        var bro = Backend.Probability.GetProbabilityContents(selectedProbabilityFileId);
+        if (bro.IsSuccess() == false)
+        {
+            Debug.LogError($"GetProbabilityContents Failed: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
+            return null;
+        }
+        LitJson.JsonData probabilityData = bro.GetReturnValuetoJSON()["rows"];
+        return probabilityData;
     }
 }

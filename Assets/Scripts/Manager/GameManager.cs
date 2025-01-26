@@ -21,6 +21,7 @@ public class GameManager : Singleton<GameManager>
      public PlayerAttack playerAttack;
      public GameState gameState;
      public long gameTimer;
+     public int currentStage = 0;
      public float dragDistanceMultiplier = 1.0f;
      public float dragSpeedMultiplier = 1.0f;
      public float playerExperienceMultiplier = 1.0f;
@@ -40,6 +41,26 @@ public class GameManager : Singleton<GameManager>
                default:
                     break;
           }
+     }
+
+     public bool SetStage(int stageNumber)
+     {
+          bool result = DropItemManager.Instance.SetProbabilityCard(BackendDataManager.Instance.probabilityCardList.FirstOrDefault(x => x.probabilityName == $"Stage{stageNumber}_DropItemProb"));
+          if (!result)
+          {
+               DebugConsole.Line errorLog = new()
+               {
+                    text = $"[{gameTimer}] Failed to set probability card for stage {stageNumber}",
+                    messageType = DebugConsole.MessageType.Local,
+                    tick = gameTimer
+               };
+               DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
+          }
+          else
+          {
+               currentStage = stageNumber;
+          }
+          return result;
      }
 
      void FixedUpdate()

@@ -12,7 +12,7 @@ public class DebugConsole : MonoBehaviour
     public static DebugConsole Instance;
     private List<Line> lines = new();
     public List<string> commandHistory = new();
-    private Command[] commands = new Command[6];
+    private Command[] commands = new Command[7];
     private Image consoleImage;
     private bool isHost = true;
     private Coroutine hideLogCoroutine;
@@ -119,6 +119,24 @@ public class DebugConsole : MonoBehaviour
         availableParameters = new List<List<string>>()
     };
 
+    private Command setStage = new()
+    {
+        name = "setStage",
+        description = "Set stage",
+        usage = "setStage [stageNumber]",
+        successMessage = "Set stage to {argument1}",
+        parameters = new List<string>()
+    };
+
+    private Command simulateItemDrop = new()
+    {
+        name = "simulateItemDrop",
+        description = "Simulate item drop",
+        usage = "simulateItemDrop [count]",
+        successMessage = "Simulated item drop {argument1} times",
+        parameters = new List<string>()
+    };
+
     void Awake()
     {
         Instance = this;
@@ -130,6 +148,8 @@ public class DebugConsole : MonoBehaviour
         commands[2] = spawn;
         commands[3] = addSubWeapon;
         commands[4] = modifySubWeaponGrade;
+        commands[5] = setStage;
+        commands[6] = simulateItemDrop;
     }
 
     void Start()
@@ -461,7 +481,7 @@ public class DebugConsole : MonoBehaviour
         command.parameters = splitCommand.GetRange(1, splitCommand.Count - 1);
         // tool tip logic
         string displayToolTipText = "";
-        if (toolTipCommand.name != null)
+        if (toolTipCommand.name != null || (splitCommand.Count > 1 && Equals(command, toolTipCommand)))
         {
             int wordsCount = splitCommand.Count;
             // display tool tip
@@ -474,7 +494,7 @@ public class DebugConsole : MonoBehaviour
                 displayToolTipText = $"{toolTipCommand.name}: {toolTipCommand.description}\nUsage: {toolTipCommand.usage}";
             }
             // if parameters given and command has available parameters, display available parameters
-            else if (toolTipCommand.availableParameters != null)
+            else if (toolTipCommand.availableParameters != null || toolTipCommand.availableParameters?.Count > 0)
             {
                 // get matched parameters with regex
                 if (!preventClearMatchedOptions)
@@ -526,6 +546,12 @@ public class DebugConsole : MonoBehaviour
                 break;
             case "modifySubWeaponGrade":
                 result = ModifySubWeaponGradeCommand(command.parameters);
+                break;
+            case "setStage":
+                result = SetStage(command.parameters);
+                break;
+            case "simulateItemDrop":
+                result = SimulateItemDrop(command.parameters);
                 break;
             default:
                 AddLine("Command not found", LineType.Error);
@@ -651,6 +677,40 @@ public class DebugConsole : MonoBehaviour
                 return false;
             }
             playerAttack.ModifySubWeaponGrade(weaponType, grade);
+            return true;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
+            return false;
+        }
+    }
+
+    bool SetStage(List<string> parameters)
+    {
+        try
+        {
+            int stageNumber = int.Parse(parameters[0]);
+            bool result = GameManager.Instance.SetStage(stageNumber);
+            return result;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
+            return false;
+        }
+    }
+
+    bool SimulateItemDrop(List<string> parameters)
+    {
+        try
+        {
+            int count = int.Parse(parameters[0]);
+            for (int i = 0; i < count; i++)
+            {
+                string itemName = DropItemManager.Instance.DropItem(localPlayer.transform.position + Vector3.right);
+                AddLine($"<color=#00FF00>{itemName}</color> drop.", LineType.Info);
+            }
             return true;
         }
         catch (Exception e)
