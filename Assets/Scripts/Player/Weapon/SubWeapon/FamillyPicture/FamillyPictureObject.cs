@@ -5,24 +5,25 @@ using DG.Tweening;
 
 public class FamillyPictureObject : AttackObject
 {
-    private float barrierHealth;
+    [SerializeField] private float barrierHealth;
     public GameObject picture;
     public override void Init(float attackDamage, float attackRange, int attackIntervalInTicks, int attackTarget)
     {
         base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
         gameObject.SetActive(true);
         picture.transform.localScale = new Vector3(attackRange, attackRange, 1);
+        SubWeaponInit();
+        barrierHealth = attackDamage;
     }
 
     protected override void Awake()
     {
         animation = GetComponent<Animation>();
-        SubWeaponInit();
     }
 
     void OnEnable()
     {
-        barrierHealth = attackDamage;
+        picture.transform.position = transform.position;
         picture.SetActive(true);
         Attack();
     }
@@ -34,8 +35,16 @@ public class FamillyPictureObject : AttackObject
 
     public override void SubWeaponInit()
     {
-        spriteRenderer = picture.GetComponent<SpriteRenderer>();
-        // spriteRenderer.sprite = subWeaponSO.weaponSprite;
+        spriteRenderer ??= picture.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = subWeaponSO.weaponSprite;
+    }
+
+    private void FixedUpdate()
+    {
+        if (barrierHealth <= 0)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     public override void Attack()
@@ -50,11 +59,7 @@ public class FamillyPictureObject : AttackObject
     {
         if (collision.CompareTag("Monster"))
         {
-            barrierHealth -= attackDamage;
-            if (barrierHealth <= 0)
-            {
-                gameObject.SetActive(false);
-            }
+            // barrierHealth -= 1;
         }
     }
 }

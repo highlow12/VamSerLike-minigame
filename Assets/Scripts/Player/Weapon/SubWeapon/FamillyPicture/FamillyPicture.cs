@@ -17,7 +17,8 @@ public class FamillyPicture : Weapon.SubWeapon
         isAttackCooldown = true;
         weaponScript.subWeaponSO = weaponData;
         weaponScript.Init(attackDamage, attackRange, 0, attackTarget);
-        yield return new WaitForSeconds(1f / attackSpeed);
+        // Cooldown
+        yield return new WaitForSeconds(attackSpeed);
         isAttackCooldown = false;
     }
 }
