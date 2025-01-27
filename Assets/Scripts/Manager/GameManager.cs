@@ -48,6 +48,7 @@ public class GameManager : Singleton<GameManager>
           bool result = DropItemManager.Instance.SetProbabilityCard(BackendDataManager.Instance.probabilityCardList.FirstOrDefault(x => x.probabilityName == $"Stage{stageNumber}_DropItemProb"));
           if (!result)
           {
+#if UNITY_EDITOR
                DebugConsole.Line errorLog = new()
                {
                     text = $"[{gameTimer}] Failed to set probability card for stage {stageNumber}",
@@ -55,6 +56,7 @@ public class GameManager : Singleton<GameManager>
                     tick = gameTimer
                };
                DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
+#endif
           }
           else
           {
@@ -78,24 +80,9 @@ public class GameManager : Singleton<GameManager>
 
      private IEnumerator ChangeValueForDurationCoroutine(Action<float> setter, Func<float> getter, float changeValue, float duration)
      {
-          float prevValue = getter();
           setter(getter() + changeValue);
-          DebugConsole.Line valueChangeLog = new()
-          {
-               text = $"[{gameTimer}] {setter.Method.Name} changed from {prevValue} to {getter()} for {duration} seconds",
-               messageType = DebugConsole.MessageType.Local,
-               tick = gameTimer
-          };
-          DebugConsole.Instance.MergeLine(valueChangeLog, "#00FF00");
           yield return new WaitForSeconds(duration);
           setter(getter() - changeValue);
-          DebugConsole.Line valueRevertLog = new()
-          {
-               text = $"[{gameTimer}] {setter.Method.Name} reverted to {prevValue}",
-               messageType = DebugConsole.MessageType.Local,
-               tick = gameTimer
-          };
-          DebugConsole.Instance.MergeLine(valueRevertLog, "#00FF00");
      }
 
      public void AddExperience(float experience)
@@ -107,6 +94,7 @@ public class GameManager : Singleton<GameManager>
                playerExperience -= experienceToLevelUp;
                experienceToLevelUp *= expereinceToLevelUpMultiplier;
                LevelUp();
+#if UNITY_EDITOR
                DebugConsole.Line levelUpLog = new()
                {
                     text = $"[{gameTimer}] Player leveled up to {playerLevel}",
@@ -114,6 +102,7 @@ public class GameManager : Singleton<GameManager>
                     tick = gameTimer
                };
                DebugConsole.Instance.MergeLine(levelUpLog, "#00FF00");
+#endif
           }
      }
 

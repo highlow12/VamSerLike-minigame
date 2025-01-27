@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4994968d693ac487d8f6dd16e239aad1, type: 3}
+  m_Name: Magnet
+  m_EditorClassIdentifier: 
+  dropItemType: 1
+  dropItemEffectType: 1
+  dropItemName: "\uC790\uC11D"
+  dropItemDescription: "{{duration}}\uCD08 \uB3D9\uC548, \uB9F5\uC5D0 \uB5A8\uC5B4\uC838
+    \uC788\uB294 \uBAA8\uB4E0 \uACBD\uD5D8\uCE58\uB4E4\uC744 \uD50C\uB808\uC774\uC5B4
+    \uC704\uCE58\uB85C \uB04C\uC5B4 \uB2F9\uAE41\uB2C8\uB2E4.\\n\uC544\uC774\uD15C\uC774
+    \uB04C\uC5B4\uB2F9\uACA8\uC9C0\uB294 \uCD5C\uC18C \uAC70\uB9AC\uAC00 {{effectValue*100}}%\uB9CC\uD07C
+    \uC99D\uAC00\uD558\uACE0, \uB04C\uB824\uC624\uB294 \uC18D\uB3C4\uAC00 {{dragSpeed*100}}%\uB9CC\uD07C
+    \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  effectValue: 10000
+  dragDistance: 0
+  dragSpeed: 0.5
+  duration: 10
+  dropItemSprite: {fileID: 319412062480141759, guid: b074fffbbb76243e9aa7435e91c7fc79, type: 3}

@@ -186,6 +186,7 @@ MonoBehaviour:
   historyCursor: -1
   isFocused: 0
   requireParse: 0
+  requireRender: 0
   inputField: {fileID: 5189555527339365224}
   consoleText: {fileID: 7473270526855619183}
   toolTipObject: {fileID: 2160353227819054567}
@@ -315,7 +316,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 84306412684136840}
   m_HandleRect: {fileID: 6375771143486222441}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -944,15 +945,15 @@ RectTransform:
   m_GameObject: {fileID: 4259155234489291683}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.98, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1905296710253865376}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 8.5000305, y: 0.000061035156}
-  m_SizeDelta: {x: 17, y: 0}
+  m_AnchoredPosition: {x: 0.00045776367, y: -0.00015258789}
+  m_SizeDelta: {x: 17.000298, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &710401656604354521
 CanvasRenderer:
@@ -1013,8 +1014,8 @@ MonoBehaviour:
   m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMin: 12
+  m_fontSizeMax: 18
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 1024
@@ -1207,6 +1208,7 @@ GameObject:
   - component: {fileID: 8268683354432989113}
   - component: {fileID: 8531290122272296321}
   - component: {fileID: 5347992109378952222}
+  - component: {fileID: 5041445558937378070}
   m_Layer: 5
   m_Name: DebugConsole
   m_TagString: Untagged
@@ -1244,7 +1246,7 @@ Canvas:
   m_GameObject: {fileID: 4794891243261640204}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 1
@@ -1255,7 +1257,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: -1668457115
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &5347992109378952222
@@ -1281,6 +1283,23 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 0
+--- !u!114 &5041445558937378070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4794891243261640204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &6916629901598503864
 GameObject:
   m_ObjectHideFlags: 0
@@ -1487,9 +1506,9 @@ MonoBehaviour:
   m_fontSize: 24
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 24
-  m_fontSizeMax: 30
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 12
+  m_fontSizeMax: 24
   m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512

@@ -3,6 +3,13 @@ using Item;
 
 public class Player : MonoBehaviour
 {
+    public enum HealType
+    {
+        Fixed,
+        PercentageByMaxHealth,
+        PercentageByLostHealth,
+    }
+
     [SerializeField] private PlayerMove playerMove;
     [SerializeField] private PlayerAttack playerAttack;
     [SerializeField] private SpriteRenderer healthBar;
@@ -21,9 +28,16 @@ public class Player : MonoBehaviour
         healthBar.size = new Vector2(normalizedHealth, healthBar.size.y);
     }
 
-    public void Heal(float amount)
+    public void Heal(float amount, HealType healType)
     {
-        health = Mathf.Clamp(health + amount, 0f, maxHealth);
+        float newAmount = healType switch
+        {
+            HealType.Fixed => amount,
+            HealType.PercentageByMaxHealth => maxHealth * amount,
+            HealType.PercentageByLostHealth => (maxHealth - health) * amount,
+            _ => 0,
+        };
+        health = Mathf.Clamp(health + newAmount, 0f, maxHealth);
     }
 
     void OnTriggerEnter2D(Collider2D col)
