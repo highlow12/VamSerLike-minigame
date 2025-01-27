@@ -1,14 +1,34 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "SpawnPatternData", menuName = "Scriptable Objects/SpawnPatternData")]
-public class SpawnPatternData : ScriptableObject
+[System.Serializable]
+public struct SpawnPatternData
 {
-    public string patternName;
+    [Tooltip("패턴 타입")]
     public SpawnPatternType patternType;
+    [Tooltip("시작 시간")]
     public float startTime;
+    [Tooltip("지속 시간")]
     public float duration;
+    [Tooltip("몬스터 수")]
     public int monsterCount;
-    public float radius = 20f;
-    public float angle = 0f;
+    [Tooltip("반지름")]
+    public float radius;
+    [Tooltip("회전 각도")]
+    public float angle;
+    [Tooltip("몬스터 타입")]
     public string monsterType;
+}
+
+[CreateAssetMenu(fileName = "StageSpawnPattern", menuName = "Scriptable Objects/StageSpawnPattern")]
+public class StageSpawnPattern : ScriptableObject
+{
+    [Tooltip("스폰 패턴 데이터를 저장하는 리스트")]
+    public List<SpawnPatternData> patterns = new List<SpawnPatternData>();
+
+    // 패턴을 시작 시간 순으로 정렬하는 메서드
+    public void SortPatternsByStartTime()
+    {
+        patterns.Sort((a, b) => a.startTime.CompareTo(b.startTime));
+    }
 }
