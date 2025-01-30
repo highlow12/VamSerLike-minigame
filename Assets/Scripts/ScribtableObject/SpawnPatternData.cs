@@ -14,10 +14,12 @@ public struct SpawnPatternData
     public int monsterCount;
     [Tooltip("반지름")]
     public float radius;
+    [Tooltip("랜덤 위치")]
+    public float wiggle;
     [Tooltip("회전 각도")]
     public float angle;
-    [Tooltip("몬스터 타입")]
-    public string monsterType;
+    [Tooltip("몬스터 이름름")]
+    public string monsterName;
 }
 
 [CreateAssetMenu(fileName = "StageSpawnPattern", menuName = "Scriptable Objects/StageSpawnPattern")]

@@ -2,20 +2,24 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-// MonsterSpawner는 주어진 StageMonsterData를 바탕으로 몬스터를 주기적으로 소환합니다.
+// 몬스터 생성을 관리하는 싱글톤 매니저
 public class MonsterSpawner : Singleton<MonsterSpawner>
 {
-
-    [Tooltip("몬스터 소환에 필요한 StageMonsterData.")]
+    // 스테이지에서 사용할 몬스터 데이터 정보
+    [Tooltip("몬스터 소환에 필요한 StageMonsterData")]
     public StageMonsterData stageMonsterData;
     
+    // 현재 실행 중인 몬스터 스폰 코루틴들
     private Dictionary<string, Coroutine> spawnRoutines = new Dictionary<string, Coroutine>();
-    [Tooltip("몬스터가 생성되는 최소 반경.")]
+
+    // 몬스터가 플레이어로부터 생성되는 최소/최대 거리
+    [Tooltip("몬스터가 생성되는 최소 반경")]
     public float MinimumSpawnRadius = 20f;
-    [Tooltip("몬스터가 생성되는 최대 반경.")]
+    [Tooltip("몬스터가 생성되는 최대 반경")]
     public float MaximumSpawnRadius = 30f;
 
-    public void UpdateSategwMonsterData(StageMonsterData newData)
+    // 새로운 스테이지 데이터로 업데이트
+    public void UpdateStageMonsterData(StageMonsterData newData)
     {
         stageMonsterData = newData;
         MonsterPoolManager.Instance.UpdateStageMonsterData(stageMonsterData);
@@ -29,10 +33,11 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
             return;
         }
         MonsterPoolManager.Instance.UpdateStageMonsterData(stageMonsterData);
-        StartSpawning();
+        //StartSpawning();
     }
-    // StartSpawning()에서 monsterData별 코루틴을 만들어 몬스터를 스폰합니다.
-    private void StartSpawning()
+
+    // 모든 종류의 몬스터 랜덤 스폰 시작
+    private void StartAllRandomSpawning()
     {
         if (spawnRoutines == null)
             spawnRoutines = new Dictionary<string, Coroutine>();
@@ -44,10 +49,30 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
             spawnRoutines[monsterData.monsterName] = routine;
         }
     }
-    // StopSpawningMonster(), StopAllSpawning()으로 개별 혹은 전체 코루틴을 중단할 수 있습니다.
+
+    // 특정 몬스터의 랜덤 스폰 시작
+    // monsterName: 스폰할 몬스터의 이름
+    public void StartRandomSpawning(string monsterName)
+    {
+        var monsterData = stageMonsterData.monsters.Find(x => x.monsterName == monsterName);
+        if (monsterData.Equals(default(StageMonsterData.MonsterData)))
+        {
+            Debug.LogWarning("MonsterData not found: " + monsterName);
+            return;
+        }
+        if (spawnRoutines.ContainsKey(monsterName))
+        {
+            Debug.LogWarning("Monster is already spawning: " + monsterName);
+            return;
+        }
+        var routine = StartCoroutine(SpawnRoutine(monsterData));
+        spawnRoutines[monsterName] = routine;
+    }
+
+    // 특정 몬스터의 스폰 중단
+    // monsterName: 중단할 몬스터의 이름
     public void StopSpawningMonster(string monsterName)
     {
-        
         if (spawnRoutines.ContainsKey(monsterName))
         {
             StopCoroutine(spawnRoutines[monsterName]);
@@ -55,6 +80,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
         }
     }
 
+    // 모든 몬스터 스폰 중단
     public void StopAllSpawning()
     {
         foreach (var routine in spawnRoutines.Values)
@@ -63,10 +89,11 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
         }
         spawnRoutines.Clear();
     }
-    // SpawnRoutine()에서 spawnRate를 이용해 기다렸다가 MonsterPoolManager에서 몬스터를 꺼냅니다.
+
+    // 몬스터의 주기적 스폰을 담당하는 코루틴
+    // monsterData: 스폰할 몬스터의 데이터
     private IEnumerator SpawnRoutine(StageMonsterData.MonsterData monsterData)
     {
-        
         while (true)
         {
             yield return new WaitForSeconds(1f / monsterData.spawnRate);
@@ -79,5 +106,22 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
                 monster.transform.position = new Vector3(spawnPos.x, spawnPos.y, 0) + GameManager.Instance.player.transform.position;
             }
         }
+    }
+
+    // 지정된 위치에 특정 몬스터를 즉시 생성
+    // monsterName: 생성할 몬스터의 이름
+    // position: 생성 위치
+    // returns: 생성된 몬스터 게임오브젝트
+    public GameObject SpawnMonster(string monsterName, Vector2 position)
+    {
+        var monster = MonsterPoolManager.Instance.GetMonsterFromPool(monsterName);
+        if (monster != null)
+        {
+            monster.transform.position = position;
+        }else
+        {
+            Debug.LogWarning("Monster not found in pool: " + monsterName);
+        }
+        return monster;
     }
 }
