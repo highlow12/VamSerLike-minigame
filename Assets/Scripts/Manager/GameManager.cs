@@ -15,11 +15,14 @@ public class GameManager : Singleton<GameManager>
           GameOver
      }
 
+
      public Player playerScript;
      public Light2D playerLight;
      public PlayerMove player;
      public PlayerAttack playerAttack;
      public GameState gameState;
+     public List<Player.PlayerBuffEffect> playerBuffEffects = new();
+     public List<Player.PlayerBonusStat> playerBonusStats = new();
      public long gameTimer;
      public int currentStage = 0;
      public float dragDistanceMultiplier = 1.0f;
@@ -69,8 +72,53 @@ public class GameManager : Singleton<GameManager>
      {
           if (gameState == GameState.InGame)
           {
+               foreach (Player.PlayerBuffEffect buffEffect in playerBuffEffects)
+               {
+                    if (buffEffect.endTime <= gameTimer)
+                    {
+                         RemoveBuffEffect(buffEffect);
+                    }
+               }
                gameTimer += 1;
           }
+     }
+
+     public void AddBonusStat(Player.PlayerBonusStat bonusStat)
+     {
+          if (Equals(bonusStat.playerBuffEffect, default))
+          {
+               Debug.LogError("PlayerBuffEffect is null");
+               return;
+          }
+          playerBonusStats.Add(bonusStat);
+          playerBuffEffects.Add(bonusStat.playerBuffEffect);
+     }
+
+     public float GetPlayerStatValue(Player.BonusStat statEnum, float value)
+     {
+          float result = value;
+          foreach (Player.PlayerBonusStat bonusStat in playerBonusStats)
+          {
+               if (bonusStat.bonusStat == statEnum)
+               {
+                    switch (bonusStat.bonusStatType)
+                    {
+                         case Player.BonusStatType.Fixed:
+                              result += bonusStat.value;
+                              break;
+                         case Player.BonusStatType.Percentage:
+                              result *= bonusStat.value;
+                              break;
+                    }
+               }
+          }
+          return result;
+     }
+
+     public void RemoveBuffEffect(Player.PlayerBuffEffect buffEffect)
+     {
+          playerBuffEffects.Remove(buffEffect);
+          playerBonusStats.Remove(playerBonusStats.FirstOrDefault(x => x.playerBuffEffect.Equals(buffEffect)));
      }
 
      public void ChangeValueForDuration(Action<float> setter, Func<float> getter, float changeValue, float duration)

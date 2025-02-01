@@ -13,7 +13,6 @@ public class HolyWaterObject : Projectile
     public override void Init(float attackDamage, float attackRange, int attackIntervalInTicks = 0, int attackTarget = 0)
     {
         base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
-        this.attackRange = attackRange;
     }
 
     protected override void Awake()

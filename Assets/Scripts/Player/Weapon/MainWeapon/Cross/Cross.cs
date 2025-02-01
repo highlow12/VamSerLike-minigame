@@ -19,18 +19,13 @@ public class Cross : Weapon.MainWeapon
     public override void InitStat()
     {
         base.InitStat();
-        weaponScript.Init(
-            attackDamage,
-            attackRange,
-            0,
-            attackTarget
-        );
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
     {
-        attackObjectAnimator.SetFloat("AttackSpeed", attackSpeed);
         isAttackCooldown = true;
+        weaponScript.Init(attackDamage, attackRange, 0, attackTarget);
+        attackObjectAnimator.SetFloat("AttackSpeed", attackSpeed);
         Vector3 normalizedDirection = attackDirection.normalized;
         float distanceMultiplier = (1 + (callibrationMultiplier / attackRange)) * Mathf.Sqrt(attackRange);
         float degree = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;

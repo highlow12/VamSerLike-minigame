@@ -18,11 +18,15 @@ namespace Weapon
         public string displayWeaponAttackDirectionType;
         public WeaponAttackDirectionType weaponAttackDirectionType;
         public GameObject attackObject;
-        protected float attackDamage;
-        protected float attackRange;
-        protected float attackSpeed;
+        public float baseAttackDamage;
+        public float baseAttackRange;
+        public float baseAttackSpeed;
+        public int baseAttackTarget;
+        public float attackDamage;
+        public float attackRange;
+        public float attackSpeed;
         protected float attackIntervalInSeconds;
-        protected int attackTarget;
+        public int attackTarget;
         protected int maxWeaponGrade;
         private int _weaponGrade = 0;
         public int weaponGrade
@@ -67,11 +71,11 @@ namespace Weapon
             displayName = weaponStat.displayName;
             displayWeaponAttackDirectionType = weaponStat.displayWeaponAttackDirectionType;
             weaponAttackDirectionType = weaponStat.weaponAttackDirectionType;
-            attackDamage = weaponStat.attackDamage;
-            attackRange = weaponStat.attackRange;
-            attackSpeed = weaponStat.attackSpeed;
+            baseAttackDamage = weaponStat.attackDamage;
+            baseAttackRange = weaponStat.attackRange;
+            baseAttackSpeed = weaponStat.attackSpeed;
             attackIntervalInSeconds = weaponStat.attackIntervalInSeconds;
-            attackTarget = weaponStat.attackTarget;
+            baseAttackTarget = weaponStat.attackTarget;
             maxWeaponGrade = weaponStat.maxWeaponGrade;
             if (attackObject != null)
             {

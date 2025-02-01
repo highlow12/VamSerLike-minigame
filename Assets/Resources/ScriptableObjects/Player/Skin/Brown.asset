@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1585825439ce8403aa53fda5f1d82697, type: 3}
+  m_Name: Brown
+  m_EditorClassIdentifier: 
+  playerSkin: 2
+  playerSprite: {fileID: 2099357371957066906, guid: f33607aa598cc4fc68e1e1b880cf4bd3, type: 3}
+  playerAnimator: {fileID: 22100000, guid: 0db2dff54387d42f49293c2f131c59fe, type: 2}
+  playerBonusStats:
+    isEditable: 0
+    keys: 
+    values: []
