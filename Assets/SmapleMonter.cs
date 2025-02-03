@@ -19,7 +19,7 @@ public class SmapleMonter : MonoBehaviour
 
     IEnumerator Despawn()
     {
-        yield return new WaitForSeconds(6);
+        yield return new WaitForSeconds(10);
         MonsterPoolManager.Instance.ReturnMonsterToPool(gameObject, monsterIdentify.monsterName);
     }
 }
