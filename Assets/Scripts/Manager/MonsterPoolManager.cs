@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 // MonsterPoolManager는 각 몬스터의 풀(Queue)을 관리하는 싱글톤 클래스입니다.
 public class MonsterPoolManager : Singleton<MonsterPoolManager>
@@ -27,7 +28,7 @@ public class MonsterPoolManager : Singleton<MonsterPoolManager>
             
             for (int i = 0; i < initialPoolSize; i++)
             {
-                GameObject newMonster = Instantiate(monster.monsterPrefab);
+                GameObject newMonster = Instantiate(monster.monsterPrefab, monster.monsterName);
                 newMonster.SetActive(false);
                 pool.Enqueue(newMonster);
             }
@@ -60,7 +61,7 @@ public class MonsterPoolManager : Singleton<MonsterPoolManager>
         
         if (pool.Count == 0)
         {
-            GameObject newMonster = Instantiate(GetPrefabByName(monsterName));
+            GameObject newMonster = Instantiate(GetPrefabByName(monsterName), monsterName);
             if (newMonster == null) return null;
             return newMonster;
         }
@@ -81,5 +82,21 @@ public class MonsterPoolManager : Singleton<MonsterPoolManager>
 
         monster.SetActive(false);
         monsterPools[monsterName].Enqueue(monster);
+    }
+
+    GameObject Instantiate(GameObject prefab, string monsterName)
+    {
+        if (prefab == null) return null;
+        var obj = Instantiate(prefab);
+        
+        if(obj.TryGetComponent(out MonsterIdentify identify))
+        {
+            identify.monsterName = monsterName;
+        }
+        else
+        {
+            obj.AddComponent<MonsterIdentify>().monsterName = monsterName;
+        }
+        return obj;
     }
 }

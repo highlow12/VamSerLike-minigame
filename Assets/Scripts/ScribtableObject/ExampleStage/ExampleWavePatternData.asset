@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ExampleWavePatternData
   m_EditorClassIdentifier: 
   wavePattern:
-  - wavePattern: {fileID: 11400000, guid: 1d4b491c7e44fe64296d1ad0c2f9155b, type: 2}
+  - wavePattern: {fileID: 11400000, guid: 29348dd48eca8da489bf84d6faabf063, type: 2}
     waveStartTime: 1
   - wavePattern: {fileID: 11400000, guid: cef7f8f0b194c2b42b082e3650ffe3b4, type: 2}
     waveStartTime: 5
