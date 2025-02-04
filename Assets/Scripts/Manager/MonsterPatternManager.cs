@@ -25,7 +25,23 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
             spawnedMonsters = new List<GameObject>();
         }
     }
+
+    class PatternInstance
+    {
+        public SpawnPatternData patternData;
+        public float spawnTime;
+        public List<GameObject> spawnedMonsters;
+
+        public PatternInstance(SpawnPatternData patternData, float spawnTime)
+        {
+            this.patternData = patternData;
+            this.spawnTime = spawnTime;
+            spawnedMonsters = new List<GameObject>();
+        }
+    }
+
     List<WaveInstance> activeWaves = new();
+    List<PatternInstance> activePatterns = new();
     float nextWaveSpawnTime = 0f;
 
     void Start()
@@ -73,6 +89,8 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
         Vector2 playerPos = GameManager.Instance.player.transform.position;
         Vector2[] spawnPositions = formation.GetSpawnPositions(playerPos);
 
+        var patternInstance = new PatternInstance(pattern, Time.time);
+
         // RandomFormation일 경우 StartRandomSpawning()을 호출합니다.
         if (formation.GetType() == typeof(RandomFormation))
         {
@@ -91,8 +109,10 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
                 {
                     activeWaves[^1].spawnedMonsters.Add(monster);
                 }
+                patternInstance.spawnedMonsters.Add(monster);
             }
         }
+        activePatterns.Add(patternInstance);
     }
 
     // 웨이브 전용 SpawnNextPattern 호출 (수정됨)
@@ -160,6 +180,30 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
             if (timeToStart && previousWaveFinished)
             {
                 StartNewWave();
+            }
+        }
+
+        // Remove patterns after duration
+        for (int i = activePatterns.Count - 1; i >= 0; i--)
+        {
+            var pat = activePatterns[i];
+            // duration이 0 이하라면 삭제하지 않음
+            if (pat.patternData.duration <= 0f) continue;
+
+            if (Time.time >= pat.spawnTime + pat.patternData.duration)
+            {
+                if (pat.patternData.patternType == SpawnPatternType.Random)
+                {
+                    MonsterSpawner.Instance.StopSpawningMonster(pat.patternData.monsterName);
+                }
+                else
+                {
+                    foreach (var monster in pat.spawnedMonsters)
+                    {
+                        if (monster) MonsterPoolManager.Instance.ReturnMonsterToPool(monster, monster.GetComponent<MonsterIdentify>().monsterName);
+                    }
+                }
+                activePatterns.RemoveAt(i);
             }
         }
     }
