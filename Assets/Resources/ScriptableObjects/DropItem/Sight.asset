@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropItemType: 2
   dropItemEffectType: 1
-  dropItemName: Sight
+  dropItemName: "\uC2DC\uC57C \uC81C\uD55C \uD574\uC81C"
   dropItemDescription: "{{duration}}\uCD08 \uB3D9\uC548, \uD50C\uB808\uC774\uC5B4\uC758
     \uC2DC\uC57C\uAC00 {{effectValue}}\uB9CC\uD07C \uC99D\uAC00\uD569\uB2C8\uB2E4."
   effectValue: 20

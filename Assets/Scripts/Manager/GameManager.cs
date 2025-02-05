@@ -32,9 +32,6 @@ public class GameManager : Singleton<GameManager>
      public float expereinceToLevelUpMultiplier = 1.05f;
      public float playerExperience = 0;
      public long playerLevel = 1;
-     // expereince item values
-     public ArrayList experienceValues = new() { 50, 100, 150, 200, 250 };
-
      // Set game state
      public void SetGameState(GameState newState)
      {

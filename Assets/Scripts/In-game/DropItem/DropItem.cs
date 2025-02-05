@@ -21,7 +21,7 @@ namespace Item
     public abstract class DropItem : MonoBehaviour
     {
         private DropItemSO _dropItemSO;
-        private DropItemSO dropItemSO
+        protected DropItemSO dropItemSO
         {
             get
             {
@@ -47,7 +47,7 @@ namespace Item
                 }
             }
         }
-        private SpriteRenderer spriteRenderer;
+        protected SpriteRenderer spriteRenderer;
         public DropItemType dropItemType;
         public DropItemEffectType dropItemEffectType;
         public string dropItemName;
@@ -103,7 +103,7 @@ namespace Item
             string processedDescription = ReplaceVariables(dropItemDescription);
             DebugConsole.Line itemLog = new()
             {
-                text = $"[{GameManager.Instance.gameTimer} - {DerivedClassName}] {processedDescription}",
+                text = $"[{GameManager.Instance.gameTimer} - {dropItemName}:{dropItemSO?.name}({DerivedClassName})] {processedDescription}",
                 messageType = DebugConsole.MessageType.Local,
                 tick = GameManager.Instance.gameTimer
             };
@@ -128,7 +128,7 @@ namespace Item
         }
 
         // unity event
-        void Awake()
+        protected virtual void Awake()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
             if (spriteRenderer == null)

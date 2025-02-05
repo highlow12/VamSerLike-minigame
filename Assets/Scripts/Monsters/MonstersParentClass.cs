@@ -41,8 +41,7 @@ public abstract class Monster : MonoBehaviour
     protected virtual void DropLoot()
     {
         // 임시 로직
-        GameObject exp = ObjectPoolManager.instance.GetGo("Experience");
-        exp.transform.position = transform.position;
+        DropItemManager.Instance.DropItem(transform.position);
     }
 
     //protected abstract void DropLoot();
