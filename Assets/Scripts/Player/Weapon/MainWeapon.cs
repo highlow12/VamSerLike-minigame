@@ -49,18 +49,24 @@ namespace Weapon
         protected Animator attackObjectAnimator;
         protected SpriteRenderer weaponSpriteRenderer;
         protected float weaponPositionXOffset;
-        protected float attackDamage;
-        protected float attackSpeed;
-        protected float attackRange;
+        public float baseAttackDamage;
+        public float baseAttackSpeed;
+        public float baseAttackRange;
+        public int baseAttackTarget;
+        public int baseProjectileCount;
+        public float baseProjectileSpeed;
+        public float attackDamage;
+        public float attackSpeed;
+        public float attackRange;
         protected float attackForwardDistance;
-        protected int attackTarget;
-        protected int projectileCount;
-        protected float projectileSpeed;
+        public int attackTarget;
+        public int projectileCount;
+        public float projectileSpeed;
         public bool isAttackCooldown;
 
         protected virtual void Awake()
         {
-            attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/" + weaponType.ToString());
+            attackObject = Resources.Load<GameObject>("Prefabs/Player/Weapon/MainWeapon/" + weaponType.ToString());
             attackObject = Instantiate(attackObject, transform);
             weaponSpriteRenderer = attackObject.GetComponent<SpriteRenderer>();
             weaponScript = attackObject.GetComponent<AttackObject>();
@@ -76,13 +82,13 @@ namespace Weapon
             displayName = weaponStat.displayName;
             weaponAttackRange = weaponStat.weaponAttackRange;
             weaponAttackTarget = weaponStat.weaponAttackTarget;
-            attackDamage = weaponStat.attackDamage;
-            attackSpeed = weaponStat.attackSpeed;
-            attackRange = weaponStat.attackRange;
+            baseAttackDamage = weaponStat.attackDamage;
+            baseAttackSpeed = weaponStat.attackSpeed;
+            baseAttackRange = weaponStat.attackRange;
             attackForwardDistance = Mathf.Sqrt(attackRange);
-            attackTarget = weaponStat.attackTarget;
-            projectileCount = weaponStat.projectileCount;
-            projectileSpeed = weaponStat.projectileSpeed;
+            baseAttackTarget = weaponStat.attackTarget;
+            baseProjectileCount = weaponStat.projectileCount;
+            baseProjectileSpeed = weaponStat.projectileSpeed;
             if (attackObject != null)
             {
                 weaponScript.colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);

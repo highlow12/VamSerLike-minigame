@@ -15,11 +15,16 @@ public class GameManager : Singleton<GameManager>
           GameOver
      }
 
+
      public Player playerScript;
      public Light2D playerLight;
      public PlayerMove player;
+     public PlayerAttack playerAttack;
      public GameState gameState;
+     public List<Player.PlayerBuffEffect> playerBuffEffects = new();
+     public List<Player.PlayerBonusStat> playerBonusStats = new();
      public long gameTimer;
+     public int currentStage = 0;
      public float dragDistanceMultiplier = 1.0f;
      public float dragSpeedMultiplier = 1.0f;
      public float playerExperienceMultiplier = 1.0f;
@@ -27,9 +32,6 @@ public class GameManager : Singleton<GameManager>
      public float expereinceToLevelUpMultiplier = 1.05f;
      public float playerExperience = 0;
      public long playerLevel = 1;
-     // expereince item values
-     public ArrayList experienceValues = new() { 50, 100, 150, 200, 250 };
-
      // Set game state
      public void SetGameState(GameState newState)
      {
@@ -41,12 +43,79 @@ public class GameManager : Singleton<GameManager>
           }
      }
 
+     public bool SetStage(int stageNumber)
+     {
+          bool result = DropItemManager.Instance.SetProbabilityCard(BackendDataManager.Instance.probabilityCardList.FirstOrDefault(x => x.probabilityName == $"Stage{stageNumber}_DropItemProb"));
+          if (!result)
+          {
+#if UNITY_EDITOR
+               DebugConsole.Line errorLog = new()
+               {
+                    text = $"[{gameTimer}] Failed to set probability card for stage {stageNumber}",
+                    messageType = DebugConsole.MessageType.Local,
+                    tick = gameTimer
+               };
+               DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
+#endif
+          }
+          else
+          {
+               currentStage = stageNumber;
+          }
+          return result;
+     }
+
      void FixedUpdate()
      {
           if (gameState == GameState.InGame)
           {
+               foreach (Player.PlayerBuffEffect buffEffect in playerBuffEffects)
+               {
+                    if (buffEffect.endTime <= gameTimer)
+                    {
+                         RemoveBuffEffect(buffEffect);
+                    }
+               }
                gameTimer += 1;
           }
+     }
+
+     public void AddBonusStat(Player.PlayerBonusStat bonusStat)
+     {
+          if (Equals(bonusStat.playerBuffEffect, default))
+          {
+               Debug.LogError("PlayerBuffEffect is null");
+               return;
+          }
+          playerBonusStats.Add(bonusStat);
+          playerBuffEffects.Add(bonusStat.playerBuffEffect);
+     }
+
+     public float GetPlayerStatValue(Player.BonusStat statEnum, float value)
+     {
+          float result = value;
+          foreach (Player.PlayerBonusStat bonusStat in playerBonusStats)
+          {
+               if (bonusStat.bonusStat == statEnum)
+               {
+                    switch (bonusStat.bonusStatType)
+                    {
+                         case Player.BonusStatType.Fixed:
+                              result += bonusStat.value;
+                              break;
+                         case Player.BonusStatType.Percentage:
+                              result *= bonusStat.value;
+                              break;
+                    }
+               }
+          }
+          return result;
+     }
+
+     public void RemoveBuffEffect(Player.PlayerBuffEffect buffEffect)
+     {
+          playerBuffEffects.Remove(buffEffect);
+          playerBonusStats.Remove(playerBonusStats.FirstOrDefault(x => x.playerBuffEffect.Equals(buffEffect)));
      }
 
      public void ChangeValueForDuration(Action<float> setter, Func<float> getter, float changeValue, float duration)
@@ -56,24 +125,9 @@ public class GameManager : Singleton<GameManager>
 
      private IEnumerator ChangeValueForDurationCoroutine(Action<float> setter, Func<float> getter, float changeValue, float duration)
      {
-          float prevValue = getter();
           setter(getter() + changeValue);
-          DebugConsole.Line valueChangeLog = new()
-          {
-               text = $"[{gameTimer}] {setter.Method.Name} changed from {prevValue} to {getter()} for {duration} seconds",
-               messageType = DebugConsole.MessageType.Local,
-               tick = gameTimer
-          };
-          DebugConsole.Instance.MergeLine(valueChangeLog, "#00FF00");
           yield return new WaitForSeconds(duration);
           setter(getter() - changeValue);
-          DebugConsole.Line valueRevertLog = new()
-          {
-               text = $"[{gameTimer}] {setter.Method.Name} reverted to {prevValue}",
-               messageType = DebugConsole.MessageType.Local,
-               tick = gameTimer
-          };
-          DebugConsole.Instance.MergeLine(valueRevertLog, "#00FF00");
      }
 
      public void AddExperience(float experience)
@@ -85,6 +139,7 @@ public class GameManager : Singleton<GameManager>
                playerExperience -= experienceToLevelUp;
                experienceToLevelUp *= expereinceToLevelUpMultiplier;
                LevelUp();
+#if UNITY_EDITOR
                DebugConsole.Line levelUpLog = new()
                {
                     text = $"[{gameTimer}] Player leveled up to {playerLevel}",
@@ -92,6 +147,7 @@ public class GameManager : Singleton<GameManager>
                     tick = gameTimer
                };
                DebugConsole.Instance.MergeLine(levelUpLog, "#00FF00");
+#endif
           }
      }
 

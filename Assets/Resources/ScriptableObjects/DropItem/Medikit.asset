@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4994968d693ac487d8f6dd16e239aad1, type: 3}
+  m_Name: Medikit
+  m_EditorClassIdentifier: 
+  dropItemType: 0
+  dropItemEffectType: 1
+  dropItemName: "\uD790\uD329"
+  dropItemDescription: "\uD50C\uB808\uC774\uC5B4\uC758 \uCCB4\uB825\uC744 \uC783\uC740
+    \uCCB4\uB825\uC758 {{effectValue*100}}% \uB9CC\uD07C \uD68C\uBCF5\uC2DC\uD0B5\uB2C8\uB2E4."
+  effectValue: 0.3
+  dragDistance: 1
+  dragSpeed: 1
+  duration: -1
+  dropItemSprite: {fileID: 7453379744291583414, guid: f8951d30e97134775b87d433a8431773, type: 3}

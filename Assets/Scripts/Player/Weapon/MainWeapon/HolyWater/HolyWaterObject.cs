@@ -7,14 +7,12 @@ public class HolyWaterObject : Projectile
 {
     [SerializeField] private float projectileInitialScale;
     private PolygonCollider2D polygonCollider;
-    private SpriteRenderer spriteRenderer;
     [SerializeField] private bool isInSplashState = false;
     private Animator animator;
 
     public override void Init(float attackDamage, float attackRange, int attackIntervalInTicks = 0, int attackTarget = 0)
     {
         base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
-        this.attackRange = attackRange;
     }
 
     protected override void Awake()

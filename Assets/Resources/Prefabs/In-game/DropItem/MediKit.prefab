@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7959467261894157575}
   - component: {fileID: 8141706844477791879}
   - component: {fileID: -4334754439163956358}
+  - component: {fileID: 2772968780074212385}
   m_Layer: 7
   m_Name: MediKit
   m_TagString: DropItem
@@ -105,6 +106,7 @@ MonoBehaviour:
   dropItemType: 0
   dropItemEffectType: 0
   dropItemName: 
+  dropItemDescription: 
   effectValue: 0
   dragDistance: 0
   dragSpeed: 0
@@ -207,3 +209,15 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+--- !u!114 &2772968780074212385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6338815786346453224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2ce5ab6858294598b041be71b90f01b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

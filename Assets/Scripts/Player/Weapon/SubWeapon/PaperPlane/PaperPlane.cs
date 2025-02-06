@@ -9,12 +9,6 @@ public class PaperPlane : Weapon.SubWeapon
     protected override void Awake()
     {
         weaponType = WeaponType.PaperPlane;
-        // test value
-        attackSpeed = 1f;
-        attackDamage = 20f;
-        attackRange = 1f;
-        attackTarget = 10;
-        weaponAttackDirectionType = Weapon.WeaponAttackDirectionType.Nearest;
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
@@ -39,7 +33,9 @@ public class PaperPlane : Weapon.SubWeapon
             attackObjects.Add(attackObject);
         }
         weaponScript = attackObject.GetComponent<AttackObject>();
+        weaponScript.subWeaponSO = weaponData;
         weaponScript.Init(attackDamage, attackRange, 0, attackTarget);
+        weaponScript.SubWeaponInit();
         yield return new WaitForSeconds(1f / attackSpeed);
         isAttackCooldown = false;
     }
