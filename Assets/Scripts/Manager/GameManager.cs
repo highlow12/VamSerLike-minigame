@@ -29,7 +29,6 @@ public class GameManager : Singleton<GameManager>
      public float dragSpeedMultiplier = 1.0f;
      public float playerExperienceMultiplier = 1.0f;
      public float experienceToLevelUp = 100;
-     public float expereinceToLevelUpMultiplier = 1.05f;
      public float playerExperience = 0;
      public long playerLevel = 1;
      // Set game state
@@ -136,8 +135,6 @@ public class GameManager : Singleton<GameManager>
           // Leveling logic - needs to be edited
           if (playerExperience >= experienceToLevelUp)
           {
-               playerExperience -= experienceToLevelUp;
-               experienceToLevelUp *= expereinceToLevelUpMultiplier;
                LevelUp();
 #if UNITY_EDITOR
                DebugConsole.Line levelUpLog = new()
@@ -153,7 +150,20 @@ public class GameManager : Singleton<GameManager>
 
      private void LevelUp()
      {
+          playerExperience -= experienceToLevelUp;
           playerLevel++;
+          switch (playerLevel)
+          {
+               case 2:
+                    experienceToLevelUp = 300;
+                    break;
+               case 3:
+                    experienceToLevelUp = 1000;
+                    break;
+               default:
+                    experienceToLevelUp += 1000;
+                    break;
+          }
      }
 
 

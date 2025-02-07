@@ -206,16 +206,6 @@ public class DebugConsole : MonoBehaviour
         foreach (Type type in singletonTypes)
         {
             classNames.Add(type.Name);
-            object instance = null;
-            try
-            {
-                instance = Activator.CreateInstance(type);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"{type.FullName} 인스턴스 생성 실패: {e.Message}");
-                continue;
-            }
             FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Static);
             foreach (FieldInfo field in fieldInfos)
             {
