@@ -6,13 +6,16 @@ using TMPro;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System;
+# if UNITY_EDITOR
+using System.Reflection;
+# endif
 
 public class DebugConsole : MonoBehaviour
 {
     public static DebugConsole Instance;
     private List<Line> lines = new();
     public List<string> commandHistory = new();
-    private Command[] commands = new Command[7];
+    private Command[] commands = new Command[8];
     private Image consoleImage;
     private bool isHost = true;
     private Coroutine hideLogCoroutine;
@@ -137,6 +140,16 @@ public class DebugConsole : MonoBehaviour
         parameters = new List<string>()
     };
 
+    private Command changeSingletonFieldValue = new()
+    {
+        name = "changeSingletonFieldValue",
+        description = "Change singleton field value",
+        usage = "changeSingletonFieldValue [className] [fieldName] [newValue]",
+        successMessage = "Changed {argument1}.{argument2} to {argument3}",
+        parameters = new List<string>(),
+        availableParameters = new List<List<string>>()
+    };
+
     void Awake()
     {
         Instance = this;
@@ -150,6 +163,7 @@ public class DebugConsole : MonoBehaviour
         commands[4] = modifySubWeaponGrade;
         commands[5] = setStage;
         commands[6] = simulateItemDrop;
+        commands[7] = changeSingletonFieldValue;
     }
 
     void Start()
@@ -179,6 +193,41 @@ public class DebugConsole : MonoBehaviour
         modifySubWeaponGrade.availableParameters.Add(parameters.ToList());
         modifySubWeaponGrade.availableParameters.Add(new List<string> { "0", "1", "2", "3", "4", "5" });
         parameters.Clear();
+#if UNITY_EDITOR
+        // init singleton class names and field names
+        List<string> classNames = new();
+        List<string> fieldsName = new();
+        var singletonTypes = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(asm => asm.GetTypes())
+            .Where(t => t.IsClass &&
+                   t.BaseType != null &&
+                   t.BaseType.IsGenericType &&
+                   t.BaseType.GetGenericTypeDefinition() == typeof(Singleton<>));
+        foreach (Type type in singletonTypes)
+        {
+            classNames.Add(type.Name);
+            object instance = null;
+            try
+            {
+                instance = Activator.CreateInstance(type);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"{type.FullName} 인스턴스 생성 실패: {e.Message}");
+                continue;
+            }
+            FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Static);
+            foreach (FieldInfo field in fieldInfos)
+            {
+                fieldsName.Add($"{type}.{field.Name}");
+            }
+        }
+        changeSingletonFieldValue.availableParameters.Add(classNames.ToList());
+        changeSingletonFieldValue.availableParameters.Add(fieldsName.ToList());
+        changeSingletonFieldValue.availableParameters.Add(new List<string> { "1" });
+        parameters.Clear();
+#endif
+
 
 
     }
@@ -507,10 +556,19 @@ public class DebugConsole : MonoBehaviour
                     matchedOptions.Clear();
                     foreach (string parameter in toolTipCommand.availableParameters[Math.Max(wordsCount - 2, 0)])
                     {
-                        Match match = Regex.Match(parameter, splitCommand.Last(), RegexOptions.IgnoreCase);
+                        List<string> splitParameter = parameter.Split('.').ToList();
+                        if (splitParameter.Count > 1)
+                        {
+                            if (splitParameter[0] != splitCommand[Math.Max(wordsCount - 2, 0)])
+                            {
+                                continue;
+                            }
+                        }
+                        string lastParameter = splitParameter.Last();
+                        Match match = Regex.Match(lastParameter, splitCommand.Last(), RegexOptions.IgnoreCase);
                         if (match.Success)
                         {
-                            matchedOptions.Add(parameter);
+                            matchedOptions.Add(lastParameter);
                         }
                     }
                 }
@@ -556,6 +614,9 @@ public class DebugConsole : MonoBehaviour
                 break;
             case "simulateItemDrop":
                 result = SimulateItemDrop(command.parameters);
+                break;
+            case "changeSingletonFieldValue":
+                result = ChangeSingletonFieldValue(command.parameters);
                 break;
             default:
                 AddLine("Command not found", LineType.Error);
@@ -722,6 +783,57 @@ public class DebugConsole : MonoBehaviour
             AddLine(e.Message, LineType.Error);
             return false;
         }
+    }
+    bool ChangeSingletonFieldValue(List<string> parameters)
+    {
+#if UNITY_EDITOR
+        try
+        {
+            string className = parameters[0];
+            string fieldName = parameters[1];
+            string newValue = parameters.GetRange(2, parameters.Count - 2).Aggregate((x, y) => x + " " + y);
+            Type classType = Type.GetType(className);
+            FieldInfo field = classType.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Static);
+            if (field == null)
+            {
+                AddLine($"Field {fieldName} not found in {className}", LineType.Warning);
+                return false;
+            }
+            MethodInfo parseMethod = field.FieldType.GetMethod("CustomParse");
+            object value;
+            if (parseMethod != null)
+            {
+                value = parseMethod.Invoke(null, new object[] { newValue });
+            }
+            else
+            {
+                value = Convert.ChangeType(newValue, field.FieldType);
+            }
+            if (field.IsStatic)
+            {
+                field.SetValue(null, value);
+            }
+            else
+            {
+                object instance = FindAnyObjectByType(classType);
+                field.SetValue(instance, value);
+            }
+            return true;
+        }
+        catch (Exception e) when (e is InvalidCastException || e is FormatException)
+        {
+            AddLine("타입 변환을 할 수 없습니다.\n입력을 수정하거나, CustomParse 메소드를 구현해주세요.", LineType.Error);
+            return false;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
+            return false;
+        }
+#else
+        AddLine("This command is only available in editor", LineType.Warning);
+        return false;
+#endif
     }
 
 }
