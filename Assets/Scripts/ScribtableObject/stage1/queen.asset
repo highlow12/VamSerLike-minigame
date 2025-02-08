@@ -10,6 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad55ba1d155b5d2458e60592940c7d2b, type: 3}
-  m_Name: queen
+  m_Name: Queen
   m_EditorClassIdentifier: 
-  monsters: []
+  monsters:
+  - monsterName: queen
+    monsterPrefab: {fileID: 8907515802758107829, guid: b0de641703784cf45814f41d9dfdbb95, type: 3}
+    spawnRate: 1

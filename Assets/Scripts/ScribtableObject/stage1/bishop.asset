@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad55ba1d155b5d2458e60592940c7d2b, type: 3}
-  m_Name: bishop
+  m_Name: Bishop
   m_EditorClassIdentifier: 
   monsters:
-  - monsterName: bishop
+  - monsterName: bishop12
     monsterPrefab: {fileID: 5172718507834586352, guid: 96aa07af3ddcb20468cb3ad527aec4fe, type: 3}
-    spawnRate: 0
+    spawnRate: 3

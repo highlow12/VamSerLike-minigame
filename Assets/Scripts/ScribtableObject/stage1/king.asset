@@ -10,6 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad55ba1d155b5d2458e60592940c7d2b, type: 3}
-  m_Name: king
+  m_Name: King
   m_EditorClassIdentifier: 
-  monsters: []
+  monsters:
+  - monsterName: king
+    monsterPrefab: {fileID: 4673368339130091960, guid: 0fa8ca4cb877e0743a20d9d0b7066298, type: 3}
+    spawnRate: 1
