@@ -15,7 +15,7 @@ MonoBehaviour:
   patterns:
   - patternType: 0
     startTime: 0
-    duration: 0
+    duration: 5
     monsterCount: 3
     radius: 0
     wiggle: 0
@@ -23,7 +23,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 5
-    duration: 0
+    duration: 5
     monsterCount: 6
     radius: 0
     wiggle: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 10
-    duration: 0
+    duration: 5
     monsterCount: 10
     radius: 0
     wiggle: 0
@@ -39,7 +39,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 15
-    duration: 0
+    duration: 5
     monsterCount: 20
     radius: 0
     wiggle: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 20
-    duration: 0
+    duration: 5
     monsterCount: 3
     radius: 0
     wiggle: 0
@@ -55,7 +55,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 20
-    duration: 0
+    duration: 5
     monsterCount: 3
     radius: 0
     wiggle: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 20
-    duration: 0
+    duration: 5
     monsterCount: 3
     radius: 0
     wiggle: 0
@@ -71,7 +71,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 30
-    duration: 0
+    duration: 5
     monsterCount: 10
     radius: 0
     wiggle: 0
@@ -79,7 +79,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 35
-    duration: 0
+    duration: 5
     monsterCount: 15
     radius: 0
     wiggle: 0
@@ -87,7 +87,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 40
-    duration: 0
+    duration: 5
     monsterCount: 30
     radius: 0
     wiggle: 0
@@ -95,7 +95,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 90
-    duration: 0
+    duration: 5
     monsterCount: 10
     radius: 0
     wiggle: 0
@@ -103,7 +103,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 150
-    duration: 0
+    duration: 5
     monsterCount: 10
     radius: 0
     wiggle: 0
@@ -111,7 +111,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 210
-    duration: 0
+    duration: 5
     monsterCount: 20
     radius: 0
     wiggle: 0
@@ -119,7 +119,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 240
-    duration: 0
+    duration: 5
     monsterCount: 20
     radius: 0
     wiggle: 0
@@ -127,7 +127,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 360
-    duration: 0
+    duration: 5
     monsterCount: 30
     radius: 0
     wiggle: 0
@@ -135,7 +135,7 @@ MonoBehaviour:
     monsterName: Pawn
   - patternType: 3
     startTime: 20
-    duration: 0
+    duration: 8
     monsterCount: 1
     radius: 0
     wiggle: 0
@@ -143,7 +143,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 25
-    duration: 0
+    duration: 8
     monsterCount: 3
     radius: 0
     wiggle: 0
@@ -151,7 +151,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 30
-    duration: 0
+    duration: 8
     monsterCount: 7
     radius: 0
     wiggle: 0
@@ -159,7 +159,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 35
-    duration: 0
+    duration: 8
     monsterCount: 13
     radius: 0
     wiggle: 0
@@ -167,7 +167,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 45
-    duration: 0
+    duration: 8
     monsterCount: 20
     radius: 0
     wiggle: 0
@@ -175,7 +175,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 120
-    duration: 0
+    duration: 8
     monsterCount: 5
     radius: 0
     wiggle: 0
@@ -183,7 +183,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 150
-    duration: 0
+    duration: 8
     monsterCount: 3
     radius: 0
     wiggle: 0
@@ -191,7 +191,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 180
-    duration: 0
+    duration: 8
     monsterCount: 8
     radius: 0
     wiggle: 0
@@ -199,7 +199,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 240
-    duration: 0
+    duration: 8
     monsterCount: 15
     radius: 0
     wiggle: 0
@@ -207,7 +207,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 300
-    duration: 0
+    duration: 8
     monsterCount: 20
     radius: 0
     wiggle: 0
@@ -215,7 +215,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 360
-    duration: 0
+    duration: 8
     monsterCount: 20
     radius: 0
     wiggle: 0
@@ -223,7 +223,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 420
-    duration: 0
+    duration: 8
     monsterCount: 25
     radius: 0
     wiggle: 0
@@ -231,7 +231,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 90
-    duration: 0
+    duration: 12
     monsterCount: 3
     radius: 0
     wiggle: 0
@@ -239,7 +239,7 @@ MonoBehaviour:
     monsterName: Bishop
   - patternType: 3
     startTime: 120
-    duration: 0
+    duration: 12
     monsterCount: 5
     radius: 0
     wiggle: 0
@@ -247,7 +247,7 @@ MonoBehaviour:
     monsterName: Bishop
   - patternType: 3
     startTime: 150
-    duration: 0
+    duration: 12
     monsterCount: 3
     radius: 0
     wiggle: 0
@@ -255,7 +255,7 @@ MonoBehaviour:
     monsterName: Bishop
   - patternType: 3
     startTime: 180
-    duration: 0
+    duration: 12
     monsterCount: 8
     radius: 0
     wiggle: 0
@@ -263,7 +263,7 @@ MonoBehaviour:
     monsterName: Bishop
   - patternType: 3
     startTime: 210
-    duration: 0
+    duration: 12
     monsterCount: 5
     radius: 0
     wiggle: 0
@@ -271,7 +271,7 @@ MonoBehaviour:
     monsterName: Bishop
   - patternType: 3
     startTime: 240
-    duration: 0
+    duration: 12
     monsterCount: 5
     radius: 0
     wiggle: 0
@@ -279,7 +279,7 @@ MonoBehaviour:
     monsterName: Bishop
   - patternType: 3
     startTime: 300
-    duration: 0
+    duration: 12
     monsterCount: 15
     radius: 0
     wiggle: 0
@@ -287,7 +287,7 @@ MonoBehaviour:
     monsterName: Bishop
   - patternType: 3
     startTime: 360
-    duration: 0
+    duration: 12
     monsterCount: 10
     radius: 0
     wiggle: 0
@@ -295,7 +295,7 @@ MonoBehaviour:
     monsterName: Bishop
   - patternType: 3
     startTime: 420
-    duration: 0
+    duration: 12
     monsterCount: 20
     radius: 0
     wiggle: 0
@@ -303,7 +303,7 @@ MonoBehaviour:
     monsterName: Bishop
   - patternType: 3
     startTime: 50
-    duration: 0
+    duration: 40
     monsterCount: 1
     radius: 0
     wiggle: 0
@@ -311,7 +311,7 @@ MonoBehaviour:
     monsterName: Queen
   - patternType: 3
     startTime: 480
-    duration: 0
+    duration: 60
     monsterCount: 1
     radius: 0
     wiggle: 0
