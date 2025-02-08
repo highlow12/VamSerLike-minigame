@@ -3,9 +3,9 @@ using Item;
 
 public class Experience : DropItem
 {
-    public void SetExpereinceItemLevel(int level)
+    public void SetExperienceItemLevel(int level)
     {
-        if (level < 1 || level > GameManager.Instance.experienceValues.Count)
+        if (level < 1)
         {
 #if UNITY_EDITOR
             DebugConsole.Line errorLog = new()
@@ -18,9 +18,33 @@ public class Experience : DropItem
 #endif
             return;
         }
-        effectValue = (float)GameManager.Instance.experienceValues[level - 1];
-        // Other logics for changing item level
-        // changing sprite, color, etc.
+        // set scriptable object
+        string path = $"ScriptableObjects/DropItem/Experience/Experience_{level}";
+        DropItemSO loadedSO = Resources.Load<DropItemSO>(path);
+        if (loadedSO == null)
+        {
+#if UNITY_EDITOR
+            DebugConsole.Line errorLog = new()
+            {
+                text = $"[{GameManager.Instance.gameTimer}] Failed to load ScriptableObject for {path}",
+                messageType = DebugConsole.MessageType.Local,
+                tick = GameManager.Instance.gameTimer
+            };
+            DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
+#endif
+            return;
+        }
+        dropItemSO = loadedSO;
+    }
+
+    protected override void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
+        {
+            Debug.LogError($"[{gameObject.name}] SpriteRenderer component is missing!");
+            return;
+        }
     }
 
     public override void UseItem()

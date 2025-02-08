@@ -390,6 +390,10 @@ public class DebugConsole : MonoBehaviour
 
     void RenderLines()
     {
+        if (lines.Count > 100)
+        {
+            lines.RemoveRange(0, lines.Count - 100);
+        }
         // render all lines
         consoleText.text = "";
         // sort lines by tick

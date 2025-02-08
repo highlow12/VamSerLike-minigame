@@ -28,6 +28,13 @@ public class PlayerAttack : MonoBehaviour
         attackDirectionObject.transform.rotation = CalculateAttackDirectionObjectRotation(attackDirection);
         if (!mainWeapon.isAttackCooldown)
         {
+            mainWeapon.attackDamage = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackDamage, mainWeapon.baseAttackDamage);
+            mainWeapon.attackRange = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackRange, mainWeapon.baseAttackRange);
+            mainWeapon.attackSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackSpeed, mainWeapon.baseAttackSpeed);
+            mainWeapon.attackTarget = (int)GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackTarget, mainWeapon.baseAttackTarget);
+            mainWeapon.projectileCount = (int)GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackProjectileCount, mainWeapon.baseProjectileCount);
+            mainWeapon.projectileSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackProjectileSpeed, mainWeapon.baseProjectileSpeed);
+
             StartCoroutine(mainWeapon.Attack(attackDirection));
         }
         foreach (Weapon.SubWeapon subWeapon in subWeapons)
@@ -35,6 +42,10 @@ public class PlayerAttack : MonoBehaviour
             if (!subWeapon.isAttackCooldown)
             {
                 Vector2 subWeaponAttackDirection = CalculateAttackDirection(subWeapon.weaponAttackDirectionType);
+                subWeapon.attackDamage = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackDamage, subWeapon.baseAttackDamage);
+                subWeapon.attackRange = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackRange, subWeapon.baseAttackRange);
+                subWeapon.attackSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackSpeed, subWeapon.baseAttackSpeed);
+                subWeapon.attackTarget = (int)GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackTarget, subWeapon.baseAttackTarget);
                 StartCoroutine(subWeapon.Attack(subWeaponAttackDirection));
             }
         }

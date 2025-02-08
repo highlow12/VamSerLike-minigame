@@ -309,6 +309,7 @@ MonoBehaviour:
   playerMove: {fileID: 555364450076536779}
   playerAttack: {fileID: 7969197253108457264}
   healthBar: {fileID: 4415956564164406851}
+  _currentPlayerSkin: 0
   maxHealth: 100
   health: 100
 --- !u!61 &3901380010685635139
@@ -468,7 +469,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -489,7 +490,7 @@ SpriteRenderer:
   m_SortingLayerID: -284238199
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 8349780394861892324, guid: 89df0831d9d8d4e2db9c73f6ec123e49, type: 3}
+  m_Sprite: {fileID: -1602302489429354498, guid: 73e051f2bc989475082a2780d7b7eb80, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -32,13 +32,6 @@ public abstract class AttackObject : MonoBehaviour
         this.attackIntervalInTicks = attackIntervalInTicks;
         this.attackTarget = attackTarget;
         this.attackRange = attackRange;
-        DebugConsole.Line debugLine = new()
-        {
-            text = $"[{GameManager.Instance.gameTimer}] AttackObject {name} initialized",
-            messageType = DebugConsole.MessageType.Local,
-            tick = GameManager.Instance.gameTimer
-        };
-        DebugConsole.Instance.MergeLine(debugLine, "#00FF00");
     }
 
     public virtual void SubWeaponInit()
