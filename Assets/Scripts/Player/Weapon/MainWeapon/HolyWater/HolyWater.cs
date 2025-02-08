@@ -41,6 +41,10 @@ public class HolyWater : Weapon.MainWeapon
         float attackAngle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
         float angleDifference = Mathf.Abs(nearestMosterAngle - attackAngle);
 
+        Vector2 baseEndValue = (Vector2)transform.position + attackDirection * projectileSpeed;
+        float baseEndValueMagnitude = baseEndValue.magnitude;
+        float positionVectorMagnitude = transform.position.magnitude;
+
         if (angleDifference > 180)
         {
             angleDifference = 360 - angleDifference;
@@ -48,22 +52,25 @@ public class HolyWater : Weapon.MainWeapon
 
         if (angleDifference < nearestMonsterTargetingDegreeThreshold)
         {
-            Debug.Log($"[{Time.time}] Shoot to nearestMonsterDirection - angleDifference: {angleDifference}");
             Vector2 endValue = (Vector2)transform.position + nearestMonsterDirection;
-            float newSpeed = attackSpeed * (nearestMonsterDirection.magnitude / (attackDirection * projectileSpeed).magnitude);
+            // 조준 보정 동작 조건을 만족하였지만, 몬스터가 플레이어와 너무 멀리 떨어져 있어 공격이 불가능한 경우 조준 보정을 취소
+            if (endValue.magnitude > baseEndValueMagnitude)
+            {
+                endValue = baseEndValue;
+            }
             Flip(nearestMosterAngle);
             yield return new WaitForSeconds(holdTime / attackSpeed);
             holyWaterObject.transform.parent = null;
-            holyWaterObject.transform.DOMove(endValue, newSpeed).SetEase(Ease.Linear).OnComplete(holyWaterComponent.ChangeSprite);
+            float distance = Vector2.Distance(transform.position, endValue);
+            holyWaterObject.transform.DOMove(endValue, distance / projectileSpeed).SetEase(Ease.Linear).OnComplete(holyWaterComponent.ChangeSprite);
         }
         else
         {
-            Debug.Log($"[{Time.time}] Shoot to attackDirection - angleDifference: {angleDifference}");
-            Vector2 endValue = (Vector2)transform.position + attackDirection * projectileSpeed;
             Flip(attackAngle);
             yield return new WaitForSeconds(holdTime / attackSpeed);
             holyWaterObject.transform.parent = null;
-            holyWaterObject.transform.DOMove(endValue, attackSpeed).SetEase(Ease.Linear).OnComplete(holyWaterComponent.ChangeSprite);
+            float distance = Vector2.Distance(transform.position, baseEndValue);
+            holyWaterObject.transform.DOMove(baseEndValue, distance / projectileSpeed).SetEase(Ease.Linear).OnComplete(holyWaterComponent.ChangeSprite);
         }
 
         yield return new WaitForSeconds(1f / attackSpeed);
