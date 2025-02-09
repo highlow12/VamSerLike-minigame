@@ -4,7 +4,7 @@ public class ExampleNoamlMonster : NormalMonster
 {
     protected override void Start()
     {
-        movement = new StraightMovement();
+        movement = new StraightMovement(moveSpeed);
         base.Start();
     }
 
