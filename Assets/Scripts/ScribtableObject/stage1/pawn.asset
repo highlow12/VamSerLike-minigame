@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad55ba1d155b5d2458e60592940c7d2b, type: 3}
+  m_Name: Pawn
+  m_EditorClassIdentifier: 
+  monsters:
+  - monsterName: Pawn
+    monsterPrefab: {fileID: 1290380380481947063, guid: e156d7e2668b39e4682c3e9c810c658f, type: 3}
+    spawnRate: 1
+  - monsterName: Bishop
+    monsterPrefab: {fileID: 5172718507834586352, guid: 96aa07af3ddcb20468cb3ad527aec4fe, type: 3}
+    spawnRate: 1
+  - monsterName: King
+    monsterPrefab: {fileID: 4673368339130091960, guid: 0fa8ca4cb877e0743a20d9d0b7066298, type: 3}
+    spawnRate: 1
+  - monsterName: Knight
+    monsterPrefab: {fileID: 6312306229977942469, guid: 9f6aa6f8491d6dc41adb33b4a080a123, type: 3}
+    spawnRate: 1
+  - monsterName: Queen
+    monsterPrefab: {fileID: 8907515802758107829, guid: b0de641703784cf45814f41d9dfdbb95, type: 3}
+    spawnRate: 1

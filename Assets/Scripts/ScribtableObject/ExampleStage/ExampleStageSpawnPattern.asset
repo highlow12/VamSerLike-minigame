@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: ExampleStageSpawnPattern
+  m_EditorClassIdentifier: Assembly-CSharp::StageSpawnPattern
+  patterns:
+  - patternType: 0
+    startTime: 1
+    duration: 1
+    monsterCount: 104
+    radius: 26.17
+    wiggle: 1
+    angle: 1
+    monsterName: Monster1
+  - patternType: 1
+    startTime: 2
+    duration: 1
+    monsterCount: 50
+    radius: 31.98
+    wiggle: 0.16
+    angle: 9.38
+    monsterName: Monster1
+  - patternType: 2
+    startTime: 3
+    duration: 1
+    monsterCount: 79
+    radius: 32.2
+    wiggle: 1.63
+    angle: 1
+    monsterName: Monster1
+  - patternType: 3
+    startTime: 4
+    duration: 1
+    monsterCount: 60
+    radius: 22.8
+    wiggle: 1.71
+    angle: 47.6
+    monsterName: Monster1
