@@ -95,7 +95,7 @@ public class HolyWaterObject : Projectile
     }
 
     // This method handles the despawning of the holy water object after a delay
-    IEnumerator Despawn()
+    new IEnumerator Despawn()
     {
         yield return new WaitForSeconds(duration - fade);
         spriteRenderer.DOFade(0, fade);

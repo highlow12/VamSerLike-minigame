@@ -34,6 +34,8 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
         public float attackSpeed;
         public float attackIntervalInSeconds;
         public int attackTarget;
+        public int projectileCount;
+        public float projectileSpeed;
     }
     public List<WeaponStat> weaponStats = new();
     public List<SubWeaponStat> subWeaponStats = new();
@@ -92,7 +94,9 @@ public class WeaponStatProvider : Singleton<WeaponStatProvider>
                 attackRange = float.Parse(chartData[i]["attackRange"]["S"].ToString()),
                 attackSpeed = float.Parse(chartData[i]["attackSpeed"]["S"].ToString()),
                 attackIntervalInSeconds = float.Parse(chartData[i]["attackIntervalInSeconds"]["S"].ToString()),
-                attackTarget = int.Parse(chartData[i]["attackTarget"]["S"].ToString())
+                attackTarget = int.Parse(chartData[i]["attackTarget"]["S"].ToString()),
+                projectileCount = int.Parse(chartData[i]["projectileCount"]["S"].ToString()),
+                projectileSpeed = float.Parse(chartData[i]["projectileSpeed"]["S"].ToString())
             };
             subWeaponStats.Add(subWeaponStat);
         }

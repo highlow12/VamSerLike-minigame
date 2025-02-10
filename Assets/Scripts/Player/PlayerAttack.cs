@@ -46,6 +46,8 @@ public class PlayerAttack : MonoBehaviour
                 subWeapon.attackRange = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackRange, subWeapon.baseAttackRange);
                 subWeapon.attackSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackSpeed, subWeapon.baseAttackSpeed);
                 subWeapon.attackTarget = (int)GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackTarget, subWeapon.baseAttackTarget);
+                subWeapon.projectileCount = (int)GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackProjectileCount, subWeapon.baseProjectileCount);
+                subWeapon.projectileSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackProjectileSpeed, subWeapon.baseProjectileSpeed);
                 StartCoroutine(subWeapon.Attack(subWeaponAttackDirection));
             }
         }

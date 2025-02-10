@@ -20,7 +20,7 @@ public class TeddyBear : Weapon.SubWeapon
                 attackObjects.RemoveAt(i);
             }
         }
-        if (attackObjects.Count > 0)
+        if (attackObjects.Count >= projectileCount)
         {
             isAttackCooldown = false;
             yield break;

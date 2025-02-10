@@ -21,7 +21,7 @@ public class PaperPlane : Weapon.SubWeapon
                 attackObjects.RemoveAt(i);
             }
         }
-        if (attackObjects.Count > 2) // 3개까지만 생성
+        if (attackObjects.Count >= projectileCount)
         {
             isAttackCooldown = false;
             yield break;
