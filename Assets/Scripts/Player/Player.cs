@@ -161,7 +161,7 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.TryGetComponent<DropItem>(out var dropItem))
+        if (col.CompareTag("DropItem") && col.TryGetComponent<DropItem>(out var dropItem))
         {
             dropItem.UseItem();
         }

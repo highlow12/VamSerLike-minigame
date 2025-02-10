@@ -80,7 +80,9 @@ public class HolyWaterObject : Projectile
 
     public void ChangeSprite()
     {
-        spriteRenderer.DOFade(0, 0);
+        Color tempColor = spriteRenderer.color;
+        tempColor.a = 0;
+        spriteRenderer.color = tempColor;
         isInSplashState = true;
         animator.SetBool("Splash", true);
         spriteRenderer.DOFade(1, fade);
