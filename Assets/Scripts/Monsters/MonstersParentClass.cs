@@ -3,12 +3,10 @@ using UnityEngine;
 
 public abstract class Monster : MonoBehaviour
 {
-    [SerializeField] protected float maxHealth;
-    [SerializeField] protected float currentHealth;
-    [SerializeField] protected float damage;
-    [SerializeField] protected float defense;
-    [SerializeField] protected float detectionRange;
-    [SerializeField] protected float attackRange;
+    [SerializeField] protected float maxHealth = 1;
+    [SerializeField] protected float currentHealth = 1;
+    [SerializeField] protected float damage = 1;
+    [SerializeField] protected float attackRange = 0.1f;
 
     protected bool isDead;
     protected Transform playerTransform;
@@ -21,7 +19,7 @@ public abstract class Monster : MonoBehaviour
 
     public virtual void TakeDamage(float damage)
     {
-        float actualDamage = Mathf.Max(damage - defense, 1);
+        float actualDamage = Mathf.Max(damage, 1);
         currentHealth -= actualDamage;
 
         if (currentHealth <= 0 && !isDead)
