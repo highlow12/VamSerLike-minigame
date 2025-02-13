@@ -26,7 +26,7 @@ public class PaperPlane : Weapon.SubWeapon
             isAttackCooldown = false;
             yield break;
         }
-        attackObject = ObjectPoolManager.instance.GetGo("PaperPlane");
+        attackObject = ObjectPoolManager.Instance.GetGo("PaperPlane");
         attackObject.transform.position = transform.position + (Vector3)attackDirection.normalized;
         if (attackObjects.Find(x => x == attackObject) == null)
         {

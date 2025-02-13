@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 5686119625223106170}
   - component: {fileID: 7165772389139815506}
   - component: {fileID: 3432359150094950461}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: PaperPlane
-  m_TagString: Untagged
+  m_TagString: AttackObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -198,7 +198,7 @@ GameObject:
   - component: {fileID: 6007829434074509216}
   - component: {fileID: 2814202069460352453}
   - component: {fileID: 7258368033329247747}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

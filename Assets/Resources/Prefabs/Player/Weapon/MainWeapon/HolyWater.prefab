@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 4682498593724451109}
   - component: {fileID: 2154735477512778440}
   - component: {fileID: 586208184160430830}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: HolyWater
-  m_TagString: Untagged
+  m_TagString: AttackObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1573350097
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: -5824092377655198212, guid: 75e0b6897ea80443dab17fd4a35e736e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -104,10 +104,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackDamage: 0
+  attackRange: 0
   attackIntervalInTicks: 0
   colliderObject: {fileID: 6814831322662165562}
+  subWeaponSO: {fileID: 0}
   speed: 0
-  attackRange: 0
   initialPosition: {x: 0, y: 0}
   projectileInitialScale: 1
   isInSplashState: 0
@@ -161,7 +162,7 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.142, y: 0.2}
+    oldSize: {x: 0.284, y: 0.4}
     newSize: {x: 1.31, y: 2.01}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 102444149149883174}
   - component: {fileID: 1623694296693710004}
   - component: {fileID: 2770767099264981010}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147,9 +147,9 @@ GameObject:
   - component: {fileID: 5611962668130121650}
   - component: {fileID: -8581534493739322351}
   - component: {fileID: -3922037827525034759}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ClayKnife
-  m_TagString: Untagged
+  m_TagString: AttackObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

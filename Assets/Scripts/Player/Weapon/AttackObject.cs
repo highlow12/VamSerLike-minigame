@@ -68,10 +68,6 @@ public abstract class AttackObject : MonoBehaviour
     {
         monstersHit.Clear();
         hits.Clear();
-        if (colliderObject != null)
-        {
-            colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
-        }
     }
 
     public virtual void Attack()

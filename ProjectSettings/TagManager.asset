@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Monster
   - DropItem
+  - AttackObject
   layers:
   - Default
   - TransparentFX

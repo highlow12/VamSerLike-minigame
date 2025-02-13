@@ -17,7 +17,7 @@ public class ClayKnife : Weapon.SubWeapon
         float spreadDegree = this.spreadDegree / projectileCount; // 퍼짐 정도를 조절
         for (int i = 0; i < projectileCount; i++)
         {
-            attackObject = ObjectPoolManager.instance.GetGo("ClayKnife");
+            attackObject = ObjectPoolManager.Instance.GetGo("ClayKnife");
             float spreadAngle = baseAngle + (i - (projectileCount - 1) / 2) * spreadDegree;
             Quaternion rotation = Quaternion.Euler(0, 0, spreadAngle + 90);
             Vector3 rotationVector = new(Mathf.Cos(spreadAngle * Mathf.Deg2Rad), Mathf.Sin(spreadAngle * Mathf.Deg2Rad), 0);

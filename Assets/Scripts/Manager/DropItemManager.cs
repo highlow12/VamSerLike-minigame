@@ -36,11 +36,8 @@ public class DropItemManager : Singleton<DropItemManager>
     // </summary>
     public static ProbabilityList defaultExpProbs = new(new List<float> { 0.8f, 0.15f, 0.05f });
 
-    private ObjectPoolManager objectPoolManager;
-
     public override void Awake()
     {
-        objectPoolManager = ObjectPoolManager.instance;
         base.Awake();
     }
 
@@ -82,7 +79,7 @@ public class DropItemManager : Singleton<DropItemManager>
                 }
                 else
                 {
-                    GameObject dropItem = objectPoolManager.GetGo(itemName);
+                    GameObject dropItem = ObjectPoolManager.Instance.GetGo(itemName);
                     dropItem.transform.position = position;
                     // 아이템일 경우에는 경험치도 추가 생성
                     DropExperience(position);
@@ -105,7 +102,7 @@ public class DropItemManager : Singleton<DropItemManager>
         }
         else
         {
-            GameObject dropItem = objectPoolManager.GetGo(itemName);
+            GameObject dropItem = ObjectPoolManager.Instance.GetGo(itemName);
             dropItem.transform.position = position;
         }
     }
@@ -134,7 +131,7 @@ public class DropItemManager : Singleton<DropItemManager>
 
         float expRandom = UnityEngine.Random.Range(0.0f, 1.0f);
         float accumulatedProbability = 0.0f;
-        Experience experience = objectPoolManager.GetGo("Experience").GetComponent<Experience>();
+        Experience experience = ObjectPoolManager.Instance.GetGo("Experience").GetComponent<Experience>();
         for (int i = 0; i < probs.Count; i++)
         {
             float prob = (float)probs[i];
@@ -153,7 +150,7 @@ public class DropItemManager : Singleton<DropItemManager>
     // </summary>
     public void DropExperience(Vector3 position, int level)
     {
-        Experience experience = objectPoolManager.GetGo("Experience").GetComponent<Experience>();
+        Experience experience = ObjectPoolManager.Instance.GetGo("Experience").GetComponent<Experience>();
         experience.SetExperienceItemLevel(level);
         experience.transform.position = position;
     }

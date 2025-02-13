@@ -26,7 +26,7 @@ public class HolyWater : Weapon.MainWeapon
     public override IEnumerator Attack(Vector2 attackDirection)
     {
         isAttackCooldown = true;
-        GameObject holyWaterObject = ObjectPoolManager.instance.GetGo("HolyWater");
+        GameObject holyWaterObject = ObjectPoolManager.Instance.GetGo("HolyWater");
         holyWaterObject.transform.parent = transform;
         weaponSpriteRenderer = holyWaterObject.GetComponent<SpriteRenderer>();
         attackObject = holyWaterObject;

@@ -25,7 +25,7 @@ public class TeddyBear : Weapon.SubWeapon
             isAttackCooldown = false;
             yield break;
         }
-        attackObject = ObjectPoolManager.instance.GetGo("TeddyBear");
+        attackObject = ObjectPoolManager.Instance.GetGo("TeddyBear");
         attackObject.transform.position = transform.position + (Vector3)attackDirection.normalized;
         if (attackObjects.Find(x => x == attackObject) == null)
         {
