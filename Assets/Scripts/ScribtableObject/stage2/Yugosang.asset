@@ -19,7 +19,7 @@ MonoBehaviour:
   - monsterName: Yugosang
     monsterPrefab: {fileID: 8082793668804131016, guid: f71e1a3e9d3c19c44b257a77991ef4ee, type: 3}
     spawnRate: 3
-  - monsterName: Namgosang
+  - monsterName: NamGosang
     monsterPrefab: {fileID: 6645689428065680246, guid: 752cf95ab537bf747850758e94f7ab21, type: 3}
     spawnRate: 3
   - monsterName: Suwii

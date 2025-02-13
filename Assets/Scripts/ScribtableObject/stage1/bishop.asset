@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Bishop
   m_EditorClassIdentifier: 
   monsters:
-  - monsterName: bishop12
+  - monsterName: Bishop
     monsterPrefab: {fileID: 5172718507834586352, guid: 96aa07af3ddcb20468cb3ad527aec4fe, type: 3}
     spawnRate: 1

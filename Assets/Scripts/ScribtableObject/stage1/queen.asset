@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Queen
   m_EditorClassIdentifier: 
   monsters:
-  - monsterName: queen
+  - monsterName: Queen
     monsterPrefab: {fileID: 8907515802758107829, guid: b0de641703784cf45814f41d9dfdbb95, type: 3}
     spawnRate: 1

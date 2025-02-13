@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Knight
   m_EditorClassIdentifier: 
   monsters:
-  - monsterName: knight5
+  - monsterName: Knight
     monsterPrefab: {fileID: 6312306229977942469, guid: 9f6aa6f8491d6dc41adb33b4a080a123, type: 3}
     spawnRate: 1

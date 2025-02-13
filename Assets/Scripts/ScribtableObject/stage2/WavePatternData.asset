@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8c25baea5086534fb090a497655a15f, type: 3}
   m_Name: WavePatternData
   m_EditorClassIdentifier: 
-  wavePattern: []
+  wavePattern:
+  - wavePattern: {fileID: 11400000, guid: 024d84a3ca76eeb4a943fa716cbea2b3, type: 2}
+    waveStartTime: 0
