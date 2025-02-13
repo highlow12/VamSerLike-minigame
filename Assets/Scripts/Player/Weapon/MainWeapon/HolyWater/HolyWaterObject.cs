@@ -2,19 +2,21 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class HolyWaterObject : Projectile
 {
     [SerializeField] private float projectileInitialScale;
     private PolygonCollider2D polygonCollider;
-    private SpriteRenderer spriteRenderer;
     [SerializeField] private bool isInSplashState = false;
     private Animator animator;
+    private float fade = 0.3f;
+    private float duration = 3f;
 
     public override void Init(float attackDamage, float attackRange, int attackIntervalInTicks = 0, int attackTarget = 0)
     {
         base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
-        this.attackRange = attackRange;
+        spriteRenderer.DOFade(1, 0);
     }
 
     protected override void Awake()
@@ -78,23 +80,28 @@ public class HolyWaterObject : Projectile
 
     public void ChangeSprite()
     {
+        Color tempColor = spriteRenderer.color;
+        tempColor.a = 0;
+        spriteRenderer.color = tempColor;
         isInSplashState = true;
         animator.SetBool("Splash", true);
+        spriteRenderer.DOFade(1, fade);
         spriteRenderer.sortingLayerName = "Splash";
         // update polygon collider
         polygonCollider.TryUpdateShapeToAttachedSprite();
         float scale = attackRange;
-        Debug.Log($"localScale: {transform.localScale.x}, attackRange: {attackRange}, scale: {scale}");
         transform.localScale = new Vector3(scale, scale, 1);
         StartCoroutine(Despawn());
     }
 
     // This method handles the despawning of the holy water object after a delay
-    IEnumerator Despawn()
+    new IEnumerator Despawn()
     {
-        yield return new WaitForSeconds(3f);
-        transform.localScale = new Vector3(projectileInitialScale, projectileInitialScale, 1);
+        yield return new WaitForSeconds(duration - fade);
+        spriteRenderer.DOFade(0, fade);
+        yield return new WaitForSeconds(fade);
         animator.SetBool("Splash", false);
+        transform.localScale = new Vector3(projectileInitialScale, projectileInitialScale, 1);
         spriteRenderer.sortingLayerName = "Projectile";
         // update polygon collider
         polygonCollider.TryUpdateShapeToAttachedSprite();

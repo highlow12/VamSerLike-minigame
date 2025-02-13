@@ -17,19 +17,13 @@ public class Hammer : Weapon.MainWeapon
     public override void InitStat()
     {
         base.InitStat();
-        weaponScript.Init(
-            attackDamage,
-            attackRange,
-            0,
-            attackTarget
-        );
-
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
     {
-        attackObjectAnimator.SetFloat("AttackSpeed", attackSpeed);
         isAttackCooldown = true;
+        weaponScript.Init(attackDamage, attackRange, 0, attackTarget);
+        attackObjectAnimator.SetFloat("AttackSpeed", attackSpeed);
         Vector2 pos = (Vector2)transform.position + attackDirection.normalized * attackForwardDistance;
         float degree = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
         weaponScript.colliderObject.transform.position = pos;

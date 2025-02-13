@@ -20,17 +20,12 @@ public class Shotgun : Weapon.MainWeapon
     public override void InitStat()
     {
         base.InitStat();
-        weaponScript.Init(
-            attackDamage,
-            attackRange,
-            0,
-            attackTarget
-        );
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
     {
         isAttackCooldown = true;
+        weaponScript.Init(attackDamage, attackRange, 0, attackTarget);
         float baseAngle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
         float spreadDegree = this.spreadDegree / projectileCount; // 퍼짐 정도를 조절
         Flip(baseAngle);

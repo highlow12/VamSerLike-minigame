@@ -6,13 +6,16 @@ using TMPro;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System;
+# if UNITY_EDITOR
+using System.Reflection;
+# endif
 
 public class DebugConsole : MonoBehaviour
 {
     public static DebugConsole Instance;
     private List<Line> lines = new();
     public List<string> commandHistory = new();
-    private Command[] commands = new Command[6];
+    private Command[] commands = new Command[8];
     private Image consoleImage;
     private bool isHost = true;
     private Coroutine hideLogCoroutine;
@@ -23,6 +26,7 @@ public class DebugConsole : MonoBehaviour
     public int historyCursor = -1;
     public bool isFocused = false;
     public bool requireParse = false;
+    public bool requireRender = false;
     public TMP_InputField inputField;
     public TMP_Text consoleText;
     public GameObject toolTipObject;
@@ -98,6 +102,53 @@ public class DebugConsole : MonoBehaviour
         availableParameters = new List<List<string>>()
     };
 
+    private Command addSubWeapon = new()
+    {
+        name = "addSubWeapon",
+        description = "Add sub weapon to player",
+        usage = "addSubWeapon [subWeaponType]",
+        successMessage = "Added sub weapon {argument1}",
+        parameters = new List<string>(),
+        availableParameters = new List<List<string>>()
+    };
+
+    private Command modifySubWeaponGrade = new()
+    {
+        name = "modifySubWeaponGrade",
+        description = "Modify sub weapon grade",
+        usage = "modifySubWeaponGrade [subWeaponType] [grade]",
+        successMessage = "Modified sub weapon {argument1} grade to {argument2}",
+        parameters = new List<string>(),
+        availableParameters = new List<List<string>>()
+    };
+
+    private Command setStage = new()
+    {
+        name = "setStage",
+        description = "Set stage",
+        usage = "setStage [stageNumber]",
+        successMessage = "Set stage to {argument1}",
+        parameters = new List<string>()
+    };
+
+    private Command simulateItemDrop = new()
+    {
+        name = "simulateItemDrop",
+        description = "Simulate item drop",
+        usage = "simulateItemDrop [count]",
+        successMessage = "Simulated item drop {argument1} times",
+        parameters = new List<string>()
+    };
+
+    private Command changeSingletonFieldValue = new()
+    {
+        name = "changeSingletonFieldValue",
+        description = "Change singleton field value",
+        usage = "changeSingletonFieldValue [className] [fieldName] [newValue]",
+        successMessage = "Changed {argument1}.{argument2} to {argument3}",
+        parameters = new List<string>(),
+        availableParameters = new List<List<string>>()
+    };
 
     void Awake()
     {
@@ -108,6 +159,11 @@ public class DebugConsole : MonoBehaviour
         commands[0] = help;
         commands[1] = changeWeapon;
         commands[2] = spawn;
+        commands[3] = addSubWeapon;
+        commands[4] = modifySubWeaponGrade;
+        commands[5] = setStage;
+        commands[6] = simulateItemDrop;
+        commands[7] = changeSingletonFieldValue;
     }
 
     void Start()
@@ -120,7 +176,7 @@ public class DebugConsole : MonoBehaviour
         }
         changeWeapon.availableParameters.Add(parameters.ToList());
         parameters.Clear();
-
+        // Initialize object names
         UnityEngine.Object[] resources = Resources.LoadAll("Prefabs/In-game");
         parameters.AddRange(
             from obj in resources
@@ -128,13 +184,51 @@ public class DebugConsole : MonoBehaviour
             select $"{$"{gameObject?.tag}/" ?? ""}{obj.name}");
         spawn.availableParameters.Add(parameters.ToList());
         parameters.Clear();
+        // Initialize sub weapon types
+        for (int i = 0; i < Enum.GetNames(typeof(Weapon.SubWeapon.WeaponType)).Length; i++)
+        {
+            parameters.Add(Enum.GetName(typeof(Weapon.SubWeapon.WeaponType), i));
+        }
+        addSubWeapon.availableParameters.Add(parameters.ToList());
+        modifySubWeaponGrade.availableParameters.Add(parameters.ToList());
+        modifySubWeaponGrade.availableParameters.Add(new List<string> { "0", "1", "2", "3", "4", "5" });
+        parameters.Clear();
+#if UNITY_EDITOR
+        // init singleton class names and field names
+        List<string> classNames = new();
+        List<string> fieldsName = new();
+        var singletonTypes = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(asm => asm.GetTypes())
+            .Where(t => t.IsClass &&
+                   t.BaseType != null &&
+                   t.BaseType.IsGenericType &&
+                   t.BaseType.GetGenericTypeDefinition() == typeof(Singleton<>));
+        foreach (Type type in singletonTypes)
+        {
+            classNames.Add(type.Name);
+            FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Static);
+            foreach (FieldInfo field in fieldInfos)
+            {
+                fieldsName.Add($"{type}.{field.Name}");
+            }
+        }
+        changeSingletonFieldValue.availableParameters.Add(classNames.ToList());
+        changeSingletonFieldValue.availableParameters.Add(fieldsName.ToList());
+        changeSingletonFieldValue.availableParameters.Add(new List<string> { "1" });
+        parameters.Clear();
+#endif
+
+
 
     }
     void Update()
     {
         if (isFocused)
         {
-            RenderLines();
+            if (requireRender)
+            {
+                RenderLines();
+            }
             if (requireParse)
             {
                 currentCommand = ParseCommand();
@@ -294,6 +388,7 @@ public class DebugConsole : MonoBehaviour
             messageType = messageType,
             tick = GameManager.Instance.gameTimer
         });
+        requireRender = true;
     }
 
     public void MergeLine(Line line, LineType lineType = LineType.Info)
@@ -316,6 +411,7 @@ public class DebugConsole : MonoBehaviour
             StopCoroutine(showLogCoroutine);
         }
         showLogCoroutine = StartCoroutine(ShowLog());
+        requireRender = true;
     }
 
     // overload function for merge line with custom color
@@ -328,18 +424,32 @@ public class DebugConsole : MonoBehaviour
             StopCoroutine(showLogCoroutine);
         }
         showLogCoroutine = StartCoroutine(ShowLog());
+        requireRender = true;
     }
 
     void RenderLines()
     {
+        if (lines.Count > 100)
+        {
+            lines.RemoveRange(0, lines.Count - 100);
+        }
         // render all lines
         consoleText.text = "";
         // sort lines by tick
-        lines.Sort((a, b) => a.tick.CompareTo(b.tick));
+        lines.Sort((a, b) =>
+        {
+            if (a.tick == b.tick)
+            {
+                return a.text.CompareTo(b.text);
+            }
+            return a.tick.CompareTo(b.tick);
+
+        });
         foreach (Line line in lines)
         {
             consoleText.text += line.text + "\n";
         }
+        requireRender = false;
     }
 
     void CommandHistory()
@@ -414,7 +524,7 @@ public class DebugConsole : MonoBehaviour
         command.parameters = splitCommand.GetRange(1, splitCommand.Count - 1);
         // tool tip logic
         string displayToolTipText = "";
-        if (toolTipCommand.name != null)
+        if (toolTipCommand.name != null || (splitCommand.Count > 1 && Equals(command, toolTipCommand)))
         {
             int wordsCount = splitCommand.Count;
             // display tool tip
@@ -427,7 +537,7 @@ public class DebugConsole : MonoBehaviour
                 displayToolTipText = $"{toolTipCommand.name}: {toolTipCommand.description}\nUsage: {toolTipCommand.usage}";
             }
             // if parameters given and command has available parameters, display available parameters
-            else if (toolTipCommand.availableParameters != null)
+            else if (toolTipCommand.availableParameters != null || toolTipCommand.availableParameters?.Count > 0)
             {
                 // get matched parameters with regex
                 if (!preventClearMatchedOptions)
@@ -436,10 +546,19 @@ public class DebugConsole : MonoBehaviour
                     matchedOptions.Clear();
                     foreach (string parameter in toolTipCommand.availableParameters[Math.Max(wordsCount - 2, 0)])
                     {
-                        Match match = Regex.Match(parameter, splitCommand.Last(), RegexOptions.IgnoreCase);
+                        List<string> splitParameter = parameter.Split('.').ToList();
+                        if (splitParameter.Count > 1)
+                        {
+                            if (splitParameter[0] != splitCommand[Math.Max(wordsCount - 2, 0)])
+                            {
+                                continue;
+                            }
+                        }
+                        string lastParameter = splitParameter.Last();
+                        Match match = Regex.Match(lastParameter, splitCommand.Last(), RegexOptions.IgnoreCase);
                         if (match.Success)
                         {
-                            matchedOptions.Add(parameter);
+                            matchedOptions.Add(lastParameter);
                         }
                     }
                 }
@@ -473,6 +592,21 @@ public class DebugConsole : MonoBehaviour
                 break;
             case "spawn":
                 result = SpawnCommand(command.parameters);
+                break;
+            case "addSubWeapon":
+                result = AddSubWeaponCommand(command.parameters);
+                break;
+            case "modifySubWeaponGrade":
+                result = ModifySubWeaponGradeCommand(command.parameters);
+                break;
+            case "setStage":
+                result = SetStage(command.parameters);
+                break;
+            case "simulateItemDrop":
+                result = SimulateItemDrop(command.parameters);
+                break;
+            case "changeSingletonFieldValue":
+                result = ChangeSingletonFieldValue(command.parameters);
                 break;
             default:
                 AddLine("Command not found", LineType.Error);
@@ -558,6 +692,138 @@ public class DebugConsole : MonoBehaviour
             AddLine(e.Message, LineType.Error);
             return false;
         }
+    }
+
+    bool AddSubWeaponCommand(List<string> parameters)
+    {
+        try
+        {
+            // parse string to enum
+            Weapon.SubWeapon.WeaponType weaponType = (Weapon.SubWeapon.WeaponType)Enum.Parse(typeof(Weapon.SubWeapon.WeaponType), parameters[0]);
+            PlayerAttack playerAttack = localPlayer.GetComponent<PlayerAttack>();
+            // check if sub weapon already exists
+            if (playerAttack.subWeapons.Exists(x => x.weaponType == weaponType))
+            {
+                AddLine($"SubWeapon {weaponType} already exists", LineType.Warning);
+                return false;
+            }
+            playerAttack.AddSubWeapon(weaponType, 0);
+            return true;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
+            return false;
+        }
+    }
+
+    bool ModifySubWeaponGradeCommand(List<string> parameters)
+    {
+        try
+        {
+            // parse string to enum
+            Weapon.SubWeapon.WeaponType weaponType = (Weapon.SubWeapon.WeaponType)Enum.Parse(typeof(Weapon.SubWeapon.WeaponType), parameters[0]);
+            int grade = int.Parse(parameters[1]);
+            PlayerAttack playerAttack = localPlayer.GetComponent<PlayerAttack>();
+            // check if sub weapon exists
+            if (!playerAttack.subWeapons.Exists(x => x.weaponType == weaponType))
+            {
+                AddLine($"SubWeapon {weaponType} not found", LineType.Warning);
+                return false;
+            }
+            playerAttack.ModifySubWeaponGrade(weaponType, grade);
+            return true;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
+            return false;
+        }
+    }
+
+    bool SetStage(List<string> parameters)
+    {
+        try
+        {
+            int stageNumber = int.Parse(parameters[0]);
+            bool result = GameManager.Instance.SetStage(stageNumber);
+            return result;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
+            return false;
+        }
+    }
+
+    bool SimulateItemDrop(List<string> parameters)
+    {
+        try
+        {
+            int count = int.Parse(parameters[0]);
+            for (int i = 0; i < count; i++)
+            {
+                string itemName = DropItemManager.Instance.DropItem(localPlayer.transform.position + Vector3.right);
+                AddLine($"<color=#00FF00>{itemName}</color> drop.", LineType.Info);
+            }
+            return true;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
+            return false;
+        }
+    }
+    bool ChangeSingletonFieldValue(List<string> parameters)
+    {
+#if UNITY_EDITOR
+        try
+        {
+            string className = parameters[0];
+            string fieldName = parameters[1];
+            string newValue = parameters.GetRange(2, parameters.Count - 2).Aggregate((x, y) => x + " " + y);
+            Type classType = Type.GetType(className);
+            FieldInfo field = classType.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Static);
+            if (field == null)
+            {
+                AddLine($"Field {fieldName} not found in {className}", LineType.Warning);
+                return false;
+            }
+            MethodInfo parseMethod = field.FieldType.GetMethod("CustomParse");
+            object value;
+            if (parseMethod != null)
+            {
+                value = parseMethod.Invoke(null, new object[] { newValue });
+            }
+            else
+            {
+                value = Convert.ChangeType(newValue, field.FieldType);
+            }
+            if (field.IsStatic)
+            {
+                field.SetValue(null, value);
+            }
+            else
+            {
+                object instance = FindAnyObjectByType(classType);
+                field.SetValue(instance, value);
+            }
+            return true;
+        }
+        catch (Exception e) when (e is InvalidCastException || e is FormatException)
+        {
+            AddLine("타입 변환을 할 수 없습니다.\n입력을 수정하거나, CustomParse 메소드를 구현해주세요.", LineType.Error);
+            return false;
+        }
+        catch (Exception e)
+        {
+            AddLine(e.Message, LineType.Error);
+            return false;
+        }
+#else
+        AddLine("This command is only available in editor", LineType.Warning);
+        return false;
+#endif
     }
 
 }
