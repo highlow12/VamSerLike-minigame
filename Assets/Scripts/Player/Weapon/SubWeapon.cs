@@ -12,6 +12,7 @@ namespace Weapon
             PaperPlane,
             TeddyBear,
             FamillyPicture,
+            ClayKnife,
         }
         public WeaponType weaponType;
         public string displayName;
@@ -22,11 +23,15 @@ namespace Weapon
         public float baseAttackRange;
         public float baseAttackSpeed;
         public int baseAttackTarget;
+        public int baseProjectileCount;
+        public float baseProjectileSpeed;
         public float attackDamage;
         public float attackRange;
         public float attackSpeed;
         protected float attackIntervalInSeconds;
         public int attackTarget;
+        public int projectileCount;
+        public float projectileSpeed;
         protected int maxWeaponGrade;
         private int _weaponGrade = 0;
         public int weaponGrade
@@ -45,6 +50,7 @@ namespace Weapon
                 if (weaponData == null)
                 {
                     Debug.LogError($"Failed to load {soPath}");
+#if UNITY_EDITOR
                     DebugConsole.Line errorLine = new()
                     {
                         text = $"Failed to load {soPath}",
@@ -52,6 +58,7 @@ namespace Weapon
                         tick = GameManager.Instance.gameTimer
                     };
                     DebugConsole.Instance.MergeLine(errorLine, "#FF0000");
+#endif
                 }
 
                 InitStat();
@@ -76,6 +83,8 @@ namespace Weapon
             baseAttackSpeed = weaponStat.attackSpeed;
             attackIntervalInSeconds = weaponStat.attackIntervalInSeconds;
             baseAttackTarget = weaponStat.attackTarget;
+            baseProjectileCount = weaponStat.projectileCount;
+            baseProjectileSpeed = weaponStat.projectileSpeed;
             maxWeaponGrade = weaponStat.maxWeaponGrade;
             if (attackObject != null)
             {

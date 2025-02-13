@@ -57,7 +57,23 @@ namespace Weapon
         public float baseProjectileSpeed;
         public float attackDamage;
         public float attackSpeed;
-        public float attackRange;
+        private float _attackRange;
+        public float attackRange
+        {
+            get
+            {
+                return _attackRange;
+            }
+            set
+            {
+                _attackRange = value;
+                attackForwardDistance = Mathf.Sqrt(_attackRange);
+                if (weaponScript != null && weaponScript.colliderObject != null)
+                {
+                    weaponScript.colliderObject.transform.localScale = new Vector3(_attackRange, _attackRange, 1);
+                }
+            }
+        }
         protected float attackForwardDistance;
         public int attackTarget;
         public int projectileCount;
@@ -85,13 +101,13 @@ namespace Weapon
             baseAttackDamage = weaponStat.attackDamage;
             baseAttackSpeed = weaponStat.attackSpeed;
             baseAttackRange = weaponStat.attackRange;
-            attackForwardDistance = Mathf.Sqrt(attackRange);
+            attackForwardDistance = Mathf.Sqrt(baseAttackRange);
             baseAttackTarget = weaponStat.attackTarget;
             baseProjectileCount = weaponStat.projectileCount;
             baseProjectileSpeed = weaponStat.projectileSpeed;
             if (attackObject != null)
             {
-                weaponScript.colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
+                weaponScript.colliderObject.transform.localScale = new Vector3(baseAttackRange, baseAttackRange, 1);
                 attackObjectAnimator = attackObject.GetComponent<Animator>();
             }
         }

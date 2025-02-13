@@ -64,20 +64,21 @@ public class TeddyBearObject : AttackObject
             {
                 transform.parent = null;
                 Attack();
-                if (animation.GetClip("Hit") != null)
-                {
-                    animation.Play("Hit");
-                }
-                Despawn();
             }
         }
     }
 
-    private void Despawn()
+    public override void Attack()
     {
-        if (TryGetComponent<PoolAble>(out var poolAble))
+        base.Attack();
+        if (hitCount > 0)
         {
-            poolAble.ReleaseObject();
+            if (animation.GetClip("Hit") != null)
+            {
+                animation.Play("Hit");
+            }
         }
+        Despawn();
     }
+
 }

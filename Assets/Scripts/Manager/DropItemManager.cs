@@ -34,13 +34,11 @@ public class DropItemManager : Singleton<DropItemManager>
     // <summary>
     // 기본 경험치 드랍 확률
     // </summary>
-    private static readonly List<float> defaultExpProbs = new() { 0.8f, 0.15f, 0.05f };
-
-    private ObjectPoolManager objectPoolManager;
+    public static ProbabilityList defaultExpProbs = new(new List<float> { 0.8f, 0.15f, 0.05f });
 
     public override void Awake()
     {
-        objectPoolManager = ObjectPoolManager.instance;
+        base.Awake();
     }
 
     // <summary>
@@ -81,7 +79,7 @@ public class DropItemManager : Singleton<DropItemManager>
                 }
                 else
                 {
-                    GameObject dropItem = objectPoolManager.GetGo(itemName);
+                    GameObject dropItem = ObjectPoolManager.Instance.GetGo(itemName);
                     dropItem.transform.position = position;
                     // 아이템일 경우에는 경험치도 추가 생성
                     DropExperience(position);
@@ -104,41 +102,36 @@ public class DropItemManager : Singleton<DropItemManager>
         }
         else
         {
-            GameObject dropItem = objectPoolManager.GetGo(itemName);
+            GameObject dropItem = ObjectPoolManager.Instance.GetGo(itemName);
             dropItem.transform.position = position;
         }
     }
 
     // <summary>
     // 확률에 따라 경험치를 생성하는 함수
-    // 확률 값을 List<float>로 전달하여 defaultExpProbs를 대체할 수 있음
-    // 경험치의 종류의 개수와 List의 크기가 일치해야 함
-    // Σprobs[i] = 1.0f (0 <= i < probs.Count)
-    // ex) DropExperience(Vector3 position, new List<float> { 0.0f, 0.7f, 0.3f });
-    // 위 예시와 같이 사용하여 2레벨 경험치를 70%, 3레벨 경험치를 30% 확률로 생성하게 할 수 있음
+    // 확률 값을 ProbabilityList로 전달하여 defaultExpProbs를 대체할 수 있음
+    // 경험치의 종류의 개수와 ProbabilityList의 크기가 일치해야 함
+    // probs의 원소의 값은 자동으로 정규화되어 사용됨
+    // ex) DropExperience(Vector3 position, new ProbabilityList(new List<float> { 0.5f, 0.7f, 0.3f }));
+    // 위 예시와 같이 사용하여 1레벨 경험치를 33.3%, 2레벨 경험치를 46.7%, 3레벨 경험치를 20% 확률로 생성
     // </summary>
-    public void DropExperience(Vector3 position, List<float> probs = null)
+    public void DropExperience(Vector3 position, ProbabilityList probs = null)
     {
         // probs가 null이면 defaultExpProbs로 초기화
         probs ??= defaultExpProbs;
-        // <validation>
-        // 확률 값이 0.0f ~ 1.0f 사이의 값이 아니면 에러 출력
-        if (probs.Cast<float>().Any(prob => prob < 0.0f || prob > 1.0f))
+#if UNITY_EDITOR
+        DebugConsole.Line line = new()
         {
-            Debug.LogError("Invalid probability values");
-            return;
-        }
-        // 확률 값의 합이 1.0f이 아니면 에러 출력
-        if (!Mathf.Approximately(probs.Cast<float>().Sum(), 1.0f))
-        {
-            Debug.LogError("Invalid probability sum");
-            return;
-        }
-        // </validation>
+            text = $"{GameManager.Instance.gameTimer} - Normalized exp probs: {probs.GetElements()}",
+            messageType = DebugConsole.MessageType.Local,
+            tick = GameManager.Instance.gameTimer
+        };
+        DebugConsole.Instance.MergeLine(line, "#00FF00");
+#endif
 
         float expRandom = UnityEngine.Random.Range(0.0f, 1.0f);
         float accumulatedProbability = 0.0f;
-        Experience experience = objectPoolManager.GetGo("Experience").GetComponent<Experience>();
+        Experience experience = ObjectPoolManager.Instance.GetGo("Experience").GetComponent<Experience>();
         for (int i = 0; i < probs.Count; i++)
         {
             float prob = (float)probs[i];
@@ -157,7 +150,7 @@ public class DropItemManager : Singleton<DropItemManager>
     // </summary>
     public void DropExperience(Vector3 position, int level)
     {
-        Experience experience = objectPoolManager.GetGo("Experience").GetComponent<Experience>();
+        Experience experience = ObjectPoolManager.Instance.GetGo("Experience").GetComponent<Experience>();
         experience.SetExperienceItemLevel(level);
         experience.transform.position = position;
     }

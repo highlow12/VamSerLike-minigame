@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 7125231193953144696}
   - component: {fileID: 5691473523213647749}
   - component: {fileID: 499100913315986115}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: TeddyBear
-  m_TagString: Untagged
+  m_TagString: AttackObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 5768146656629602095}
   - component: {fileID: 6624026415590659988}
   - component: {fileID: 2107848639247245299}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -21,4 +21,4 @@ MonoBehaviour:
   dragDistance: 1
   dragSpeed: 3
   duration: -1
-  dropItemSprite: {fileID: -2413806693520163455, guid: 4adeaf2d2b1c7417e89f026626d8264f, type: 3}
+  dropItemSprite: {fileID: 21300000, guid: ca3ca252888505fa3c535ce90585c715, type: 3}

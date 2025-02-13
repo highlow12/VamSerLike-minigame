@@ -21,12 +21,12 @@ public class PaperPlane : Weapon.SubWeapon
                 attackObjects.RemoveAt(i);
             }
         }
-        if (attackObjects.Count > 2) // 3개까지만 생성
+        if (attackObjects.Count >= projectileCount)
         {
             isAttackCooldown = false;
             yield break;
         }
-        attackObject = ObjectPoolManager.instance.GetGo("PaperPlane");
+        attackObject = ObjectPoolManager.Instance.GetGo("PaperPlane");
         attackObject.transform.position = transform.position + (Vector3)attackDirection.normalized;
         if (attackObjects.Find(x => x == attackObject) == null)
         {

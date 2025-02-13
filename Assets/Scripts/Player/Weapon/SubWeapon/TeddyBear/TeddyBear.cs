@@ -20,12 +20,12 @@ public class TeddyBear : Weapon.SubWeapon
                 attackObjects.RemoveAt(i);
             }
         }
-        if (attackObjects.Count > 0)
+        if (attackObjects.Count >= projectileCount)
         {
             isAttackCooldown = false;
             yield break;
         }
-        attackObject = ObjectPoolManager.instance.GetGo("TeddyBear");
+        attackObject = ObjectPoolManager.Instance.GetGo("TeddyBear");
         attackObject.transform.position = transform.position + (Vector3)attackDirection.normalized;
         if (attackObjects.Find(x => x == attackObject) == null)
         {

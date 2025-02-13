@@ -78,13 +78,21 @@ public class PaperPlaneObject : AttackObject
             if (targetDistance < 0.1f)
             {
                 Attack();
-                if (animation.GetClip("Hit") != null)
-                {
-                    animation.Play("Hit");
-                }
-                Despawn();
             }
         }
+    }
+
+    public override void Attack()
+    {
+        base.Attack();
+        if (hitCount > 0)
+        {
+            if (animation.GetClip("Hit") != null)
+            {
+                animation.Play("Hit");
+            }
+        }
+        Despawn();
     }
 
     private void FlyBeforeRetarget()
@@ -103,14 +111,5 @@ public class PaperPlaneObject : AttackObject
             waitingFlyBeforeRetarget = false;
         });
     }
-
-    private void Despawn()
-    {
-        if (TryGetComponent<PoolAble>(out var poolAble))
-        {
-            poolAble.ReleaseObject();
-        }
-    }
-
 
 }
