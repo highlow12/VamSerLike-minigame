@@ -14,6 +14,8 @@ public abstract class Projectile : AttackObject
         base.Awake();
         _rb = GetComponent<Rigidbody2D>();
     }
-
+    protected override void Start()
+    {
+    }
 
 }

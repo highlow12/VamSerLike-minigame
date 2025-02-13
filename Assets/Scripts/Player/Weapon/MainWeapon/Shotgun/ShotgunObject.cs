@@ -41,7 +41,7 @@ public class ShotgunObject : AttackObject
         animator.SetFloat("AttackSpeed", attackSpeed);
         for (int i = 0; i < projectileCount; i++)
         {
-            GameObject bullet = ObjectPoolManager.instance.GetGo("ShotgunBullet");
+            GameObject bullet = ObjectPoolManager.Instance.GetGo("ShotgunBullet");
             float spreadAngle = (i - (projectileCount - 1) / 2f) * spreadDegree;
             Quaternion rotation = Quaternion.Euler(0, 0, baseAngle + spreadAngle);
             Vector3 firePosOffset;
