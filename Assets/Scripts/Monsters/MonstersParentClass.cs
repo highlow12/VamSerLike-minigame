@@ -49,7 +49,7 @@ public abstract class Monster : MonoBehaviour
 // 일반 몬스터 클래스
 public class NormalMonster : Monster
 {
-    [SerializeField] protected float moveSpeed;
+    [SerializeField] protected float moveSpeed = 1;
     protected IMovement movement/* = Enter Movement*/;
 
     protected override void Start()

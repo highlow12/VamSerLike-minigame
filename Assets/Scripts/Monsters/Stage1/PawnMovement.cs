@@ -16,16 +16,16 @@ public class PawnMoveMent : NormalMonster
 
 class ChessStepMovement : IMovement
 {
-    Vector2 startPos;
-    Vector2 targetPos;
-    float jumpPower;
-    float delay;
-    float speed;
-    float Timer = 0;
-    float elapsedTime = 0;
-    bool isJumping = false;
-    float gravity = -1f;
-    float initialVelocityY;
+    protected Vector2 startPos;
+    protected Vector2 targetPos;
+    protected float jumpPower;
+    protected float delay;
+    protected float speed;
+    protected float Timer = 0;
+    protected float elapsedTime = 0;
+    protected bool isJumping = false;
+    protected float gravity = -1f;
+    protected float initialVelocityY;
 
     public ChessStepMovement(float jumpPower, float delay, float speed)
     {
@@ -35,7 +35,7 @@ class ChessStepMovement : IMovement
         this.initialVelocityY = jumpPower;
     }
 
-    public void CalculateMovement(Transform transform)
+    public virtual void CalculateMovement(Transform transform)
     {
         Timer += Time.deltaTime;
 
@@ -43,7 +43,7 @@ class ChessStepMovement : IMovement
         {
             Timer = 0;
             startPos = transform.position;
-            targetPos = transform.position + (GameManager.Instance.player.transform.position - transform.position).normalized;
+            targetPos = transform.position + (GameManager.Instance.player.transform.position - transform.position).normalized * speed;
             elapsedTime = 0;
             isJumping = true;
         }
@@ -66,7 +66,7 @@ class ChessStepMovement : IMovement
         }
     }
 
-    float func(float x)
+    protected float func(float x)
     {
         return -1 * Mathf.Pow(2*x - 1, 2) + 1;
     }

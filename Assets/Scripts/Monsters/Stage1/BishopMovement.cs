@@ -1,65 +1,58 @@
-using System.Collections;
-using DG.Tweening;
+
 using UnityEngine;
 
-public class BishopMovement :  NormalMonster
+public class BishopMovement : NormalMonster
 {
-    public Animator animator;
+    public bool isMoving { get; private set; }
+    public float amplitude = .1f;
+    public float frequency = 2;
     protected override void Start()
     {
-        movement = new ChessBishopMovement(this);
+        movement = new ChessBishopMovement(this, moveSpeed, frequency, amplitude);
         base.Start();
+    }
+    public void StartMovement()
+    {
+        isMoving = true;
+    }
+    public void StopMovement()
+    {
+        isMoving = false;
     }
 }
 class ChessBishopMovement : IMovement
 {
-    
-    float length = 0;
-    float delay = 0;
-    float duration =0;
-    Vector2 c = Vector2.zero;
-    Vector2 p = Vector2.zero;
-    Vector2 t = Vector2.zero;
-    BishopMovement tr = null;
+    Vector2 targetDir;
+    BishopMovement bishop;
+    float speed = 1;
+    float d = 0.1f;
+    float amplitude;
+    float frequency;
 
-    Tween activeTween = null;
-    public ChessBishopMovement(BishopMovement tr ,float len = 5, float delay = 3, float duration = 1 )
+    public ChessBishopMovement(BishopMovement bishop, float speed, float frequency,float amplitude)
     {
-        length = len;
-        this.delay = delay;
-        this.duration = duration;
-        this.tr =tr;
+        this.bishop = bishop;
+        this.speed = speed;
+        this.amplitude = amplitude;
+        this.frequency = frequency;
     }
+
     public void CalculateMovement(Transform transform)
     {
-        Vector2 currentPosition = transform.position;
-        Vector2 targetPosition = currentPosition + new Vector2(length, length); // 예제: 대각선 이동
-
-        if (activeTween == null || (bool)!activeTween?.IsPlaying())
+        if (bishop.isMoving)
         {
-            startmotion(currentPosition, targetPosition);
+            d = 0.1f;
+            transform.position += (Vector3)targetDir * speed * Time.deltaTime;
+        }
+        else
+        {
+            d += Time.deltaTime * frequency;
+            targetDir = (GameManager.Instance.player.transform.position - transform.position).normalized;
+            transform.position += new Vector3(0, Mathf.Sin(d) * amplitude * Time.deltaTime, 0);
+
         }
     }
-    
-    void startmotion(Vector2 currentPosition, Vector2 targetPosition)
-    {
-        var dir = targetPosition - currentPosition;
-        dir = dir.normalized;
-        c = currentPosition;
-        t = dir * length; 
-        
 
-        activeTween = DOVirtual.DelayedCall(delay, () =>
-        {
-            tr.animator.SetTrigger("StartTrigger");
-            Vector2 startPosition = c; // 현재 위치
-            Vector2 endPosition = t; // 목표 위치
-            // Lerp와 유사한 트윈 설정
-            DOTween.To(() => 0f, (val) => 
-            {
-               p = Vector2.Lerp(c,t,val);
-            },1f,duration).SetEase(Ease.Linear);
-        });
-    }
-    
+
+
 }
