@@ -16,7 +16,9 @@ public class HolyWater : Weapon.MainWeapon
         weaponType = WeaponType.HolyWater;
         weaponAttackDirectionType = Weapon.WeaponAttackDirectionType.Aim;
         weaponPositionXOffset = 0.2f;
+        InitPool("HolyWater");
     }
+
 
     public override void InitStat()
     {

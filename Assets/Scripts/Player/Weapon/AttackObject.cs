@@ -7,6 +7,8 @@ using DG.Tweening;
 
 public abstract class AttackObject : MonoBehaviour
 {
+    protected bool isUsingPool = false;
+    protected string prefabName;
     public float attackDamage;
     public float attackRange;
     public int attackIntervalInTicks;
@@ -62,6 +64,39 @@ public abstract class AttackObject : MonoBehaviour
         contactFilter.SetLayerMask(monsterLayer);
         attackCollider = colliderObject.GetComponent<Collider2D>() ?? new Collider2D();
 
+    }
+
+    protected void InitPool(string name, int poolSize = 10)
+    {
+        string path = $"Prefabs/Player/Weapon/{name}";
+        name = name.Split('/').Last();
+        GameObject prefab = Resources.Load<GameObject>(path);
+        if (prefab == null)
+        {
+#if UNITY_EDITOR
+            DebugConsole.Line errorLog = new()
+            {
+                text = $"[{GameManager.Instance.gameTimer}] Failed to load drop item prefab {name}",
+                messageType = DebugConsole.MessageType.Local,
+                tick = GameManager.Instance.gameTimer
+            };
+            DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
+            return;
+#endif
+        }
+        else
+        {
+            ObjectPoolManager.Instance.RegisterObjectPool(name, prefab, null, poolSize);
+            isUsingPool = true;
+        }
+    }
+
+    protected virtual void OnDestroy()
+    {
+        if (isUsingPool)
+        {
+            ObjectPoolManager.Instance.UnregisterObjectPool(prefabName);
+        }
     }
 
     protected virtual void Start()

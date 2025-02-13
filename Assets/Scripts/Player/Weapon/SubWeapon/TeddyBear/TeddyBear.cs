@@ -8,6 +8,7 @@ public class TeddyBear : Weapon.SubWeapon
     protected override void Awake()
     {
         weaponType = WeaponType.TeddyBear;
+        InitPool("TeddyBear");
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)

@@ -154,4 +154,24 @@ public class DropItemManager : Singleton<DropItemManager>
         experience.SetExperienceItemLevel(level);
         experience.transform.position = position;
     }
+
+    // <summary>
+    // 현재 스테이지의 모든 드랍 아이템들을 리턴하는 함수
+    // </summary>
+    public List<string> GetDropItems()
+    {
+        if (currentStageDropItemData == null)
+        {
+            return new List<string>();
+        }
+        List<string> dropItems = new();
+        for (int i = 0; i < currentStageDropItemData.Count; i++)
+        {
+            string itemId = currentStageDropItemData[i]["itemId"].ToString();
+            Item.DropItemType parsedItemId = (Item.DropItemType)Enum.Parse(typeof(Item.DropItemType), itemId);
+            string itemName = Enum.GetName(typeof(Item.DropItemType), parsedItemId);
+            dropItems.Add(itemName);
+        }
+        return dropItems;
+    }
 }
