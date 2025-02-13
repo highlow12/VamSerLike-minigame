@@ -28,6 +28,7 @@ public class ShotgunObject : AttackObject
     {
         base.Awake();
         animator = GetComponent<Animator>();
+        InitPool("MainWeapon/ShotgunBullet");
     }
 
     protected override void Start()

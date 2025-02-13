@@ -9,6 +9,7 @@ public class PaperPlane : Weapon.SubWeapon
     protected override void Awake()
     {
         weaponType = WeaponType.PaperPlane;
+        InitPool("PaperPlane");
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)
