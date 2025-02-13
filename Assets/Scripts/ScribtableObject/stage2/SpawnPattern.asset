@@ -197,7 +197,7 @@ MonoBehaviour:
     wiggle: 0
     angle: 0
     monsterName: Suwii
-  - patternType: 0
+  - patternType: 2
     startTime: 160
     duration: 0
     monsterCount: 5

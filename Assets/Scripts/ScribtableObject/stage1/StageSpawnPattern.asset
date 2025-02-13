@@ -303,7 +303,7 @@ MonoBehaviour:
     monsterName: Bishop
   - patternType: 3
     startTime: 50
-    duration: 40
+    duration: 60
     monsterCount: 1
     radius: 0
     wiggle: 0

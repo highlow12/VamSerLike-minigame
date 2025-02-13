@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsters:
   - monsterName: Suwii
-    monsterPrefab: {fileID: 0}
+    monsterPrefab: {fileID: 7577924051601286063, guid: 81f4afb749d28bb40a4ee9748febbce7, type: 3}
     spawnRate: 3

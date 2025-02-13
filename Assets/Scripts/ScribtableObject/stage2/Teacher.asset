@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsters:
   - monsterName: Teacher
-    monsterPrefab: {fileID: 0}
+    monsterPrefab: {fileID: 5001692169701588040, guid: 33baf82f11c0b6940885778426125491, type: 3}
     spawnRate: 3
