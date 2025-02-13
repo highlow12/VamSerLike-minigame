@@ -91,7 +91,7 @@ namespace Weapon
             baseProjectileSpeed = weaponStat.projectileSpeed;
             if (attackObject != null)
             {
-                weaponScript.colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
+                weaponScript.colliderObject.transform.localScale = new Vector3(baseAttackRange, baseAttackRange, 1);
                 attackObjectAnimator = attackObject.GetComponent<Animator>();
             }
         }
