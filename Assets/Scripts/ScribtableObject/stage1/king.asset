@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: King
   m_EditorClassIdentifier: 
   monsters:
-  - monsterName: king
+  - monsterName: King
     monsterPrefab: {fileID: 4673368339130091960, guid: 0fa8ca4cb877e0743a20d9d0b7066298, type: 3}
     spawnRate: 1

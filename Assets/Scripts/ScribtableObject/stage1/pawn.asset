@@ -28,3 +28,6 @@ MonoBehaviour:
   - monsterName: Queen
     monsterPrefab: {fileID: 8907515802758107829, guid: b0de641703784cf45814f41d9dfdbb95, type: 3}
     spawnRate: 1
+  - monsterName: Bishop
+    monsterPrefab: {fileID: 5172718507834586352, guid: 96aa07af3ddcb20468cb3ad527aec4fe, type: 3}
+    spawnRate: 1
