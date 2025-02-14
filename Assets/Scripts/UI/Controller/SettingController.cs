@@ -35,12 +35,12 @@ public class SettingsController : MonoBehaviour
 
     private void InitializeToggles()
     {
-        // ÀúÀåµÈ ¼³Á¤ ºÒ·¯¿À±â
+        // ì €ì¥ëœ ì„¤ì • ë¶ˆëŸ¬ì˜¤ê¸°
         effectSoundToggle.isOn = PlayerPrefs.GetInt(EFFECT_SOUND_KEY, 1) == 1;
         backgroundMusicToggle.isOn = PlayerPrefs.GetInt(BACKGROUND_MUSIC_KEY, 1) == 1;
         vibrationToggle.isOn = PlayerPrefs.GetInt(VIBRATION_KEY, 1) == 1;
 
-        // ÃÊ±â ÀÌ¹ÌÁö ¼³Á¤
+        // ì´ˆê¸° ì´ë¯¸ì§€ ì„¤ì •
         UpdateToggleImage(effectSoundImage, effectSoundToggle.isOn);
         UpdateToggleImage(backgroundMusicImage, backgroundMusicToggle.isOn);
         UpdateToggleImage(vibrationImage, vibrationToggle.isOn);
@@ -48,19 +48,22 @@ public class SettingsController : MonoBehaviour
 
     private void SetupToggleListeners()
     {
-        effectSoundToggle.onValueChanged.AddListener((value) => {
+        effectSoundToggle.onValueChanged.AddListener((value) =>
+        {
             UpdateToggleImage(effectSoundImage, value);
             PlayerPrefs.SetInt(EFFECT_SOUND_KEY, value ? 1 : 0);
             ApplyEffectSoundSetting(value);
         });
 
-        backgroundMusicToggle.onValueChanged.AddListener((value) => {
+        backgroundMusicToggle.onValueChanged.AddListener((value) =>
+        {
             UpdateToggleImage(backgroundMusicImage, value);
             PlayerPrefs.SetInt(BACKGROUND_MUSIC_KEY, value ? 1 : 0);
             ApplyBackgroundMusicSetting(value);
         });
 
-        vibrationToggle.onValueChanged.AddListener((value) => {
+        vibrationToggle.onValueChanged.AddListener((value) =>
+        {
             UpdateToggleImage(vibrationImage, value);
             PlayerPrefs.SetInt(VIBRATION_KEY, value ? 1 : 0);
             ApplyVibrationSetting(value);
@@ -72,31 +75,31 @@ public class SettingsController : MonoBehaviour
         toggleImage.sprite = isOn ? toggleOnSprite : toggleOffSprite;
     }
 
-    // È¿°úÀ½ ¼³Á¤ Àû¿ë
+    // íš¨ê³¼ìŒ ì„¤ì • ì ìš©
     private void ApplyEffectSoundSetting(bool isOn)
     {
-        // AudioManager µîÀ» ÅëÇØ È¿°úÀ½ ¼³Á¤ Àû¿ë
-        Debug.Log($"È¿°úÀ½ {(isOn ? "ÄÑÁü" : "²¨Áü")}");
+        // AudioManager ë“±ì„ í†µí•´ íš¨ê³¼ìŒ ì„¤ì • ì ìš©
+        Debug.Log($"íš¨ê³¼ìŒ {(isOn ? "ì¼œì§" : "êº¼ì§")}");
     }
 
-    // ¹è°æÀ½¾Ç ¼³Á¤ Àû¿ë
+    // ë°°ê²½ìŒì•… ì„¤ì • ì ìš©
     private void ApplyBackgroundMusicSetting(bool isOn)
     {
-        // AudioManager µîÀ» ÅëÇØ ¹è°æÀ½¾Ç ¼³Á¤ Àû¿ë
-        Debug.Log($"¹è°æÀ½¾Ç {(isOn ? "ÄÑÁü" : "²¨Áü")}");
+        // AudioManager ë“±ì„ í†µí•´ ë°°ê²½ìŒì•… ì„¤ì • ì ìš©
+        Debug.Log($"ë°°ê²½ìŒì•… {(isOn ? "ì¼œì§" : "êº¼ì§")}");
     }
 
-    // Áøµ¿ ¼³Á¤ Àû¿ë
+    // ì§„ë™ ì„¤ì • ì ìš©
     private void ApplyVibrationSetting(bool isOn)
     {
         if (isOn)
         {
-            // Áøµ¿ È°¼ºÈ­
+            // ì§„ë™ í™œì„±í™”
 #if UNITY_ANDROID
                 Handheld.Vibrate();
 #endif
         }
-        Debug.Log($"Áøµ¿ {(isOn ? "ÄÑÁü" : "²¨Áü")}");
+        Debug.Log($"ì§„ë™ {(isOn ? "ì¼œì§" : "êº¼ì§")}");
     }
 
     private void SetupQuitButton()
@@ -114,6 +117,6 @@ public class SettingsController : MonoBehaviour
 #else
         Application.Quit();
 #endif
-        Debug.Log("°ÔÀÓ Á¾·á");
+        Debug.Log("ê²Œì„ ì¢…ë£Œ");
     }
 }

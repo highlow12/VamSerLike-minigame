@@ -1,74 +1,68 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections;
+using System;
 
 public class ExperienceBar : MonoBehaviour
 {
-    public Slider experienceSlider; // °æÇèÄ¡ ½½¶óÀÌ´õ
-    public Text levelText;          // ·¹º§ ÅØ½ºÆ®
-    public float slideSpeed = 5f;   // ½½¶óÀÌµå ¼Óµµ
-
-    private int playerLevel = 1;    // ÇöÀç ÇÃ·¹ÀÌ¾î ·¹º§
-    private int currentXP = 0;      // ÇöÀç °æÇèÄ¡
-    private int xpToNextLevel = 100; // ´ÙÀ½ ·¹º§±îÁö ÇÊ¿äÇÑ °æÇèÄ¡
+    public Slider experienceSlider; // ê²½í—˜ì¹˜ ìŠ¬ë¼ì´ë”
+    public TextMeshProUGUI levelText;          // ë ˆë²¨ í…ìŠ¤íŠ¸
+    Coroutine slideCoroutine;   // ìŠ¬ë¼ì´ë“œ ì½”ë£¨í‹´
+    public float slideSpeed = 5f;   // ìŠ¬ë¼ì´ë“œ ì†ë„
+    private long playerLevel = 1;    // í˜„ì¬ í”Œë ˆì´ì–´ ë ˆë²¨
+    private float currentXP = 0;     // í˜„ì¬ ê²½í—˜ì¹˜
+    private float xpToNextLevel = 100; // ë‹¤ìŒ ë ˆë²¨ê¹Œì§€ í•„ìš”í•œ ê²½í—˜ì¹˜
 
     void Start()
     {
         UpdateUI();
     }
 
-    // ÇöÀç °æÇèÄ¡¸¦ ¹İÈ¯
-    public int GetCurrentXP()
+    // í˜„ì¬ ê²½í—˜ì¹˜ë¥¼ ë°˜í™˜
+    public float GetCurrentXP()
     {
         return currentXP;
     }
 
-    // °æÇèÄ¡ Á¤»ê ¹× UI ¾÷µ¥ÀÌÆ®
-    public void AddExperience(int amount)
+    // ìŠ¬ë¼ì´ë“œ ì• ë‹ˆë©”ì´ì…˜ ì½”ë£¨í‹´
+    private IEnumerator SlideExperience(long targetLevel, float targetExp)
     {
-        StartCoroutine(SlideExperience(amount));
-    }
-
-    // ½½¶óÀÌµå ¾Ö´Ï¸ŞÀÌ¼Ç ÄÚ·çÆ¾
-    private IEnumerator SlideExperience(int amount)
-    {
-        int targetXP = currentXP + amount;
-
-        while (currentXP < targetXP)
+        xpToNextLevel = GameManager.Instance.GetExperienceToNextLevel(playerLevel);
+        while (playerLevel != targetLevel || currentXP != targetExp)
         {
-            // ½½¶óÀÌ´õ °ª Áõ°¡
-            currentXP = Mathf.Min(currentXP + Mathf.CeilToInt(slideSpeed * Time.deltaTime), targetXP);
-            experienceSlider.value = (float)currentXP / xpToNextLevel;
-
-            // ·¹º§ ¾÷ Ã¼Å©
+            if (targetLevel == playerLevel)
+            {
+                currentXP = Mathf.Min(currentXP + Mathf.CeilToInt(slideSpeed * Time.deltaTime), targetExp);
+            }
+            else
+            {
+                currentXP = Mathf.Min(currentXP + Mathf.CeilToInt(slideSpeed * Time.deltaTime), xpToNextLevel);
+            }
             if (currentXP >= xpToNextLevel)
             {
-                // ÃÊ°úµÈ °æÇèÄ¡ °è»ê
-                int overflowXP = currentXP - xpToNextLevel;
-                currentXP = 0;
-                LevelUp();
-
-                // ÃÊ°ú °æÇèÄ¡¸¦ ´ÙÀ½ ´Ü°è¿¡ ¹İ¿µ
-                targetXP = overflowXP;
+                playerLevel++;
+                currentXP -= xpToNextLevel;
+                xpToNextLevel = GameManager.Instance.GetExperienceToNextLevel(playerLevel);
             }
-
+            UpdateUI();
             yield return null;
         }
-
-        UpdateUI();
+        currentXP = targetExp;
+        playerLevel = targetLevel;
+        slideCoroutine = null;
     }
 
-    // ·¹º§ ¾÷ Ã³¸®
-    private void LevelUp()
+    public void Sync(long level, float experience)
     {
-        playerLevel++;
-        xpToNextLevel = Mathf.FloorToInt(xpToNextLevel * 1.2f); // ·¹º§¾÷ ½Ã ÇÊ¿ä °æÇèÄ¡ Áõ°¡
+        slideCoroutine ??= StartCoroutine(SlideExperience(level, experience));
     }
 
-    // UI ¾÷µ¥ÀÌÆ®
+
+    // UI ì—…ë°ì´íŠ¸
     private void UpdateUI()
     {
         levelText.text = "Lv. " + playerLevel;
-        experienceSlider.value = (float)currentXP / xpToNextLevel;
+        experienceSlider.value = currentXP / xpToNextLevel;
     }
 }
