@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecfca90069ef43745a15e5f14376c714, type: 3}
   m_Name: SpawnPattern
   m_EditorClassIdentifier: 
+  jsonFile: {fileID: 0}
   patterns:
   - patternType: 0
     startTime: 0

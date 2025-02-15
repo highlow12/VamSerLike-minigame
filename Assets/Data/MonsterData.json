@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Pawn",
+    "korName": "폰"
+  },
+  {
+    "name": "Knight",
+    "korName": "나이트"
+  },
+  {
+    "name": "Bishop",
+    "korName": "비숍"
+  },
+  {
+    "name": "Queen",
+    "korName": "퀸"
+  },
+  {
+    "name": "King",
+    "korName": "킹"
+  },
+  {
+    "name": "Yugosang",
+    "korName": "여고생"
+  },
+  {
+    "name": "Suwii",
+    "korName": "수위"
+  },
+  {
+    "name": "NamGosang",
+    "korName": "남고생"
+  },
+  {
+    "name": "Teacher",
+    "korName": "선생님"
+  },
+  {
+    "name": "Principal",
+    "korName": "교장선생님"
+  }
+]

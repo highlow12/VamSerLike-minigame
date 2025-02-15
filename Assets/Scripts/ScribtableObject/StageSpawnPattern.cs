@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 [System.Serializable]
 public struct SpawnPatternData
@@ -25,6 +25,8 @@ public struct SpawnPatternData
 [CreateAssetMenu(fileName = "StageSpawnPattern", menuName = "Scriptable Objects/StageSpawnPattern")]
 public class StageSpawnPattern : ScriptableObject
 {
+    [Tooltip("데이터를 불러올 JSON 파일")]
+    public TextAsset jsonFile;
     [Tooltip("스폰 패턴 데이터를 저장하는 리스트")]
     public List<SpawnPatternData> patterns = new List<SpawnPatternData>();
 

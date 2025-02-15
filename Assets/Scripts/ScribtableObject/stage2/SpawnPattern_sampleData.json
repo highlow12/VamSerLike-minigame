@@ -1,0 +1,542 @@
+[
+  {
+    "patternType": 0,
+    "startTime": 0.0,
+    "duration": 0.0,
+    "monsterCount": 3,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 5.0,
+    "duration": 0.0,
+    "monsterCount": 6,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 10.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 20.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 30.0,
+    "duration": 0.0,
+    "monsterCount": 5,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 40.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 50.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 70.0,
+    "duration": 0.0,
+    "monsterCount": 30,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 60.0,
+    "duration": 0.0,
+    "monsterCount": 15,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 180.0,
+    "duration": 0.0,
+    "monsterCount": 5,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 170.0,
+    "duration": 0.0,
+    "monsterCount": 3,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 190.0,
+    "duration": 0.0,
+    "monsterCount": 3,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 250.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 270.0,
+    "duration": 0.0,
+    "monsterCount": 30,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 290.0,
+    "duration": 0.0,
+    "monsterCount": 30,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 300.0,
+    "duration": 0.0,
+    "monsterCount": 50,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 320.0,
+    "duration": 0.0,
+    "monsterCount": 60,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 330.0,
+    "duration": 0.0,
+    "monsterCount": 70,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Yugosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 30.0,
+    "duration": 0.0,
+    "monsterCount": 1,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 40.0,
+    "duration": 0.0,
+    "monsterCount": 3,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 50.0,
+    "duration": 0.0,
+    "monsterCount": 7,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 60.0,
+    "duration": 0.0,
+    "monsterCount": 13,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 80.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 160.0,
+    "duration": 0.0,
+    "monsterCount": 5,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 2,
+    "startTime": 170.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 180.0,
+    "duration": 0.0,
+    "monsterCount": 15,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 180.0,
+    "duration": 0.0,
+    "monsterCount": 15,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 190.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 190.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 200.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 210.0,
+    "duration": 0.0,
+    "monsterCount": 5,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 210.0,
+    "duration": 0.0,
+    "monsterCount": 5,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 220.0,
+    "duration": 0.0,
+    "monsterCount": 3,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 220.0,
+    "duration": 0.0,
+    "monsterCount": 3,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 230.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 250.0,
+    "duration": 0.0,
+    "monsterCount": 15,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 260.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 270.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 280.0,
+    "duration": 0.0,
+    "monsterCount": 40,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 290.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 290.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 320.0,
+    "duration": 0.0,
+    "monsterCount": 30,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 320.0,
+    "duration": 0.0,
+    "monsterCount": 30,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Suwii"
+  },
+  {
+    "patternType": 0,
+    "startTime": 200.0,
+    "duration": 0.0,
+    "monsterCount": 2,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "NamGosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 200.0,
+    "duration": 0.0,
+    "monsterCount": 2,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "NamGosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 200.0,
+    "duration": 0.0,
+    "monsterCount": 2,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "NamGosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 230.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "NamGosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 240.0,
+    "duration": 0.0,
+    "monsterCount": 6,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "NamGosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 260.0,
+    "duration": 0.0,
+    "monsterCount": 15,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "NamGosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 270.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "NamGosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 280.0,
+    "duration": 0.0,
+    "monsterCount": 25,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "NamGosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 290.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "NamGosang"
+  },
+  {
+    "patternType": 0,
+    "startTime": 340.0,
+    "duration": 0.0,
+    "monsterCount": 1,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Principal"
+  },
+  {
+    "patternType": 0,
+    "startTime": 100.0,
+    "duration": 0.0,
+    "monsterCount": 1,
+    "radius": 0.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Teacher"
+  }
+]
