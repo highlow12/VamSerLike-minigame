@@ -1039,7 +1039,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &619394801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1141,13 +1141,15 @@ MonoBehaviour:
   playerScript: {fileID: 201440466}
   playerLight: {fileID: 1983434721}
   player: {fileID: 201440458}
+  playerAttack: {fileID: 0}
   gameState: 1
+  playerBuffEffects: []
   gameTimer: 0
+  currentStage: 0
   dragDistanceMultiplier: 1
   dragSpeedMultiplier: 1
   playerExperienceMultiplier: 1
   experienceToLevelUp: 100
-  expereinceToLevelUpMultiplier: 1.05
   playerExperience: 0
   playerLevel: 1
 --- !u!4 &857343107
@@ -1189,18 +1191,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afaffe940579c4aa29f4a2e8d24b7b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultParent: {fileID: 0}
   objectInfos:
   - objectName: ShotgunBullet
     prefab: {fileID: 6311800377638777129, guid: 8cd7f0c9cd10b4e28983a77c7cf213da, type: 3}
+    parent: {fileID: 0}
     count: 20
   - objectName: HolyWater
     prefab: {fileID: 6814831322662165562, guid: 9b013d0dc3eb34455bed2d905b2a5853, type: 3}
+    parent: {fileID: 0}
     count: 10
   - objectName: Experience
     prefab: {fileID: 6338815786346453224, guid: af836f2d7a0c344a48289bc54cebe548, type: 3}
+    parent: {fileID: 0}
     count: 10
   - objectName: PaperPlane
     prefab: {fileID: 5642043172849326268, guid: 0ea0ad71bc023415690f94778c98b171, type: 3}
+    parent: {fileID: 0}
     count: 10
 --- !u!1 &934590549 stripped
 GameObject:
@@ -1420,7 +1427,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!43 &1083019314
+--- !u!43 &1161612497
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3402,6 +3409,63 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1008417}
   m_SourcePrefab: {fileID: 100100000, guid: 1e591596c3318b641a146371c437f620, type: 3}
+--- !u!1001 &1143830544141150386
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4353014510710910821, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.61
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353014510710910821, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353014510710910821, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353014510710910821, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353014510710910821, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353014510710910821, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353014510710910821, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353014510710910821, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353014510710910821, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353014510710910821, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265120688610369667, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
+      propertyPath: m_Name
+      value: Deepseafish
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2b8336c88f91fb54f955d20f24e97291, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3421,3 +3485,4 @@ SceneRoots:
   - {fileID: 2107821663}
   - {fileID: 1938648242}
   - {fileID: 677501316212349983}
+  - {fileID: 1143830544141150386}
