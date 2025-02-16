@@ -9,6 +9,7 @@ public class ClayKnife : Weapon.SubWeapon
     protected override void Awake()
     {
         weaponType = WeaponType.ClayKnife;
+        InitPool("ClayKnife");
     }
     public override IEnumerator Attack(Vector2 attackDirection)
     {

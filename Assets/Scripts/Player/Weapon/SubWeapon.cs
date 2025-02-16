@@ -14,6 +14,8 @@ namespace Weapon
             FamillyPicture,
             ClayKnife,
         }
+        protected bool isUsingPool = false;
+        protected string prefabName;
         public WeaponType weaponType;
         public string displayName;
         public string displayWeaponAttackDirectionType;
@@ -72,6 +74,38 @@ namespace Weapon
             attackObject = Instantiate(attackObject, transform);
             weaponScript = attackObject.GetComponent<AttackObject>();
         }
+        protected void InitPool(string name, int poolSize = 10)
+        {
+            string path = $"Prefabs/Player/Weapon/SubWeapon/{name}";
+            GameObject prefab = Resources.Load<GameObject>(path);
+            if (prefab == null)
+            {
+#if UNITY_EDITOR
+                DebugConsole.Line errorLog = new()
+                {
+                    text = $"[{GameManager.Instance.gameTimer}] Failed to load drop item prefab {name}",
+                    messageType = DebugConsole.MessageType.Local,
+                    tick = GameManager.Instance.gameTimer
+                };
+                DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
+                return;
+#endif
+            }
+            else
+            {
+                ObjectPoolManager.Instance.RegisterObjectPool(name, prefab, null, poolSize);
+                isUsingPool = true;
+            }
+        }
+
+        protected void OnDestroy()
+        {
+            if (isUsingPool)
+            {
+                ObjectPoolManager.Instance.UnregisterObjectPool(prefabName);
+            }
+        }
+
         protected virtual void InitStat()
         {
             weaponStat = WeaponStatProvider.Instance.subWeaponStats.Find(x => x.weaponType == weaponType && x.weaponGrade == weaponGrade);
