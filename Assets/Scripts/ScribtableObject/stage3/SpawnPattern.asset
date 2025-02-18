@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ecfca90069ef43745a15e5f14376c714, type: 3}
-  m_Name: StageSpawnPattern
+  m_Name: SpawnPattern
   m_EditorClassIdentifier: 
   patterns: []
