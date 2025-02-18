@@ -42,5 +42,9 @@
   {
     "name": "DeepseaFish",
     "korName": "심해어"
+  },
+  {
+    "name":"Jellyfish",
+    "korName":"해파리"
   }
 ]
