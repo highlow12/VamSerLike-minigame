@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using System;
 
 [DefaultExecutionOrder(-100)]
 public class ObjectPoolManager : MonoBehaviour
@@ -28,7 +29,7 @@ public class ObjectPoolManager : MonoBehaviour
     public Transform defaultParent;
 
     [SerializeField]
-    private ObjectInfo[] objectInfos = null;
+    private List<ObjectInfo> objectInfos = new();
 
     // 생성할 오브젝트의 key값지정을 위한 변수
     private string objectName;
@@ -58,54 +59,87 @@ public class ObjectPoolManager : MonoBehaviour
     {
         IsReady = false;
 
-        for (int idx = 0; idx < objectInfos.Length; idx++)
+        for (int idx = 0; idx < objectInfos.Count; idx++)
         {
-            IObjectPool<GameObject> pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool,
-            OnDestroyPoolObject, true, objectInfos[idx].count, objectInfos[idx].count);
-
-            if (goDic.ContainsKey(objectInfos[idx].objectName))
-            {
-                Debug.LogFormat("{0} 이미 등록된 오브젝트입니다.", objectInfos[idx].objectName);
-                return;
-            }
-
-            goDic.Add(objectInfos[idx].objectName, objectInfos[idx].prefab);
-            objectPoolDic.Add(objectInfos[idx].objectName, pool);
-
-            // 미리 오브젝트 생성 해놓기
-            for (int i = 0; i < objectInfos[idx].count; i++)
-            {
-                objectName = objectInfos[idx].objectName;
-                if (objectInfos[idx].parent != null)
-                {
-                    objectParent = objectInfos[idx].parent;
-                }
-                else
-                {
-                    GameObject parent = GameObject.Find($"{objectInfos[idx].prefab.tag}Pool");
-                    if (parent == null)
-                    {
-                        objectParent = defaultParent;
-                    }
-                    else
-                    {
-                        objectParent = parent.transform;
-                    }
-                }
-                PoolAble poolAbleGo = CreatePooledItem().GetComponent<PoolAble>();
-                poolAbleGo.Pool.Release(poolAbleGo.gameObject);
-                objectParent = null;
-            }
+            RegisterObjectPool(objectInfos[idx].objectName, objectInfos[idx].prefab, objectInfos[idx].parent, objectInfos[idx].count);
         }
 
         Debug.Log("오브젝트풀링 준비 완료");
         IsReady = true;
     }
 
+    // dynamic object pool register
+    public void RegisterObjectPool(string objectName, GameObject prefab, Transform parent, int count)
+    {
+        IObjectPool<GameObject> pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool,
+            OnDestroyPoolObject, true, count, count);
+
+        if (goDic.ContainsKey(objectName))
+        {
+            Debug.LogFormat("{0} 이미 등록된 오브젝트입니다.", objectName);
+            return;
+        }
+
+        goDic.Add(objectName, prefab);
+        objectPoolDic.Add(objectName, pool);
+        if (parent != null)
+        {
+            objectParent = parent;
+        }
+        else
+        {
+            GameObject parentGo = GameObject.Find($"{prefab.tag}Pool");
+            if (parentGo == null)
+            {
+                objectParent = defaultParent;
+            }
+            else
+            {
+                objectParent = parentGo.transform;
+            }
+        }
+        // 미리 오브젝트 생성 해놓기
+        for (int i = 0; i < count; i++)
+        {
+            this.objectName = objectName;
+
+            PoolAble poolAbleGo = CreatePooledItem().GetComponent<PoolAble>();
+            if (objectInfos.Find(x => x.objectName == objectName) == null)
+            {
+                ObjectInfo objectInfo = new()
+                {
+                    objectName = objectName,
+                    prefab = prefab,
+                    parent = objectParent,
+                    count = count
+                };
+                objectInfos.Add(objectInfo);
+            }
+            poolAbleGo.Pool.Release(poolAbleGo.gameObject);
+            objectParent = null;
+        }
+    }
+
+    // unregister object pool
+    public void UnregisterObjectPool(string objectName)
+    {
+        if (objectPoolDic.ContainsKey(objectName) == false)
+        {
+            Debug.LogFormat("{0} 오브젝트풀에 등록되지 않은 오브젝트입니다.", objectName);
+            return;
+        }
+        IObjectPool<GameObject> pool = objectPoolDic[objectName];
+        pool.Clear();
+        objectPoolDic.Remove(objectName);
+        goDic.Remove(objectName);
+        objectInfos.Remove(objectInfos.Find(x => x.objectName == objectName));
+
+    }
+
     // 생성
     private GameObject CreatePooledItem()
     {
-        Transform objectParent = System.Array.Find(objectInfos, x => x.objectName == objectName).parent;
+        Transform objectParent = objectInfos.Find(x => x.objectName == objectName)?.parent;
         GameObject poolGo = Instantiate(goDic[objectName], this.objectParent ? this.objectParent : objectParent);
         poolGo.GetComponent<PoolAble>().Pool = objectPoolDic[objectName];
         return poolGo;

@@ -16,6 +16,15 @@ MonoBehaviour:
   - monsterName: Cockroach
     monsterPrefab: {fileID: 2806064885155864291, guid: aaca0779e3f04264383a1d211cee58cb, type: 3}
     spawnRate: 1
-  - monsterName: Cockroach
+  - monsterName: Fly
+    monsterPrefab: {fileID: 7292265682558888406, guid: 975419a9016f3754590f898ceeac2c1f, type: 3}
+    spawnRate: 1
+  - monsterName: Gentle
+    monsterPrefab: {fileID: 758608936801536891, guid: 8840625118444814e9de679033579d4c, type: 3}
+    spawnRate: 1
+  - monsterName: Mouse
+    monsterPrefab: {fileID: 8569189442785978047, guid: 9c6732d2f848b694fabcd71ffdf0c0e1, type: 3}
+    spawnRate: 1
+  - monsterName: Trash
     monsterPrefab: {fileID: 2806064885155864291, guid: aaca0779e3f04264383a1d211cee58cb, type: 3}
     spawnRate: 1

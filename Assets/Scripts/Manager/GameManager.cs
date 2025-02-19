@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -44,6 +45,14 @@ public class GameManager : Singleton<GameManager>
 
      public bool SetStage(int stageNumber)
      {
+          List<string> existingDropItems = DropItemManager.Instance.GetDropItems();
+          if (existingDropItems.Count > 0)
+          {
+               foreach (string dropItem in existingDropItems)
+               {
+                    ObjectPoolManager.Instance.UnregisterObjectPool(dropItem);
+               }
+          }
           bool result = DropItemManager.Instance.SetProbabilityCard(BackendDataManager.Instance.probabilityCardList.FirstOrDefault(x => x.probabilityName == $"Stage{stageNumber}_DropItemProb"));
           if (!result)
           {
@@ -60,6 +69,30 @@ public class GameManager : Singleton<GameManager>
           else
           {
                currentStage = stageNumber;
+               List<string> dropItems = DropItemManager.Instance.GetDropItems();
+               foreach (string dropItem in dropItems)
+               {
+                    string path = $"Prefabs/In-game/DropItem/{dropItem}";
+                    GameObject dropItemPrefab = Resources.Load<GameObject>(path);
+                    if (dropItemPrefab == null)
+                    {
+#if UNITY_EDITOR
+                         DebugConsole.Line errorLog = new()
+                         {
+                              text = $"[{gameTimer}] Failed to load drop item prefab {dropItem}",
+                              messageType = DebugConsole.MessageType.Local,
+                              tick = gameTimer
+                         };
+                         DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
+#endif
+                         continue;
+
+                    }
+                    else
+                    {
+                         ObjectPoolManager.Instance.RegisterObjectPool(dropItem, dropItemPrefab, null, 10);
+                    }
+               }
           }
           return result;
      }

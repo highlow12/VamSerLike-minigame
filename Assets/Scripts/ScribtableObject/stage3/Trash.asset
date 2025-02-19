@@ -9,9 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8c25baea5086534fb090a497655a15f, type: 3}
-  m_Name: WavePatternData
+  m_Script: {fileID: 11500000, guid: ad55ba1d155b5d2458e60592940c7d2b, type: 3}
+  m_Name: Trash
   m_EditorClassIdentifier: 
-  wavePattern:
-  - wavePattern: {fileID: 11400000, guid: ac8f0fe3fc3198f4897d2bfe25f1fc1a, type: 2}
-    waveStartTime: 0
+  monsters:
+  - monsterName: Trash
+    monsterPrefab: {fileID: 0}
+    spawnRate: 0

@@ -21,7 +21,8 @@ namespace Weapon
             public Monster monster;
             public long hitTime;
         }
-
+        protected bool isUsingPool = false;
+        protected string prefabName;
         public GameObject attackObject;
         protected AttackObject weaponScript;
         public string displayName;
@@ -87,6 +88,38 @@ namespace Weapon
             weaponSpriteRenderer = attackObject.GetComponent<SpriteRenderer>();
             weaponScript = attackObject.GetComponent<AttackObject>();
             attackObject.transform.localPosition = new Vector3(weaponPositionXOffset, 0, 0);
+        }
+
+        protected void InitPool(string name, int poolSize = 10)
+        {
+            string path = $"Prefabs/Player/Weapon/MainWeapon/{name}";
+            GameObject prefab = Resources.Load<GameObject>(path);
+            if (prefab == null)
+            {
+#if UNITY_EDITOR
+                DebugConsole.Line errorLog = new()
+                {
+                    text = $"[{GameManager.Instance.gameTimer}] Failed to load drop item prefab {name}",
+                    messageType = DebugConsole.MessageType.Local,
+                    tick = GameManager.Instance.gameTimer
+                };
+                DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
+                return;
+#endif
+            }
+            else
+            {
+                ObjectPoolManager.Instance.RegisterObjectPool(name, prefab, null, poolSize);
+                isUsingPool = true;
+            }
+        }
+
+        protected virtual void OnDestroy()
+        {
+            if (isUsingPool)
+            {
+                ObjectPoolManager.Instance.UnregisterObjectPool(prefabName);
+            }
         }
 
         public virtual void InitStat()

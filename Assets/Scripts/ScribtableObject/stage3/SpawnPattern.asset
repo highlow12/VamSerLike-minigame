@@ -12,4 +12,405 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecfca90069ef43745a15e5f14376c714, type: 3}
   m_Name: SpawnPattern
   m_EditorClassIdentifier: 
-  patterns: []
+  jsonFile: {fileID: 0}
+  patterns:
+  - patternType: 0
+    startTime: 0
+    duration: 0
+    monsterCount: 3
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 5
+    duration: 0
+    monsterCount: 6
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 10
+    duration: 0
+    monsterCount: 10
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 20
+    duration: 0
+    monsterCount: 20
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 30
+    duration: 0
+    monsterCount: 5
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 40
+    duration: 0
+    monsterCount: 10
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 50
+    duration: 0
+    monsterCount: 10
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 60
+    duration: 0
+    monsterCount: 15
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 70
+    duration: 0
+    monsterCount: 30
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 170
+    duration: 0
+    monsterCount: 3
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 180
+    duration: 0
+    monsterCount: 5
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 190
+    duration: 0
+    monsterCount: 3
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 250
+    duration: 0
+    monsterCount: 20
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 270
+    duration: 0
+    monsterCount: 30
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 290
+    duration: 0
+    monsterCount: 30
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 300
+    duration: 0
+    monsterCount: 50
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 320
+    duration: 0
+    monsterCount: 60
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 330
+    duration: 0
+    monsterCount: 70
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Fly
+  - patternType: 0
+    startTime: 30
+    duration: 0
+    monsterCount: 1
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 40
+    duration: 0
+    monsterCount: 3
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 50
+    duration: 0
+    monsterCount: 7
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 60
+    duration: 0
+    monsterCount: 13
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 80
+    duration: 0
+    monsterCount: 20
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 160
+    duration: 0
+    monsterCount: 5
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 170
+    duration: 0
+    monsterCount: 10
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 180
+    duration: 0
+    monsterCount: 15
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 190
+    duration: 0
+    monsterCount: 20
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 200
+    duration: 0
+    monsterCount: 10
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 210
+    duration: 0
+    monsterCount: 5
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 220
+    duration: 0
+    monsterCount: 3
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 230
+    duration: 0
+    monsterCount: 10
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 250
+    duration: 0
+    monsterCount: 15
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 260
+    duration: 0
+    monsterCount: 20
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 270
+    duration: 0
+    monsterCount: 10
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 280
+    duration: 0
+    monsterCount: 40
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 290
+    duration: 0
+    monsterCount: 20
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 310
+    duration: 0
+    monsterCount: 40
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 320
+    duration: 0
+    monsterCount: 30
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 330
+    duration: 0
+    monsterCount: 40
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Gentle
+  - patternType: 0
+    startTime: 200
+    duration: 0
+    monsterCount: 2
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Cockroach
+  - patternType: 0
+    startTime: 210
+    duration: 0
+    monsterCount: 5
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Cockroach
+  - patternType: 0
+    startTime: 220
+    duration: 0
+    monsterCount: 10
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Cockroach
+  - patternType: 0
+    startTime: 230
+    duration: 0
+    monsterCount: 10
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Cockroach
+  - patternType: 0
+    startTime: 240
+    duration: 0
+    monsterCount: 6
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Cockroach
+  - patternType: 0
+    startTime: 260
+    duration: 0
+    monsterCount: 15
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Cockroach
+  - patternType: 0
+    startTime: 270
+    duration: 0
+    monsterCount: 20
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Cockroach
+  - patternType: 0
+    startTime: 280
+    duration: 0
+    monsterCount: 25
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Cockroach
+  - patternType: 0
+    startTime: 290
+    duration: 0
+    monsterCount: 10
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Cockroach
+  - patternType: 0
+    startTime: 100
+    duration: 0
+    monsterCount: 1
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Mouse
+  - patternType: 0
+    startTime: 340
+    duration: 0
+    monsterCount: 1
+    radius: 0
+    wiggle: 0
+    angle: 0
+    monsterName: Trash
