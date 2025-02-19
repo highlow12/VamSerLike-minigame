@@ -38,5 +38,41 @@
   {
     "name": "Principal",
     "korName": "교장선생님"
+  },
+  {
+    "name": "Cockroach",
+    "korName": "바퀴벌레"
+  },
+  {
+    "name": "Gentle",
+    "korName": "구더기"
+  },
+  {
+    "name": "Fly",
+    "korName": "파리"
+  },
+  {
+    "name": "Rat",
+    "korName": "쥐"
+  },
+  {
+    "name": "GarbageMonster",
+    "korName": "쓰레기괴물"
+  },
+  {
+    "name": "DeepseaFish",
+    "korName": "심해어"
+  },
+  {
+    "name":"Jellyfish",
+    "korName":"해파리"
+  },
+  {
+    "name": "Mermaid",
+    "korName": "인어"
+  },
+  {
+    "name": "Shark",
+    "korName": "상어"
   }
 ]

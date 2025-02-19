@@ -413,4 +413,4 @@ MonoBehaviour:
     radius: 0
     wiggle: 0
     angle: 0
-    monsterName: Trash
+    monsterName: TrashMonster
