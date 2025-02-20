@@ -152,4 +152,29 @@ public class BackendDataManager : Singleton<BackendDataManager>
         LitJson.JsonData probabilityData = bro.GetReturnValuetoJSON()["rows"];
         return probabilityData;
     }
+
+    public LitJson.JsonData GetUserMainWeaponData()
+    {
+        // 테스트 용 코드입니다.
+        if (Instance.isSignedIn == false)
+        {
+            Backend.Initialize();
+            Backend.BMember.CustomLogin("admin", "12345678");
+            Instance.isSignedIn = true;
+        }
+        Where where = new();
+        var bro = Backend.GameData.GetMyData("Weapon", where);
+        if (bro.IsSuccess() == false)
+        {
+            Debug.LogError($"GetMyData Failed: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
+            return null;
+        }
+        if (bro.GetReturnValuetoJSON()["rows"].Count == 0)
+        {
+            Debug.LogError("No weapon data");
+            return null;
+        }
+        LitJson.JsonData weaponData = bro.GetReturnValuetoJSON()["rows"];
+        return weaponData;
+    }
 }

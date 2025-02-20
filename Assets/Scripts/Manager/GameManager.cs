@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -10,18 +9,29 @@ public class GameManager : Singleton<GameManager>
 {
      public enum GameState
      {
-          Lobby,
           InGame,
           Pause,
           GameOver
      }
 
+     public delegate void OnPlayerLevelChanged();
+     public event OnPlayerLevelChanged onPlayerLevelChanged;
+     public delegate void OnGamePaused();
+     public event OnGamePaused onGamePaused;
 
      public Player playerScript;
      public Light2D playerLight;
      public PlayerMove player;
      public PlayerAttack playerAttack;
-     public GameState gameState;
+     public GameState gameState
+     {
+          get => _GameState;
+          set
+          {
+               _GameState = value;
+          }
+     }
+     private GameState _GameState;
      public List<Player.PlayerBuffEffect> playerBuffEffects = new();
      public List<Player.PlayerBonusStat> playerBonusStats = new();
      public long gameTimer;
@@ -31,7 +41,42 @@ public class GameManager : Singleton<GameManager>
      public float playerExperienceMultiplier = 1.0f;
      public float experienceToLevelUp = 100;
      public float playerExperience = 0;
-     public long playerLevel = 1;
+     public long playerLevel
+     {
+          get => _playerLevel;
+          set
+          {
+               if (value > 1)
+               {
+                    onPlayerLevelChanged?.Invoke();
+               }
+               _playerLevel = value;
+          }
+     }
+     private long _playerLevel = 1;
+     public static bool IsGamePaused
+     {
+          get { return Instance._isGamePaused; }
+          set
+          {
+               Instance._isGamePaused = value;
+               Instance.onGamePaused?.Invoke();
+          }
+     }
+     private bool _isGamePaused = false;
+
+
+     public override void Awake()
+     {
+          base.Awake();
+          onGamePaused += () =>
+          {
+               Time.timeScale = IsGamePaused ? 0 : 1;
+          };
+
+          SetGameState(GameState.InGame);
+     }
+
      // Set game state
      public void SetGameState(GameState newState)
      {
