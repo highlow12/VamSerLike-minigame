@@ -60,7 +60,9 @@ public class NormalMonster : Monster
         // 일반 몬스터는 한 가지 이동 패턴만 사용
         if (movement == null)
         {
+#if UNITY_EDITOR
             Debug.LogError("Enter Movement");
+#endif
             Destroy(this);
         }
     }
@@ -98,7 +100,9 @@ public class NormalMonster : Monster
     /// </summary>
     protected virtual void CheckAttackRange()
     {
+#if UNITY_EDITOR
         throw new System.NotImplementedException();
+#endif
     }
 
     /// <summary>
@@ -106,7 +110,9 @@ public class NormalMonster : Monster
     /// </summary>
     protected override void Attack()
     {
+#if UNITY_EDITOR
         throw new System.NotImplementedException();
+#endif
     }
 }
 
@@ -147,6 +153,8 @@ public abstract class BossMonster : Monster
 
     protected override void Attack()
     {
+#if UNITY_EDITOR
         throw new System.NotImplementedException();
+#endif
     }
 }
