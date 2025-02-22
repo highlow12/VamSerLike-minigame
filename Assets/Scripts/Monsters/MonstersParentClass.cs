@@ -71,8 +71,17 @@ public class NormalMonster : Monster
     {
         if (!isDead)
         {
-            Move();
+            if (Vector2.Distance(transform.position, playerTransform.position) < attackRange)
+            {
+                Attack();
+            }
+            else
+            {
+                Move();
+            }
+
             CheckAttackRange();
+
         }
     }
 

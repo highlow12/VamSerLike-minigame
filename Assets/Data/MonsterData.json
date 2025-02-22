@@ -78,5 +78,9 @@
   {
     "name": "Passenger",
     "korName": "승객"
+  },
+  {
+    "name": "Seller",
+    "korName": "상인"
   }
 ]
