@@ -74,5 +74,9 @@
   {
     "name": "Shark",
     "korName": "상어"
+  },
+  {
+    "name": "Passenger",
+    "korName": "승객"
   }
 ]
