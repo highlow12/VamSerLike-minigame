@@ -13,6 +13,12 @@ public class LocalDataManager : Singleton<LocalDataManager>
     private string probabilityDataPath => localDataPath + "Probability/";
     private string userDataPath => localDataPath + "User/";
 
+    // <summary>
+    // 파일을 복호화하여 읽어들입니다. 파일이 없거나 복호화에 실패할 경우 fallbackCreator를 실행하여 새 파일을 생성합니다.
+    // </summary>
+    // <param name="path">파일 경로</param>
+    // <param name="fallbackCreator">파일이 없거나 복호화에 실패할 경우 실행할 함수</param>
+    // <returns>파일 내용</returns>
     private string _LoadData(string path, Func<bool> fallbackCreator = null)
     {
         if (!File.Exists(path))
@@ -45,7 +51,11 @@ public class LocalDataManager : Singleton<LocalDataManager>
         }
         return Encoding.UTF8.GetString(decryptedBytes);
     }
-
+    // <summary>
+    // 파일을 암호화하여 저장합니다.
+    // </summary>
+    // <param name="path">파일 경로</param>
+    // <param name="data">저장할 데이터</param>
     private void _SaveData(string path, string data)
     {
         byte[] bytes = Rijndael.EncryptString(data, m_key);
