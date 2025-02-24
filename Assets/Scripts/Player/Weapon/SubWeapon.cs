@@ -34,7 +34,7 @@ namespace Weapon
         public int attackTarget;
         public int projectileCount;
         public float projectileSpeed;
-        protected int maxWeaponGrade;
+        public int maxWeaponGrade;
         private int _weaponGrade = 0;
         public int weaponGrade
         {

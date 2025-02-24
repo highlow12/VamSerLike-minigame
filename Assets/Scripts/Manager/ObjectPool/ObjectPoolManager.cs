@@ -4,7 +4,7 @@ using UnityEngine.Pool;
 using System;
 
 [DefaultExecutionOrder(-100)]
-public class ObjectPoolManager : MonoBehaviour
+public class ObjectPoolManager : Singleton<ObjectPoolManager>
 {
     [System.Serializable]
     public class ObjectInfo
@@ -20,7 +20,6 @@ public class ObjectPoolManager : MonoBehaviour
     }
 
 
-    public static ObjectPoolManager Instance;
 
     // 오브젝트풀 매니저 준비 완료표시
     public bool IsReady { get; private set; }
@@ -43,15 +42,9 @@ public class ObjectPoolManager : MonoBehaviour
     // 오브젝트풀에서 오브젝트를 새로 생성할때 사용할 딕셔너리
     private Dictionary<string, GameObject> goDic = new Dictionary<string, GameObject>();
 
-    void Awake()
+    public override void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-        else
-        {
-            Destroy(this.gameObject);
-        }
-
+        base.Awake();
         Init();
     }
 
