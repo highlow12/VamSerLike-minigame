@@ -2,56 +2,76 @@ using UnityEngine;
 using System.IO;
 using LitJson;
 using System;
+using CustomEncryption;
+using System.Text;
 
 public class LocalDataManager : Singleton<LocalDataManager>
 {
+    private const string m_key = "EnRBcwL791f3oEf/AH2D0D2EhbajQ0yBimSUbLHDTA8=";
     private string localDataPath => Application.streamingAssetsPath + "/LocalData/";
     private string chartDataPath => localDataPath + "Chart/";
     private string probabilityDataPath => localDataPath + "Probability/";
     private string userDataPath => localDataPath + "User/";
 
+    private string _LoadData(string path, Func<bool> fallbackCreator = null)
+    {
+        if (!File.Exists(path))
+        {
+            Debug.LogError($"File not found: {path}");
+            if (fallbackCreator != null)
+            {
+                Debug.Log("Creating new file using fallback creator");
+                if (fallbackCreator())
+                {
+                    return _LoadData(path);
+                }
+            }
+            return null;
+        }
+        byte[] encryptedBytes = File.ReadAllBytes(path);
+        byte[] decryptedBytes = Rijndael.Decrypt(encryptedBytes, m_key);
+        if (decryptedBytes == null)
+        {
+            Debug.LogError($"Failed to decrypt file: {path}");
+            if (fallbackCreator != null)
+            {
+                Debug.Log("Creating new file using fallback creator");
+                if (fallbackCreator())
+                {
+                    return _LoadData(path);
+                }
+            }
+            return null;
+        }
+        return Encoding.UTF8.GetString(decryptedBytes);
+    }
+
+    private void _SaveData(string path, string data)
+    {
+        byte[] bytes = Rijndael.EncryptString(data, m_key);
+        File.WriteAllBytes(path, bytes);
+    }
+
     public JsonData GetLocalChart(string chartName)
     {
         string filePath = Path.Combine(chartDataPath, $"{chartName}.json");
-        if (!File.Exists(filePath))
-        {
-            Debug.LogError($"Local chart file not found: {filePath}");
-            return null;
-        }
-        string json = File.ReadAllText(filePath);
+        string json = _LoadData(filePath);
         return JsonMapper.ToObject(json);
     }
 
     public JsonData GetLocalProbabilityData(string probabilityName)
     {
         string filePath = Path.Combine(probabilityDataPath, $"{probabilityName}.json");
-        if (!File.Exists(filePath))
-        {
-            Debug.LogError($"Local probability file not found: {filePath}");
-            return null;
-        }
-        string json = File.ReadAllText(filePath);
+        string json = _LoadData(filePath);
         return JsonMapper.ToObject(json);
     }
 
     public JsonData GetLocalUserMainWeaponData()
     {
         string filePath = Path.Combine(userDataPath, "MainWeaponData.json");
-        if (!File.Exists(filePath))
-        {
-            Debug.LogError($"Local user main weapon data file not found: {filePath}");
-            Debug.Log("Creating new user main weapon data file");
-            if (!CreateLocalUserMainWeaponData())
-            {
-                Debug.LogError("Failed to create new user main weapon data file");
-                return null;
-            }
-            else
-            {
-                return GetLocalUserMainWeaponData();
-            }
-        }
-        string json = File.ReadAllText(filePath);
+        string json = _LoadData(filePath, CreateLocalUserMainWeaponData);
+        if (json == null) return null;
+
         JsonData data = JsonMapper.ToObject(json);
         // validate that has all of main weapons data
         foreach (int wt in Enum.GetValues(typeof(Weapon.MainWeapon.WeaponType)))
@@ -99,8 +119,7 @@ public class LocalDataManager : Singleton<LocalDataManager>
             jsonWriter.PrettyPrint = true;
             JsonMapper.ToJson(updatedData, jsonWriter);
             string json = stringWriter.ToString();
-
-            File.WriteAllText(filePath, json);
+            _SaveData(filePath, json);
             Debug.Log($"Local user main weapon data updated: {filePath}");
             return true;
         }
@@ -134,8 +153,7 @@ public class LocalDataManager : Singleton<LocalDataManager>
             jsonWriter.PrettyPrint = true;
             JsonMapper.ToJson(data, jsonWriter);
             string json = stringWriter.ToString();
-
-            File.WriteAllText(filePath, json);
+            _SaveData(filePath, json);
             Debug.Log($"Local user main weapon data created: {filePath}");
             return true;
         }
@@ -149,22 +167,8 @@ public class LocalDataManager : Singleton<LocalDataManager>
     public JsonData GetLocalUserGameAssetData()
     {
         string filePath = Path.Combine(userDataPath, "GameAssetData.json");
-        if (!File.Exists(filePath))
-        {
-            Debug.LogError($"Local user game asset data file not found: {filePath}");
-            Debug.Log("Creating new user game asset data file");
-            if (!CreateLocalUserGameAssetData())
-            {
-                Debug.LogError("Failed to create new user game asset data file");
-                return null;
-            }
-            else
-            {
-                return GetLocalUserGameAssetData();
-            }
-        }
-        string json = File.ReadAllText(filePath);
-        return JsonMapper.ToObject(json);
+        string json = _LoadData(filePath, CreateLocalUserGameAssetData);
+        return json != null ? JsonMapper.ToObject(json) : null;
     }
 
     public bool UpdateLocalUserGameAssetData(JsonData updatedData)
@@ -177,8 +181,7 @@ public class LocalDataManager : Singleton<LocalDataManager>
             jsonWriter.PrettyPrint = true;
             JsonMapper.ToJson(updatedData, jsonWriter);
             string json = stringWriter.ToString();
-
-            File.WriteAllText(filePath, json);
+            _SaveData(filePath, json);
             Debug.Log($"Local user game asset data updated: {filePath}");
             return true;
         }
@@ -204,8 +207,7 @@ public class LocalDataManager : Singleton<LocalDataManager>
             jsonWriter.PrettyPrint = true;
             JsonMapper.ToJson(data, jsonWriter);
             string json = stringWriter.ToString();
-
-            File.WriteAllText(filePath, json);
+            _SaveData(filePath, json);
             Debug.Log($"Local user game asset data created: {filePath}");
             return true;
         }
