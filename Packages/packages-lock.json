@@ -310,6 +310,13 @@
       },
       "url": "https://packages.unity.com"
     },
+    "net.taptappun.taku.kobayashi.unitycipher": {
+      "version": "https://github.com/TakuKobayashi/UnityCipher.git?path=/Assets/UnityCipher#v1.3.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ff83ee945391a2806d1400ca5b082da98f5bf777"
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,
