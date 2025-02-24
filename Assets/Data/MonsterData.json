@@ -82,5 +82,13 @@
   {
     "name": "Seller",
     "korName": "상인"
+  },
+  {
+    "name": "TrainCrew",
+    "korName": "승무원"
+  },
+  {
+    "name": "TrainCaptain",
+    "korName": "기관사"
   }
 ]
