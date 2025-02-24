@@ -1,0 +1,26 @@
+[
+  {
+    "itemName": "Medikit",
+    "itemId": 0,
+    "displayName": "힐팩",
+    "percent": 2
+  },
+  {
+    "itemName": "Magnet",
+    "itemId": 1,
+    "displayName": "자석",
+    "percent": 0.5
+  },
+  {
+    "itemName": "Sight",
+    "itemId": 2,
+    "displayName": "시야 제한 해제",
+    "percent": 1
+  },
+  {
+    "itemName": "Experience",
+    "itemId": 3,
+    "displayName": "경험치",
+    "percent": 96.5
+  }
+]

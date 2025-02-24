@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using LitJson;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -34,6 +35,7 @@ public class GameManager : Singleton<GameManager>
      private GameState _GameState;
      public List<Player.PlayerBuffEffect> playerBuffEffects = new();
      public List<Player.PlayerBonusStat> playerBonusStats = new();
+     public JsonData playerAssetData;
      public long gameTimer;
      public int currentStage = 0;
      public float dragDistanceMultiplier = 1.0f;
@@ -75,6 +77,7 @@ public class GameManager : Singleton<GameManager>
           };
 
           SetGameState(GameState.InGame);
+          playerAssetData = BackendDataManager.Instance.GetUserAssetData();
      }
 
      // Set game state
@@ -98,7 +101,7 @@ public class GameManager : Singleton<GameManager>
                     ObjectPoolManager.Instance.UnregisterObjectPool(dropItem);
                }
           }
-          bool result = DropItemManager.Instance.SetProbabilityCard(BackendDataManager.Instance.probabilityCardList.FirstOrDefault(x => x.probabilityName == $"Stage{stageNumber}_DropItemProb"));
+          bool result = DropItemManager.Instance.SetProbabilityTitle($"Stage{stageNumber}_DropItemProb");
           if (!result)
           {
 #if UNITY_EDITOR

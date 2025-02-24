@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using BackEnd;
 using System.Data;
 
 public class PlayerAttack : MonoBehaviour
@@ -130,25 +129,25 @@ public class PlayerAttack : MonoBehaviour
 
     public Weapon.WeaponRare GetWeaponRare(Weapon.MainWeapon.WeaponType weaponType)
     {
-        LitJson.JsonData bro = BackendDataManager.Instance.GetUserMainWeaponData();
-        if (bro == null)
+        LitJson.JsonData data = BackendDataManager.Instance.GetUserMainWeaponData();
+        if (data == null)
         {
             return Weapon.WeaponRare.Common;
         }
-        int broIndex = -1;
-        for (int i = 0; i < bro.Count; i++)
+        int dataIndex = -1;
+        for (int i = 0; i < data.Count; i++)
         {
-            if (bro[i]["weaponType"]["N"].ToString() == ((int)weaponType).ToString())
+            if (data[i]["weaponType"].ToString() == ((int)weaponType).ToString())
             {
-                broIndex = i;
+                dataIndex = i;
                 break;
             }
         }
-        if (broIndex == -1)
+        if (dataIndex == -1)
         {
             return Weapon.WeaponRare.Common;
         }
-        return (Weapon.WeaponRare)Enum.Parse(typeof(Weapon.WeaponRare), bro[broIndex]["weaponRare"]["N"].ToString());
+        return (Weapon.WeaponRare)Enum.Parse(typeof(Weapon.WeaponRare), data[dataIndex]["weaponRare"].ToString());
     }
 
     private Vector2 CalculateAttackDirection(Weapon.WeaponAttackDirectionType weaponAttackDirectionType)
