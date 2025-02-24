@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Mono.Cecil;
+using LitJson;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -10,28 +10,76 @@ public class GameManager : Singleton<GameManager>
 {
      public enum GameState
      {
-          Lobby,
           InGame,
           Pause,
           GameOver
      }
 
+     public delegate void OnPlayerLevelChanged();
+     public event OnPlayerLevelChanged onPlayerLevelChanged;
+     public delegate void OnGamePaused();
+     public event OnGamePaused onGamePaused;
 
      public Player playerScript;
      public Light2D playerLight;
      public PlayerMove player;
      public PlayerAttack playerAttack;
-     public GameState gameState;
+     public GameState gameState
+     {
+          get => _GameState;
+          set
+          {
+               _GameState = value;
+          }
+     }
+     private GameState _GameState;
      public List<Player.PlayerBuffEffect> playerBuffEffects = new();
      public List<Player.PlayerBonusStat> playerBonusStats = new();
+     public JsonData playerAssetData;
      public long gameTimer;
      public int currentStage = 0;
      public float dragDistanceMultiplier = 1.0f;
      public float dragSpeedMultiplier = 1.0f;
+     public float playerExperienceMultiplier = 1.0f;
      public float experienceToLevelUp = 100;
      public float playerExperience = 0;
-     [SerializeField] private ExperienceBar experienceBar;
-     public long playerLevel = 1;
+     public long playerLevel
+     {
+          get => _playerLevel;
+          set
+          {
+               if (value > 1)
+               {
+                    onPlayerLevelChanged?.Invoke();
+               }
+               _playerLevel = value;
+          }
+     }
+     private long _playerLevel = 1;
+     public static bool IsGamePaused
+     {
+          get { return Instance._isGamePaused; }
+          set
+          {
+               Instance._isGamePaused = value;
+               Instance.onGamePaused?.Invoke();
+          }
+     }
+     private bool _isGamePaused = false;
+
+
+     public override void Awake()
+     {
+          base.Awake();
+          onGamePaused += () =>
+          {
+               Time.timeScale = IsGamePaused ? 0 : 1;
+          };
+
+          SetGameState(GameState.InGame);
+          playerAssetData = BackendDataManager.Instance.GetUserAssetData();
+     }
+
      // Set game state
      public void SetGameState(GameState newState)
      {
@@ -53,7 +101,7 @@ public class GameManager : Singleton<GameManager>
                     ObjectPoolManager.Instance.UnregisterObjectPool(dropItem);
                }
           }
-          bool result = DropItemManager.Instance.SetProbabilityCard(BackendDataManager.Instance.probabilityCardList.FirstOrDefault(x => x.probabilityName == $"Stage{stageNumber}_DropItemProb"));
+          bool result = DropItemManager.Instance.SetProbabilityTitle($"Stage{stageNumber}_DropItemProb");
           if (!result)
           {
 #if UNITY_EDITOR
@@ -101,7 +149,6 @@ public class GameManager : Singleton<GameManager>
      {
           if (gameState == GameState.InGame)
           {
-               experienceBar.Sync(playerLevel, playerExperience);
                foreach (Player.PlayerBuffEffect buffEffect in playerBuffEffects)
                {
                     if (buffEffect.endTime <= gameTimer)
@@ -165,8 +212,7 @@ public class GameManager : Singleton<GameManager>
 
      public void AddExperience(float experience)
      {
-          float newExperience = GetPlayerStatValue(Player.BonusStat.Experience, experience);
-          playerExperience += newExperience;
+          playerExperience += experience * playerExperienceMultiplier;
           // Leveling logic - needs to be edited
           if (playerExperience >= experienceToLevelUp)
           {
@@ -187,18 +233,18 @@ public class GameManager : Singleton<GameManager>
      {
           playerExperience -= experienceToLevelUp;
           playerLevel++;
-          experienceToLevelUp = GetExperienceToNextLevel(playerLevel);
-     }
-
-     public float GetExperienceToNextLevel(long level)
-     {
-          return level switch
+          switch (playerLevel)
           {
-               1 => 100,
-               2 => 300,
-               3 => 1000,
-               _ => (float)(1000 + (level - 3) * 1000),
-          };
+               case 2:
+                    experienceToLevelUp = 300;
+                    break;
+               case 3:
+                    experienceToLevelUp = 1000;
+                    break;
+               default:
+                    experienceToLevelUp += 1000;
+                    break;
+          }
      }
 
 
