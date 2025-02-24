@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using BackEnd;
 using System.Data;
 
 public class PlayerAttack : MonoBehaviour
@@ -130,27 +129,25 @@ public class PlayerAttack : MonoBehaviour
 
     public Weapon.WeaponRare GetWeaponRare(Weapon.MainWeapon.WeaponType weaponType)
     {
-        // 테스트 용 코드입니다.
-        if (BackendDataManager.Instance.isSignedIn == false)
+        LitJson.JsonData data = BackendDataManager.Instance.GetUserMainWeaponData();
+        if (data == null)
         {
-            Backend.Initialize();
-            Backend.BMember.CustomLogin("admin", "12345678");
-            BackendDataManager.Instance.isSignedIn = true;
-        }
-        Where where = new();
-        where.Equal("weaponType", (int)weaponType);
-        var bro = Backend.GameData.GetMyData("Weapon", where);
-        if (bro.IsSuccess() == false)
-        {
-            Debug.LogError($"GetMyData Failed: {bro.GetStatusCode()}\n{bro.GetMessage()}\n{bro}");
             return Weapon.WeaponRare.Common;
         }
-        if (bro.GetReturnValuetoJSON()["rows"].Count == 0)
+        int dataIndex = -1;
+        for (int i = 0; i < data.Count; i++)
         {
-            Debug.LogError("No weapon data");
+            if (data[i]["weaponType"].ToString() == ((int)weaponType).ToString())
+            {
+                dataIndex = i;
+                break;
+            }
+        }
+        if (dataIndex == -1)
+        {
             return Weapon.WeaponRare.Common;
         }
-        return (Weapon.WeaponRare)Enum.Parse(typeof(Weapon.WeaponRare), bro.Rows()[0]["weaponRare"]["N"].ToString());
+        return (Weapon.WeaponRare)Enum.Parse(typeof(Weapon.WeaponRare), data[dataIndex]["weaponRare"].ToString());
     }
 
     private Vector2 CalculateAttackDirection(Weapon.WeaponAttackDirectionType weaponAttackDirectionType)
