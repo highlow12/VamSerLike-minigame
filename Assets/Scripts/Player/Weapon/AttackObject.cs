@@ -7,6 +7,7 @@ using DG.Tweening;
 
 public abstract class AttackObject : MonoBehaviour
 {
+    public float tweeningDuration = 1f;
     protected bool isUsingPool = false;
     protected string prefabName;
     public float attackDamage;
@@ -21,8 +22,9 @@ public abstract class AttackObject : MonoBehaviour
     protected LayerMask monsterLayer;
     protected ContactFilter2D contactFilter;
     protected int hitCount;
+    protected Animator animator;
     // Sub weapon properties
-    protected new Animation animation;
+    protected float weaponPositionXOffset;
     protected SpriteRenderer spriteRenderer;
 
     public virtual void Setup(float baseAngle, float spreadDegree, int projectileCount, float projectileSpeed, float attackSpeed)
@@ -40,17 +42,8 @@ public abstract class AttackObject : MonoBehaviour
 
     public virtual void SubWeaponInit()
     {
-        animation = GetComponent<Animation>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponent<SpriteRenderer>() ?? gameObject.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = subWeaponSO.weaponSprite;
-        if (subWeaponSO.attackAnimation != null)
-        {
-            animation.AddClip(subWeaponSO.attackAnimation, "Attack");
-        }
-        if (subWeaponSO.hitAnimation != null)
-        {
-            animation.AddClip(subWeaponSO.hitAnimation, "Hit");
-        }
     }
 
     protected virtual void Awake()
@@ -108,6 +101,7 @@ public abstract class AttackObject : MonoBehaviour
     public virtual void Attack()
     {
         Start();
+
         Physics2D.OverlapCollider(attackCollider, contactFilter, hits);
         hits = hits.OrderBy(x => Vector2.Distance(x.transform.position, transform.position)).ToList();
         hitCount = 0;
@@ -135,6 +129,20 @@ public abstract class AttackObject : MonoBehaviour
     public virtual void Throw(Vector3 endPos, float duration)
     {
         transform.DOMove(endPos, duration).SetEase(Ease.Linear).OnComplete(() => Despawn());
+    }
+
+    protected virtual void Flip(float degree, bool reversed = false)
+    {
+        if (degree > 90 || degree < -90)
+        {
+            spriteRenderer.flipX = false ^ reversed;
+            transform.localPosition = new Vector3(weaponPositionXOffset, transform.localPosition.y, 0);
+        }
+        else
+        {
+            spriteRenderer.flipX = true ^ reversed;
+            transform.localPosition = new Vector3(-weaponPositionXOffset, transform.localPosition.y, 0);
+        }
     }
 
     public virtual void Despawn()

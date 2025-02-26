@@ -9,7 +9,6 @@ public class HolyWaterObject : Projectile
     [SerializeField] private float projectileInitialScale;
     private PolygonCollider2D polygonCollider;
     [SerializeField] private bool isInSplashState = false;
-    private Animator animator;
     private float fade = 0.3f;
     private float duration = 3f;
 

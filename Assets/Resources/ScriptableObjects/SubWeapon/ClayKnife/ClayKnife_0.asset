@@ -15,5 +15,6 @@ MonoBehaviour:
   weaponType: 3
   weaponGrade: 0
   weaponSprite: {fileID: 21300000, guid: cce17fc65a2a2571895d599ce5873cea, type: 3}
-  attackAnimation: {fileID: 0}
+  idleAnimation: {fileID: 0}
+  attackAnimation: {fileID: 7400000, guid: 9beb8b9270af741ee89c2353f5657ce1, type: 2}
   hitAnimation: {fileID: 0}

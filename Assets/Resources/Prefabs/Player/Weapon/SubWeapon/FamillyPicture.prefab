@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 412747668555289554}
   - component: {fileID: 7929228808652911372}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: picture
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,9 +99,9 @@ GameObject:
   - component: {fileID: 6198087538134418724}
   - component: {fileID: 2760736573533714349}
   - component: {fileID: 1774672625621638630}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: FamillyPicture
-  m_TagString: Untagged
+  m_TagString: AttackObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -194,6 +194,7 @@ MonoBehaviour:
   attackIntervalInTicks: 0
   colliderObject: {fileID: 7471903191022330066}
   subWeaponSO: {fileID: 0}
+  barrierHealth: 0
   picture: {fileID: 6360426083744643888}
 --- !u!58 &1774672625621638630
 CircleCollider2D:

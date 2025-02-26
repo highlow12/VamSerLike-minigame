@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class ShotgunObject : AttackObject
 {
-    protected Animator animator;
     protected float baseAngle;
     protected float spreadDegree;
     protected int projectileCount;

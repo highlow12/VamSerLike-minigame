@@ -13,6 +13,7 @@ namespace Weapon
             TeddyBear,
             FamillyPicture,
             ClayKnife,
+            FishingRod,
         }
         protected bool isUsingPool = false;
         protected string prefabName;
@@ -127,9 +128,6 @@ namespace Weapon
         }
 
 
-        public virtual IEnumerator Attack(Vector2 attackDirection)
-        {
-            yield return null;
-        }
+        public abstract IEnumerator Attack(Vector2 attackDirection);
     }
 }

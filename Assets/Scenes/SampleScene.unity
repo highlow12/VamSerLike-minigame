@@ -1078,7 +1078,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultParent: {fileID: 2101847122}
-  objectInfos: []
+  objectInfos:
+  - objectName: Bishop
+    prefab: {fileID: 5172718507834586352, guid: 09f95e560146a4782ad4557caae286fa, type: 3}
+    parent: {fileID: 991827755}
+    count: 10
 --- !u!4 &1134803611
 Transform:
   m_ObjectHideFlags: 0
@@ -1987,9 +1991,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 289913078743131231, guid: f29975e23aeb95c4e93ffa1a841a6946, type: 3}
+      propertyPath: maxHealth
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 289913078743131231, guid: f29975e23aeb95c4e93ffa1a841a6946, type: 3}
+      propertyPath: currentHealth
+      value: 10000
+      objectReference: {fileID: 0}
     - target: {fileID: 6157717236681629019, guid: f29975e23aeb95c4e93ffa1a841a6946, type: 3}
       propertyPath: m_Name
       value: Seller
+      objectReference: {fileID: 0}
+    - target: {fileID: 6157717236681629019, guid: f29975e23aeb95c4e93ffa1a841a6946, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6157717236681629019, guid: f29975e23aeb95c4e93ffa1a841a6946, type: 3}
+      propertyPath: m_TagString
+      value: Monster
       objectReference: {fileID: 0}
     - target: {fileID: 8396978435333635838, guid: f29975e23aeb95c4e93ffa1a841a6946, type: 3}
       propertyPath: m_LocalPosition.x

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1041221459528180490}
   - component: {fileID: 4595492353744574149}
   - component: {fileID: -6082047200592140400}
+  - component: {fileID: -8912923218253991675}
   m_Layer: 8
   m_Name: Bishop
   m_TagString: Monster
@@ -124,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a9f7f7916217d64ca27292517fff60f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 10000
   currentHealth: 1
   damage: 1
   defense: 1
@@ -178,3 +179,15 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-8912923218253991675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5172718507834586352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2ce5ab6858294598b041be71b90f01b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
