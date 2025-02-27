@@ -15,9 +15,12 @@ public class GameManager : Singleton<GameManager>
           GameOver
      }
 
-     public delegate void OnPlayerLevelChanged();
-     public event OnPlayerLevelChanged onPlayerLevelChanged;
-     public delegate void OnGamePaused();
+    // 레벨업 이벤트 수정 - 이벤트를 null 체크 없이 호출할 수 있도록 함
+    // 델리게이트 정의
+    public delegate void OnPlayerLevelChanged();
+    // 이벤트 초기화하여 null이 되지 않도록 함
+    public event OnPlayerLevelChanged onPlayerLevelChanged = delegate { };
+    public delegate void OnGamePaused();
      public event OnGamePaused onGamePaused;
 
      public Player playerScript;
@@ -43,20 +46,24 @@ public class GameManager : Singleton<GameManager>
      public float playerExperienceMultiplier = 1.0f;
      public float experienceToLevelUp = 100;
      public float playerExperience = 0;
-     public long playerLevel
-     {
-          get => _playerLevel;
-          set
-          {
-               if (value > 1)
-               {
-                    onPlayerLevelChanged?.Invoke();
-               }
-               _playerLevel = value;
-          }
-     }
-     private long _playerLevel = 1;
-     public static bool IsGamePaused
+
+    // playerLevel 프로퍼티 수정
+    public long playerLevel
+    {
+        get => _playerLevel;
+        set
+        {
+            Debug.Log($"[GameManager] 레벨 변경: {_playerLevel} -> {value}");
+            _playerLevel = value;
+
+            // value > 1 체크는 제거하고 항상 이벤트 발생
+            Debug.Log($"[GameManager] onPlayerLevelChanged 이벤트 호출");
+            // null 체크가 필요 없음 - 빈 델리게이트로 초기화했기 때문
+            onPlayerLevelChanged.Invoke();
+        }
+    }
+    private long _playerLevel = 1;
+    public static bool IsGamePaused
      {
           get { return Instance._isGamePaused; }
           set
@@ -68,20 +75,26 @@ public class GameManager : Singleton<GameManager>
      private bool _isGamePaused = false;
 
 
-     public override void Awake()
-     {
-          base.Awake();
-          onGamePaused += () =>
-          {
-               Time.timeScale = IsGamePaused ? 0 : 1;
-          };
+    public override void Awake()
+    {
+        base.Awake();
+        Debug.Log("[GameManager] Awake 호출됨");
 
-          SetGameState(GameState.InGame);
-          playerAssetData = BackendDataManager.Instance.GetUserAssetData();
-     }
+        // 테스트를 위해 레벨업 이벤트 기본 구독자 추가
+        onPlayerLevelChanged += () => { Debug.Log("[GameManager] 레벨업 이벤트 기본 처리기 호출됨"); };
 
-     // Set game state
-     public void SetGameState(GameState newState)
+        onGamePaused += () =>
+        {
+            Time.timeScale = IsGamePaused ? 0 : 1;
+            Debug.Log($"[GameManager] Time.timeScale 설정됨: {Time.timeScale}");
+        };
+
+        SetGameState(GameState.InGame);
+        playerAssetData = BackendDataManager.Instance.GetUserAssetData();
+    }
+
+    // Set game state
+    public void SetGameState(GameState newState)
      {
           gameState = newState;
           switch (gameState)
@@ -229,23 +242,32 @@ public class GameManager : Singleton<GameManager>
           }
      }
 
-     private void LevelUp()
-     {
-          playerExperience -= experienceToLevelUp;
-          playerLevel++;
-          switch (playerLevel)
-          {
-               case 2:
-                    experienceToLevelUp = 300;
-                    break;
-               case 3:
-                    experienceToLevelUp = 1000;
-                    break;
-               default:
-                    experienceToLevelUp += 1000;
-                    break;
-          }
-     }
+    private void LevelUp()
+    {
+        Debug.Log($"[GameManager] LevelUp 시작: 현재 경험치={playerExperience}/{experienceToLevelUp}, 현재 레벨={playerLevel}");
+
+        playerExperience -= experienceToLevelUp;
+        playerLevel = playerLevel + 1;
+
+        // 이벤트 로그 추가
+        Debug.Log($"[GameManager] onPlayerLevelChanged 이벤트 구독자 수: {onPlayerLevelChanged.GetInvocationList().Length}");
+
+
+        switch (playerLevel)
+        {
+            case 2:
+                experienceToLevelUp = 300;
+                break;
+            case 3:
+                experienceToLevelUp = 1000;
+                break;
+            default:
+                experienceToLevelUp += 1000;
+                break;
+        }
+
+        Debug.Log($"[GameManager] 다음 레벨업까지 필요 경험치: {experienceToLevelUp}");
+    }
 
 
 }

@@ -18,6 +18,23 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
     private const int MAX_RETRY_COUNT = 10;  // 최대 시도 횟수
     private const int MAX_TOTAL_RETRY_COUNT = 30;  // 전체 아이템 선택 최대 시도 횟수
 
+    [SerializeField] private LevelUpUI levelUpUI;
+    private List<LitJson.JsonData> mainWeaponOptions = new List<LitJson.JsonData>();
+    private List<WeaponStatProvider.SubWeaponStat> subWeaponOptions = new List<WeaponStatProvider.SubWeaponStat>();
+
+    private void Start()
+    {
+        // LevelUpUI 참조 가져오기
+        if (levelUpUI == null)
+        {
+            levelUpUI = FindAnyObjectByType<LevelUpUI>();
+            if (levelUpUI == null)
+            {
+                Debug.LogError("[LevelUpSelectManager] Cannot find LevelUpUI component in scene");
+            }
+        }
+    }
+
     private LitJson.JsonData GetNonDuplicateMainWeapon(LitJson.JsonData userMainWeaponData, Weapon.MainWeapon currentMainWeapon)
     {
         int tryCount = 0;
@@ -86,23 +103,41 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
 
     public void CreateItemList()
     {
+        // 백엔드에서 메인 무기 데이터 가져오기
         LitJson.JsonData userMainWeaponData = BackendDataManager.Instance.GetUserMainWeaponData();
+
+        // 데이터 확인용 상세 디버그 로그 추가
+        Debug.Log($"[LevelUpSelectManager] MainWeapon Data Count: {userMainWeaponData?.Count ?? 0}");
+
+        // 데이터 내용 상세 출력
+        if (userMainWeaponData != null)
+        {
+            for (int i = 0; i < userMainWeaponData.Count; i++)
+            {
+                Debug.Log($"[LevelUpSelectManager] MainWeapon Data [{i}]: {userMainWeaponData[i].ToJson()}");
+            }
+        }
+        else
+        {
+            Debug.LogError("[LevelUpSelectManager] userMainWeaponData is null!");
+            return;
+        }
+
         List<WeaponStatProvider.SubWeaponStat> subWeaponStats = WeaponStatProvider.Instance.subWeaponStats;
-        // List<WeaponStatProvider.SupportItemStat> supportItemStats = new();
 
         PlayerAttack playerAttack = GameManager.Instance.playerAttack;
         Weapon.MainWeapon currentMainWeapon = playerAttack.mainWeapon;
         List<Weapon.SubWeapon> currentSubWeapons = playerAttack.subWeapons;
 
-        int totalTryCount = 0;
-        for (int i = 0; i < 3; i++)
-        {
-            if (totalTryCount >= MAX_TOTAL_RETRY_COUNT)
-            {
-                Debug.LogWarning($"[LevelUpSelectManager] Failed to create item list after {MAX_TOTAL_RETRY_COUNT} attempts");
-                break;
-            }
+        // 이전 옵션 목록 초기화
+        mainWeaponOptions.Clear();
+        subWeaponOptions.Clear();
 
+        int totalTryCount = 0;
+        int successCount = 0;  // 성공적으로 생성된 아이템 카운트
+
+        while (successCount < 3 && totalTryCount < MAX_TOTAL_RETRY_COUNT)
+        {
             int itemIndex = UnityEngine.Random.Range(0, 3);
             SelectItemType selectItemType = (SelectItemType)itemIndex;
             bool succeeded = false;
@@ -111,50 +146,65 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             {
                 case SelectItemType.MainWeapon:
                     LitJson.JsonData userData = GetNonDuplicateMainWeapon(userMainWeaponData, currentMainWeapon);
+
+                    Debug.Log($"[LevelUpSelectManager] 선택된 MainWeapon Data: {userData?.ToJson() ?? "null"}");
+
                     if (userData != null)
                     {
-                        // UI 버튼에 이벤트리스너를 추가하여 선택 시 해당 무기로 변경
-                        CreateMainWeaponItem(userData);
+                        // UI 버튼에 메인 무기 정보 설정
+                        mainWeaponOptions.Add(userData);
+
+                        // 메인 무기 정보 디버그
+                        Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(
+                            typeof(Weapon.MainWeapon.WeaponType),
+                            userData["weaponType"]["N"].ToString()
+                        );
+                        Debug.Log($"[LevelUpSelectManager] 선택된 무기 타입: {weaponType}");
+
+                        levelUpUI.SetMainWeaponItem(userData, successCount);
                         succeeded = true;
                     }
                     break;
+
                 case SelectItemType.SubWeapon:
                     // SubWeapon이 6개 이상인 경우에는 선택하지 않음
                     if (playerAttack.subWeapons.Count == 6)
                     {
-                        i--;
+                        totalTryCount++;
                         continue;
                     }
                     WeaponStatProvider.SubWeaponStat subWeaponStat = GetSubWeaponOption(subWeaponStats, currentSubWeapons);
                     if (!Equals(subWeaponStat, default))
                     {
-                        bool isUpgrade = subWeaponStat.weaponGrade > 0;
-                        // UI 버튼에 이벤트리스너를 추가하여 선택 시 해당 무기 추가 또는 업그레이드
-                        CreateSubWeaponItem(subWeaponStat);
+                        // UI 버튼에 서브 무기 정보 설정
+                        subWeaponOptions.Add(subWeaponStat);
+                        levelUpUI.SetSubWeaponItem(subWeaponStat, successCount);
                         succeeded = true;
                     }
                     break;
+
                 case SelectItemType.SupportItem:
-                    i--;
+                    // 현재 지원품 미구현으로 인해 건너뜀
+                    totalTryCount++;
                     continue;
-                    // 현재 지원품 미구현으로 인해 주석 처리
-                    // int supportItemIndex = Random.Range(0, supportItemStats.Count);
-                    // WeaponStatProvider.SupportItemStat supportItemStat = supportItemStats[supportItemIndex];
-                    // CreateSupportItem(supportItemStat);
-                    succeeded = true;
-                    break;
             }
 
-            if (!succeeded)
+            if (succeeded)
             {
-                i--; // 현재 시도를 다시 하도록 인덱스 감소
-                totalTryCount++;
+                successCount++;
             }
+
+            totalTryCount++;
+        }
+
+        // 만약 3개의 선택지를 채우지 못했다면 로그 출력
+        if (successCount < 3)
+        {
+            Debug.LogWarning($"[LevelUpSelectManager] Only created {successCount} items after {totalTryCount} attempts");
         }
     }
 
-
-    private void CreateMainWeaponItem(LitJson.JsonData userData)
+    public void CreateMainWeaponItem(LitJson.JsonData userData)
     {
         PlayerAttack playerAttack = GameManager.Instance.playerAttack;
 
@@ -181,10 +231,9 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         newMainWeapon.weaponRare = weaponRare;
         playerAttack.mainWeapon = newMainWeapon;
         Debug.Log($"[LevelUpSelectManager] Main weapon changed to {newMainWeapon.weaponType}");
-
     }
 
-    private void CreateSubWeaponItem(WeaponStatProvider.SubWeaponStat subWeaponStat)
+    public void CreateSubWeaponItem(WeaponStatProvider.SubWeaponStat subWeaponStat)
     {
         PlayerAttack playerAttack = GameManager.Instance.playerAttack;
         if (subWeaponStat.weaponGrade == 0)
