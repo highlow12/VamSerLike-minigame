@@ -35,7 +35,7 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         }
     }
 
-    private LitJson.JsonData GetNonDuplicateMainWeapon(LitJson.JsonData userMainWeaponData, Weapon.MainWeapon currentMainWeapon)
+    private LitJson.JsonData GetNonDuplicateMainWeapon(LitJson.JsonData userMainWeaponData, Weapon.MainWeapon currentMainWeapon, List<LitJson.JsonData> listedWeapons)
     {
         int tryCount = 0;
         while (tryCount < MAX_RETRY_COUNT)
@@ -49,8 +49,11 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
                 continue;
             }
 
-            Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(typeof(Weapon.MainWeapon.WeaponType), userData["weaponType"]["N"].ToString());
-
+            Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(typeof(Weapon.MainWeapon.WeaponType), userData["weaponType"].ToString());
+            if (listedWeapons.Any(x => x["weaponType"].ToString() == weaponType.ToString()))
+            {
+                continue;
+            }
             // 현재 장착된 무기와 다른 타입인 경우에만 반환
             if (currentMainWeapon == null || weaponType != currentMainWeapon.weaponType)
             {
@@ -63,7 +66,7 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         return null;  // 유효한 무기를 찾지 못한 경우
     }
 
-    private WeaponStatProvider.SubWeaponStat GetSubWeaponOption(List<WeaponStatProvider.SubWeaponStat> subWeaponStats, List<Weapon.SubWeapon> currentSubWeapons)
+    private WeaponStatProvider.SubWeaponStat GetSubWeaponOption(List<WeaponStatProvider.SubWeaponStat> subWeaponStats, List<Weapon.SubWeapon> currentSubWeapons, List<WeaponStatProvider.SubWeaponStat> listedWeapons)
     {
         // 현재 장착된 SubWeapon들 중 랜덤 선택 시도
         if (currentSubWeapons.Count > 0)
@@ -73,7 +76,15 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             {
                 int weaponIndex = UnityEngine.Random.Range(0, currentSubWeapons.Count);
                 Weapon.SubWeapon currentWeapon = currentSubWeapons[weaponIndex];
-
+                if (currentWeapon == null)
+                {
+                    tryCount++;
+                    continue;
+                }
+                if (listedWeapons.Any(x => x.weaponType == currentWeapon.weaponType))
+                {
+                    continue;
+                }
                 // 최대 레벨이 아닌 경우에만 선택
                 if (currentWeapon.weaponGrade < currentWeapon.maxWeaponGrade)
                 {
@@ -129,6 +140,10 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         Weapon.MainWeapon currentMainWeapon = playerAttack.mainWeapon;
         List<Weapon.SubWeapon> currentSubWeapons = playerAttack.subWeapons;
 
+        List<LitJson.JsonData> listedMainWeapons = new List<LitJson.JsonData>();
+        List<WeaponStatProvider.SubWeaponStat> listedSubWeapons = new List<WeaponStatProvider.SubWeaponStat>();
+        // 지원품 구현 후 listedDrops 추가 필요
+
         // 이전 옵션 목록 초기화
         mainWeaponOptions.Clear();
         subWeaponOptions.Clear();
@@ -145,7 +160,7 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             switch (selectItemType)
             {
                 case SelectItemType.MainWeapon:
-                    LitJson.JsonData userData = GetNonDuplicateMainWeapon(userMainWeaponData, currentMainWeapon);
+                    LitJson.JsonData userData = GetNonDuplicateMainWeapon(userMainWeaponData, currentMainWeapon, listedMainWeapons);
 
                     Debug.Log($"[LevelUpSelectManager] 선택된 MainWeapon Data: {userData?.ToJson() ?? "null"}");
 
@@ -157,11 +172,11 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
                         // 메인 무기 정보 디버그
                         Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(
                             typeof(Weapon.MainWeapon.WeaponType),
-                            userData["weaponType"]["N"].ToString()
+                            userData["weaponType"].ToString()
                         );
                         Debug.Log($"[LevelUpSelectManager] 선택된 무기 타입: {weaponType}");
-
                         levelUpUI.SetMainWeaponItem(userData, successCount);
+                        listedMainWeapons.Add(userData);
                         succeeded = true;
                     }
                     break;
@@ -173,12 +188,13 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
                         totalTryCount++;
                         continue;
                     }
-                    WeaponStatProvider.SubWeaponStat subWeaponStat = GetSubWeaponOption(subWeaponStats, currentSubWeapons);
+                    WeaponStatProvider.SubWeaponStat subWeaponStat = GetSubWeaponOption(subWeaponStats, currentSubWeapons, listedSubWeapons);
                     if (!Equals(subWeaponStat, default))
                     {
                         // UI 버튼에 서브 무기 정보 설정
                         subWeaponOptions.Add(subWeaponStat);
                         levelUpUI.SetSubWeaponItem(subWeaponStat, successCount);
+                        listedSubWeapons.Add(subWeaponStat);
                         succeeded = true;
                     }
                     break;
@@ -218,9 +234,9 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             Debug.LogWarning($"[LevelUpSelectManager] Failed to destroy main weapon: {e.Message}");
         }
         playerAttack.mainWeapon = null;
-        Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(typeof(Weapon.MainWeapon.WeaponType), userData["weaponType"]["N"].ToString());
+        Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(typeof(Weapon.MainWeapon.WeaponType), userData["weaponType"].ToString());
         string weaponTypeString = weaponType.ToString();
-        Weapon.WeaponRare weaponRare = (Weapon.WeaponRare)Enum.Parse(typeof(Weapon.WeaponRare), userData["weaponRare"]["N"].ToString());
+        Weapon.WeaponRare weaponRare = (Weapon.WeaponRare)Enum.Parse(typeof(Weapon.WeaponRare), userData["weaponRare"].ToString());
         Type type = Type.GetType(weaponTypeString);
         if (type == null)
         {
