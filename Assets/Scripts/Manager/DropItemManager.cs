@@ -9,20 +9,20 @@ public class DropItemManager : Singleton<DropItemManager>
     // 뒤끝 백엔드에 업로드되어 있는 확률 차트를 클라이언트에서 사용하기 위한 변수
     // 해당 변수 값이 변경되면 해당 확률 차트에 맞는 드랍 아이템 데이터를 불러옴
     // </summary>
-    private BackendDataManager.ProbabilityCardV2 _probabilityCard;
+    private string _probabilityTitle;
 
-    public BackendDataManager.ProbabilityCardV2 probabilityCard
+    public string probabilityTitle
     {
         get
         {
-            return _probabilityCard;
+            return _probabilityTitle;
         }
         set
         {
             if (value != null)
             {
-                _probabilityCard = value;
-                currentStageDropItemData = BackendDataManager.Instance.GetProbabilityData(value.selectedProbabilityFileId);
+                _probabilityTitle = value;
+                currentStageDropItemData = BackendDataManager.Instance.GetProbabilityData(value);
             }
         }
     }
@@ -44,14 +44,10 @@ public class DropItemManager : Singleton<DropItemManager>
     // <summary>
     // 해당 클래스 외부에서 확률 차트를 설정하는 함수
     // </summary>
-    public bool SetProbabilityCard(BackendDataManager.ProbabilityCardV2 probabilityCard)
+    public bool SetProbabilityTitle(string probName)
     {
-        if (probabilityCard == null || Equals(probabilityCard, default))
-        {
-            return false;
-        }
-        this.probabilityCard = probabilityCard;
-        return true;
+        probabilityTitle = probName;
+        return currentStageDropItemData != null;
     }
 
     // <summary>
