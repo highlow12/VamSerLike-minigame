@@ -9,16 +9,16 @@ public class ClayKnifeObject : AttackObject
     {
         base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
         colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
-        if (animation.GetClip("Attack") != null)
-        {
-            animation.Play("Attack");
-        }
     }
 
     protected override void Awake()
     {
         base.Awake();
-        animation = GetComponent<Animation>();
+    }
+
+    public override void SubWeaponInit()
+    {
+        base.SubWeaponInit();
     }
 
     void OnEnable()
@@ -36,10 +36,6 @@ public class ClayKnifeObject : AttackObject
         base.Attack();
         if (hitCount > 0)
         {
-            if (animation.GetClip("Hit") != null)
-            {
-                animation.Play("Hit");
-            }
             Despawn();
         }
     }

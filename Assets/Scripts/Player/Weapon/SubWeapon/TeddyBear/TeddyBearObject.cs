@@ -16,16 +16,11 @@ public class TeddyBearObject : AttackObject
         base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
         colliderObject.transform.localScale = new Vector3(attackRange, attackRange, 1);
         this.attackRange = attackRange;
-        if (animation.GetClip("Attack") != null)
-        {
-            animation.Play("Attack");
-        }
     }
 
     protected override void Awake()
     {
         base.Awake();
-        animation = GetComponent<Animation>();
     }
 
     void OnEnable()
@@ -73,10 +68,6 @@ public class TeddyBearObject : AttackObject
         base.Attack();
         if (hitCount > 0)
         {
-            if (animation.GetClip("Hit") != null)
-            {
-                animation.Play("Hit");
-            }
         }
         Despawn();
     }
