@@ -19,7 +19,7 @@ public class FishingRodObject : AttackObject
     {
         base.Awake();
         animator = GetComponent<Animator>();
-        weaponPositionXOffset = 0;
+        weaponPositionXOffset = 0.3f;
     }
 
     public override void SubWeaponInit()
@@ -51,7 +51,7 @@ public class FishingRodObject : AttackObject
         {
             float degree = Mathf.Atan2(nearestMonster.transform.position.y - transform.position.y,
                                       nearestMonster.transform.position.x - transform.position.x) * Mathf.Rad2Deg;
-            Flip(degree, true);
+            Flip(degree);
 
             // 몬스터의 머리 위치 계산
             Vector3 hookPosition = GetMonsterHeadPosition(nearestMonster);

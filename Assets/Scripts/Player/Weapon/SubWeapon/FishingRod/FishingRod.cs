@@ -10,7 +10,7 @@ public class FishingRod : Weapon.SubWeapon
         weaponType = WeaponType.FishingRod;
         base.Awake();
         attackObject.transform.parent = transform;
-        attackObject.transform.localPosition = new Vector3(0, 0.15f, 0);
+        attackObject.transform.localPosition = new Vector3(0, 0, 0);
     }
 
     public override IEnumerator Attack(Vector2 attackDirection)

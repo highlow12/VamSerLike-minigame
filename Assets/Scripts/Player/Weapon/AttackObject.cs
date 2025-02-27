@@ -44,6 +44,10 @@ public abstract class AttackObject : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>() ?? gameObject.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = subWeaponSO.weaponSprite;
+        if (subWeaponSO.weaponAnimator != null)
+        {
+            animator.runtimeAnimatorController = subWeaponSO.weaponAnimator;
+        }
     }
 
     protected virtual void Awake()
