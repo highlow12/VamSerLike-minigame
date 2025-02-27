@@ -18,7 +18,6 @@ public class FamillyPictureObject : AttackObject
 
     protected override void Awake()
     {
-        animation = GetComponent<Animation>();
     }
 
     void OnEnable()

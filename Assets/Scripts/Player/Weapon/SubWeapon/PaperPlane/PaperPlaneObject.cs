@@ -21,16 +21,11 @@ public class PaperPlaneObject : AttackObject
             // if weapon grade is 0, set the attackCollider itself
             attackCollider = GetComponent<Collider2D>();
         }
-        if (animation.GetClip("Attack") != null)
-        {
-            animation.Play("Attack");
-        }
     }
 
     protected override void Awake()
     {
         base.Awake();
-        animation = GetComponent<Animation>();
     }
 
     void OnEnable()
@@ -87,10 +82,6 @@ public class PaperPlaneObject : AttackObject
         base.Attack();
         if (hitCount > 0)
         {
-            if (animation.GetClip("Hit") != null)
-            {
-                animation.Play("Hit");
-            }
         }
         Despawn();
     }

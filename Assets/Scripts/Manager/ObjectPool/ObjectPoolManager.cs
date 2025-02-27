@@ -27,8 +27,8 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
     // default parent transform of object pool
     public Transform defaultParent;
 
-    [SerializeField]
-    private List<ObjectInfo> objectInfos = new();
+    // Modifier changed from [SerializeField] private to public
+    public List<ObjectInfo> objectInfos = new();
 
     // 생성할 오브젝트의 key값지정을 위한 변수
     private string objectName;

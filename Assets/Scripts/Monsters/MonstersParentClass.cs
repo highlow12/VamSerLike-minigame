@@ -33,7 +33,8 @@ public abstract class Monster : MonoBehaviour
     protected virtual void Die()
     {
         isDead = true;
-        Destroy(gameObject);
+        PoolAble poolAble = GetComponent<PoolAble>();
+        poolAble?.ReleaseObject();
         // 사망 처리 로직
         DropLoot();
     }

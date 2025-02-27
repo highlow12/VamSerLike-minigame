@@ -3,14 +3,16 @@ using UnityEngine;
 
 public class MonsterPatternManager : Singleton<MonsterPatternManager>
 {
-    int currentPatternIndex = 0;
-    int currentWaveIndex = 0;  // 현재 실행 중인 웨이브 인덱스
+    // Make these public for MonsterPatternTestUi
+    public float gameStartTime;
+    public List<WaveInstance> activeWaves = new();
+    public int currentPatternIndex = 0;
+    public int currentWaveIndex = 0;  // 현재 실행 중인 웨이브 인덱스
     public StageSpawnPattern stageSpawnPattern;
     public WavePatternData waveSpawnPattern;
-    float gameStartTime;  // 게임 시작 시간 저장용 변수 추가
 
     // 웨이브 관리용 내부 클래스 (수정됨)
-    class WaveInstance
+    public class WaveInstance
     {
         public WavePattern wavePattern; // WavePattern을 저장
         public int currentPatternIndex;
@@ -40,7 +42,6 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
         }
     }
 
-    List<WaveInstance> activeWaves = new();
     List<PatternInstance> activePatterns = new();
     float nextWaveSpawnTime = 0f;
 
@@ -133,11 +134,11 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
     }
 
     // 새로운 웨이브 시작 : WavePatternData의 내부 WavePattern 이용 (수정됨)
-    void StartNewWave()
+    public void StartNewWave()
     {
         if (waveSpawnPattern == null || currentWaveIndex >= waveSpawnPattern.wavePattern.Count)
             return;
-            
+
         WaveInstance newWave = new WaveInstance(waveSpawnPattern.wavePattern[currentWaveIndex], Time.time);
         activeWaves.Add(newWave);
         currentWaveIndex++;
@@ -151,7 +152,7 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
         {
             WaveInstance wave = activeWaves[i];
             var patterns = wave.wavePattern.wavePattern.patterns;
-            
+
             // 패턴은 시간에 따라 진행
             if (wave.currentPatternIndex < patterns.Count)
             {
@@ -230,57 +231,5 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
 
         // 남은 몬스터가 없으면 true, 있으면 false 반환
         return wave.spawnedMonsters.Count == 0;
-    }
-
-    private void OnGUI()
-    {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        float width = 190 * 3;
-        float height = 50 * 3;
-        float labelHeight = 100 * 3;
-
-        // 모든 GUI 요소의 폰트 크기를 36으로 설정
-        GUI.skin.button.fontSize = 36;
-        GUI.skin.label.fontSize = 36;
-
-        // 패턴 스폰 버튼 (크기 3배)
-        if (GUI.Button(new Rect(Screen.width - width, 10, width, height), "Spawn Next Pattern"))
-        {
-            SpawnNextPattern();
-        }
-
-        // 웨이브 시작 버튼 (크기 3배)
-        if (GUI.Button(new Rect(Screen.width - width, height + 30, width, height), "Start New Wave"))
-        {
-            StartNewWave();
-        }
-
-        // 웨이브 정보 표시 (크기 3배)
-        GUI.skin.label.fontSize = 36; // 폰트 크기도 증가
-        string waveInfo = $"Game Time: {Time.time - gameStartTime:F1}s\n";
-        waveInfo += $"Active Waves: {activeWaves.Count}\n";
-        waveInfo += $"Current Wave: {currentWaveIndex}/{waveSpawnPattern?.wavePattern.Count}\n";
-        if (activeWaves.Count > 0)
-        {
-            var lastWave = activeWaves[^1];
-            var patterns = lastWave.wavePattern.wavePattern.patterns;
-            waveInfo += $"Last Wave Pattern: {lastWave.currentPatternIndex}/{patterns.Count}\n";
-            if (lastWave.currentPatternIndex < patterns.Count)
-            {
-                float nextPatternTime = lastWave.waveStartTime + patterns[lastWave.currentPatternIndex].startTime;
-                waveInfo += $"Next Pattern Time: {nextPatternTime - Time.time:F1}s\n";
-            }
-            waveInfo += $"Monsters Alive: {lastWave.spawnedMonsters.Count}";
-        }
-        GUI.Label(new Rect(Screen.width - width, (height * 2) + 60, width, labelHeight), waveInfo);
-
-        // 다음 패턴 정보 표시 (크기 3배)
-        var nextPattern = GetNextPattern();
-        if (nextPattern != null)
-        {
-            string info = $"Next: {nextPattern?.patternType}\nCount: {nextPattern?.monsterCount}";
-            GUI.Label(new Rect(Screen.width - width, (height * 3) + 90, width, height), info);
-        }
-#endif
     }
 }
