@@ -29,6 +29,8 @@ public class FaceMask : Weapon.SubWeapon
     protected override void InitStat()
     {
         base.InitStat();
+        weaponScript.subWeaponSO = weaponData;
+        weaponScript.SubWeaponInit();
         if (weaponGrade == 2)
         {
             attackObject.transform.localPosition = new Vector3(-0.025f, 0.5f, 0); // 플레이어 얼굴 위치에 맞게 조정
@@ -39,8 +41,6 @@ public class FaceMask : Weapon.SubWeapon
     {
         isAttackCooldown = true;
         weaponScript.Init(attackDamage, attackRange, 0, attackTarget);
-        weaponScript.subWeaponSO = weaponData;
-        weaponScript.SubWeaponInit();
         ApplyInvincibilityEffect();
         yield return new WaitForSeconds(attackDamage);
         RemoveInvincibilityEffect();

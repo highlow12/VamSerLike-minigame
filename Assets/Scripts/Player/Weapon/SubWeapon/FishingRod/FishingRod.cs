@@ -13,13 +13,18 @@ public class FishingRod : Weapon.SubWeapon
         attackObject.transform.localPosition = new Vector3(0, 0, 0);
     }
 
+    protected override void InitStat()
+    {
+        base.InitStat();
+        weaponScript.subWeaponSO = weaponData;
+        weaponScript.SubWeaponInit();
+    }
+
     public override IEnumerator Attack(Vector2 attackDirection)
     {
         isAttackCooldown = true;
-        weaponScript.subWeaponSO = weaponData;
         weaponScript.Init(attackDamage, attackRange, 0, attackTarget);
         weaponScript.tweeningDuration = 1f / (attackSpeed * 5);
-        weaponScript.SubWeaponInit();
         weaponScript.Attack();
         yield return new WaitForSeconds(1f / attackSpeed);
         isAttackCooldown = false;
