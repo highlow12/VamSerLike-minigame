@@ -37,6 +37,20 @@ public class Player : MonoBehaviour
         Fixed,
         Percentage
     }
+
+    public enum PlayerSpecialEffect
+    {
+        None = 0,
+        Invincible = 1 << 0,
+        Stun = 1 << 1,
+        Slow = 1 << 2,
+        Knockback = 1 << 3,
+        KnockbackImmune = 1 << 4,
+        StunImmune = 1 << 5,
+        SlowImmune = 1 << 6,
+
+    }
+
     [System.Serializable]
     public struct PlayerBuffEffect
     {
@@ -60,6 +74,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private PlayerSkin _currentPlayerSkin = PlayerSkin.Normal;
     private PlayerSkin _lastSkin;
+    public PlayerSpecialEffect playerSpecialEffect;
 
     public PlayerSkin currentPlayerSkin
     {
@@ -159,11 +174,33 @@ public class Player : MonoBehaviour
         health = Mathf.Clamp(health + newAmount, 0f, maxHealth);
     }
 
+    public void ApplySpecialEffect(PlayerSpecialEffect specialEffect, float duration = 5f)
+    {
+        GameManager.Instance.ChangeValueForDuration(
+            (value) => playerSpecialEffect = (PlayerSpecialEffect)value,
+            () => playerSpecialEffect,
+            specialEffect,
+            duration
+        );
+    }
+
     void OnTriggerEnter2D(Collider2D col)
     {
         if (col.CompareTag("DropItem") && col.TryGetComponent<DropItem>(out var dropItem))
         {
             dropItem.UseItem();
+        }
+        if (col.CompareTag("Monster"))
+        {
+            if (playerSpecialEffect.HasFlag(PlayerSpecialEffect.Invincible))
+            {
+                return;
+            }
+            Monster monster = col.GetComponent<Monster>();
+            if (monster != null)
+            {
+                // 몬스터 대미지 로직
+            }
         }
     }
 }

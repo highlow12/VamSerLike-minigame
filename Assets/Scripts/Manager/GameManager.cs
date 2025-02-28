@@ -210,6 +210,64 @@ public class GameManager : Singleton<GameManager>
           setter(getter() - changeValue);
      }
 
+     public void ChangeValueForDuration(Action<Enum> setter, Func<Enum> getter, Enum changeValue, float duration)
+     {
+          StartCoroutine(ChangeValueForDurationCoroutine(setter, getter, changeValue, duration));
+     }
+
+     // Dictionary to track active enum effect coroutines
+     private Dictionary<Enum, Coroutine> activeEnumEffects = new Dictionary<Enum, Coroutine>();
+
+     private IEnumerator ChangeValueForDurationCoroutine(Action<Enum> setter, Func<Enum> getter, Enum changeValue, float duration)
+     {
+          Enum currentValue = getter();
+          bool alreadyHasFlag = false;
+
+          // Check if the value already has the flag
+          if (currentValue != null && changeValue != null &&
+              Convert.ToInt32(currentValue) != 0 &&
+              (Convert.ToInt32(currentValue) & Convert.ToInt32(changeValue)) == Convert.ToInt32(changeValue))
+          {
+               alreadyHasFlag = true;
+
+               // 이미 실행 중인 코루틴이 있으면 중지
+               if (activeEnumEffects.TryGetValue(changeValue, out Coroutine existingCoroutine))
+               {
+                    if (existingCoroutine != null)
+                    {
+                         StopCoroutine(existingCoroutine);
+                    }
+                    // 딕셔너리에서 이전 코루틴을 제거 (나중에 새 코루틴으로 다시 추가됨)
+                    activeEnumEffects.Remove(changeValue);
+               }
+          }
+
+          if (!alreadyHasFlag)
+          {
+               // 값이 없는 경우에만 추가
+               setter((Enum)Enum.ToObject(getter().GetType(), Convert.ToInt32(getter()) | Convert.ToInt32(changeValue)));
+          }
+
+          // 현재 코루틴을 딕셔너리에 등록
+          activeEnumEffects[changeValue] = StartCoroutine(RemoveValueAfterDelay(setter, getter, changeValue, duration));
+
+          yield break; // 실제 대기는 RemoveValueAfterDelay에서 처리
+     }
+
+     private IEnumerator RemoveValueAfterDelay(Action<Enum> setter, Func<Enum> getter, Enum changeValue, float duration)
+     {
+          yield return new WaitForSeconds(duration);
+
+          // 지정된 시간이 지나면 값을 제거
+          setter((Enum)Enum.ToObject(getter().GetType(), Convert.ToInt32(getter()) & ~Convert.ToInt32(changeValue)));
+
+          // 딕셔너리에서 코루틴 제거
+          if (activeEnumEffects.ContainsKey(changeValue))
+          {
+               activeEnumEffects.Remove(changeValue);
+          }
+     }
+
      public void AddExperience(float experience)
      {
           playerExperience += experience * playerExperienceMultiplier;

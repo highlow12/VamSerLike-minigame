@@ -21,6 +21,7 @@ public class TestUi : MonoBehaviour
         SkinSelectTestUi skinSelectTestUi = gameObject.AddComponent<SkinSelectTestUi>();
         MonsterPatternTestUi monsterPatternTestUi = gameObject.AddComponent<MonsterPatternTestUi>();
         MonsterSpawnTestUi monsterSpawnTestUi = gameObject.AddComponent<MonsterSpawnTestUi>();
+        PlayerSpecialEffectTestUi playerSpecialEffectTestUi = gameObject.AddComponent<PlayerSpecialEffectTestUi>();
 
         testUIs.Add(new TestUI
         {
@@ -40,6 +41,13 @@ public class TestUi : MonoBehaviour
         {
             name = "Monster Spawn",
             guiAction = monsterSpawnTestUi.MonsterSpawnGUI,
+            show = false
+        });
+
+        testUIs.Add(new TestUI
+        {
+            name = "Special Effects",
+            guiAction = playerSpecialEffectTestUi.PlayerSpecialEffectGUI,
             show = false
         });
     }

@@ -14,6 +14,7 @@ namespace Weapon
             FamillyPicture,
             ClayKnife,
             FishingRod,
+            FaceMask,
         }
         protected bool isUsingPool = false;
         protected string prefabName;
@@ -84,7 +85,7 @@ namespace Weapon
 #if UNITY_EDITOR
                 DebugConsole.Line errorLog = new()
                 {
-                    text = $"[{GameManager.Instance.gameTimer}] Failed to load drop item prefab {name}",
+                    text = $"[{GameManager.Instance.gameTimer}] Failed to load prefab {name}",
                     messageType = DebugConsole.MessageType.Local,
                     tick = GameManager.Instance.gameTimer
                 };
