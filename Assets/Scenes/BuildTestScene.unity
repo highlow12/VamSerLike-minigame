@@ -139,7 +139,7 @@ MonoBehaviour:
   gameStartTime: 0
   currentPatternIndex: 0
   currentWaveIndex: 0
-  stageSpawnPattern: {fileID: 11400000, guid: a9cc1b736dd97cd46baecc755ad5011f, type: 2}
+  stageSpawnPattern: {fileID: 11400000, guid: 024d84a3ca76eeb4a943fa716cbea2b3, type: 2}
   waveSpawnPattern: {fileID: 11400000, guid: c9063697e3774d44798685a7e0ef9fba, type: 2}
 --- !u!1 &45077537
 GameObject:
@@ -2686,11 +2686,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9199972372846630469, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.05
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9199972372846630469, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.82
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9199972372846630469, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
       propertyPath: m_LocalPosition.z
