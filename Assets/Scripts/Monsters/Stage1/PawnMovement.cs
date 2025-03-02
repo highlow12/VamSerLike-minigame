@@ -1,68 +1,73 @@
 using UnityEngine;
 using DG.Tweening;
 using System;
+using Unity.Collections;
 
 public class PawnMoveMent : NormalMonster
 {
+    [SerializeField] float jumpPower = 1;
+    [SerializeField] float delay = 0;
     protected override void Start()
     {
-        movement = new ChessStepMovement();
+        movement = new ChessStepMovement(jumpPower, delay, moveSpeed);
         base.Start();
     }
 }
 
 class ChessStepMovement : IMovement
 {
-    Vector2 tweeningPos = Vector2.zero;
-    float jumpPower = 2;
-    float duration = 1;
-    float speed = 1;
-    Tweener activeTween;
+    protected Vector2 startPos;
+    protected Vector2 targetPos;
+    protected float jumpPower;
+    protected float delay;
+    protected float speed;
+    protected float Timer = 0;
+    protected float elapsedTime = 0;
+    protected bool isJumping = false;
+    protected float gravity = -1f;
+    protected float initialVelocityY;
 
-    public ChessStepMovement(float jumpPower = 2, float duration = 1, float speed = 1)
+    public ChessStepMovement(float jumpPower, float delay, float speed)
     {
         this.jumpPower = jumpPower;
-        this.duration = duration;
+        this.delay = delay;
         this.speed = speed;
+        this.initialVelocityY = jumpPower;
     }
 
-    public void CalculateMovement(Transform transform)
+    public virtual void CalculateMovement(Transform transform)
     {
-        Vector2 currentPosition = transform.position;
-        Vector2 targetPosition = currentPosition + new Vector2(0, speed); // 예제: 앞으로 이동
+        Timer += Time.deltaTime;
 
-        if (activeTween == null || (bool)!activeTween?.IsPlaying())
+        if (Timer >= delay && !isJumping)
         {
-            StartJumpMotion(currentPosition, targetPosition, jumpPower, speed, (pos) => 
+            Timer = 0;
+            startPos = transform.position;
+            targetPos = transform.position + (GameManager.Instance.player.transform.position - transform.position).normalized * speed;
+            elapsedTime = 0;
+            isJumping = true;
+        }
+
+        if (isJumping)
+        {
+            if (elapsedTime >= 1)
             {
-                tweeningPos = pos;
-                transform.position = tweeningPos; // 트랜스폼 위치 업데이트
-            });
+                isJumping = false;
+                return;
+            }
+
+            elapsedTime += Time.deltaTime;
+            
+            var newPosX = Mathf.Lerp(startPos.x, targetPos.x, elapsedTime);
+            var newPosY = func(elapsedTime) * jumpPower + Mathf.Lerp(startPos.y, targetPos.y, elapsedTime);
+
+            transform.position = new Vector2(newPosX, newPosY);
+
         }
     }
 
-    public void StartJumpMotion(Vector2 startPos, Vector2 endPos, float jumpPower = 2f, float speed = 1f, Action<Vector2> onPositionUpdate = null)
+    protected float func(float x)
     {
-        var dir = endPos - startPos;
-        dir = dir.normalized;
-        var newEndPos = startPos + dir * speed;
-
-        // 진행도를 0에서 1까지 트위닝
-        activeTween = DOTween.To(() => 0f, (progress) =>
-        {
-            // 현재 위치 계산
-            Vector2 currentPos = GetJumpPosition(startPos, newEndPos, jumpPower, progress);
-            var returnPos = startPos - currentPos;
-            // 위치 업데이트 콜백 호출
-            onPositionUpdate?.Invoke(-returnPos);
-
-        }, 1f, duration);
-    }
-
-    private Vector2 GetJumpPosition(Vector2 startPos, Vector2 endPos, float jumpPower, float progress)
-    {
-        // 점프 위치 계산 로직 (예제)
-        float height = Mathf.Sin(Mathf.PI * progress) * jumpPower;
-        return Vector2.Lerp(startPos, endPos, progress) + new Vector2(0, height);
+        return -1 * Mathf.Pow(2*x - 1, 2) + 1;
     }
 }
