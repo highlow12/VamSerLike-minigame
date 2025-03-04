@@ -5,8 +5,16 @@ public class DemoUI : MonoBehaviour
 {
     private bool showWeaponUI = true;
     private Vector2 scrollPosition;
+    private float startTime;
     
-    // Add this Update method to check for key input
+    // Version display string
+    [SerializeField] private string versionText = "Version 1.0.0";
+    
+    private void Start()
+    {
+        startTime = Time.time;
+    }
+    
     private void Update()
     {
         // Press Tab key to toggle weapon selection UI
@@ -16,9 +24,14 @@ public class DemoUI : MonoBehaviour
         }
     }
     
-    // Add this OnGUI method to render the weapon selection UI
     private void OnGUI()
     {
+        // Display timer at the top center of the screen
+        DisplayTimer();
+        
+        // Display version at bottom left
+        DisplayVersion();
+        
         if (!showWeaponUI) 
             return;
             
@@ -59,6 +72,57 @@ public class DemoUI : MonoBehaviour
         }
         
         GUI.EndScrollView();
+    }
+    
+    private void DisplayVersion()
+    {
+        // Create style for the version text
+        GUIStyle versionStyle = new GUIStyle(GUI.skin.label);
+        versionStyle.fontSize = 14;
+        versionStyle.normal.textColor = Color.white;
+        
+        // Calculate the size of the text
+        Vector2 textSize = versionStyle.CalcSize(new GUIContent(versionText));
+        
+        // Position at bottom left with padding
+        float padding = 10f;
+        
+        // Draw background for better visibility
+        GUI.color = new Color(0, 0, 0, 0.5f);
+        GUI.Box(new Rect(padding, Screen.height - textSize.y - padding - 5, textSize.x + 10, textSize.y + 5), "");
+        GUI.color = Color.white;
+        
+        // Display the version text
+        GUI.Label(new Rect(padding + 5, Screen.height - textSize.y - padding - 2, textSize.x, textSize.y), versionText, versionStyle);
+    }
+    
+    private void DisplayTimer()
+    {
+        float elapsedTime = Time.time - startTime;
+        
+        int minutes = Mathf.FloorToInt(elapsedTime / 60f);
+        int seconds = Mathf.FloorToInt(elapsedTime % 60f);
+        int milliseconds = Mathf.FloorToInt((elapsedTime * 1000) % 1000);
+        
+        string timeText = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
+        
+        // Create style for the timer text
+        GUIStyle timerStyle = new GUIStyle(GUI.skin.label);
+        timerStyle.fontSize = 24;
+        timerStyle.fontStyle = FontStyle.Bold;
+        timerStyle.normal.textColor = Color.white;
+        timerStyle.alignment = TextAnchor.UpperCenter;
+        
+        // Calculate the size of the text
+        Vector2 textSize = timerStyle.CalcSize(new GUIContent(timeText));
+        
+        // Draw background for better visibility
+        GUI.color = new Color(0, 0, 0, 0.5f);
+        GUI.Box(new Rect((Screen.width - textSize.x - 20) / 2, 10, textSize.x + 20, textSize.y + 10), "");
+        GUI.color = Color.white;
+        
+        // Display the timer
+        GUI.Label(new Rect((Screen.width - textSize.x) / 2, 15, textSize.x, textSize.y), timeText, timerStyle);
     }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
