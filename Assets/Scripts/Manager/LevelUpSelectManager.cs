@@ -27,12 +27,57 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         // LevelUpUI 참조 가져오기
         if (levelUpUI == null)
         {
+            Debug.Log("[LevelUpSelectManager] LevelUpUI 참조를 찾는 중...");
             levelUpUI = FindAnyObjectByType<LevelUpUI>();
             if (levelUpUI == null)
             {
-                Debug.LogError("[LevelUpSelectManager] Cannot find LevelUpUI component in scene");
+                Debug.LogError("[LevelUpSelectManager] LevelUpUI 컴포넌트를 씬에서 찾을 수 없습니다!");
+                return;
+            }
+            Debug.Log("[LevelUpSelectManager] LevelUpUI 참조 찾음");
+        }
+
+        // 레벨업 이벤트에 구독
+        if (GameManager.Instance != null)
+        {
+            Debug.Log("[LevelUpSelectManager] GameManager.Instance 이벤트에 구독합니다.");
+            GameManager.Instance.onPlayerLevelChanged += OnPlayerLevelUp;
+        }
+        else
+        {
+            Debug.LogError("[LevelUpSelectManager] GameManager.Instance가 null입니다!");
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // 이벤트 구독 해제
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.onPlayerLevelChanged -= OnPlayerLevelUp;
+        }
+    }
+
+    // 레벨업 이벤트 처리
+    private void OnPlayerLevelUp()
+    {
+        // 레벨업 옵션 생성
+        Debug.Log("[LevelUpSelectManager] OnPlayerLevelUp 이벤트 발생! 레벨업 옵션을 생성합니다.");
+
+        // 현재 활성화된 패널이 있는지 확인
+        if (levelUpUI != null && levelUpUI.gameObject.activeInHierarchy)
+        {
+            // 이미 표시된 패널이 있는지 확인
+            Transform panelTransform = levelUpUI.transform.Find("LevelUpPanel");
+            if (panelTransform != null && panelTransform.gameObject.activeSelf)
+            {
+                Debug.Log("[LevelUpSelectManager] 레벨업 패널이 이미 활성화되어 있습니다. 새 패널을 표시하지 않습니다.");
+                return;
             }
         }
+
+        // 아이템 목록 생성
+        CreateItemList();
     }
 
     private LitJson.JsonData GetNonDuplicateMainWeapon(LitJson.JsonData userMainWeaponData, Weapon.MainWeapon currentMainWeapon, List<LitJson.JsonData> listedWeapons)
@@ -52,6 +97,7 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(typeof(Weapon.MainWeapon.WeaponType), userData["weaponType"].ToString());
             if (listedWeapons.Any(x => x["weaponType"].ToString() == weaponType.ToString()))
             {
+                tryCount++;
                 continue;
             }
             // 현재 장착된 무기와 다른 타입인 경우에만 반환
@@ -83,6 +129,7 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
                 }
                 if (listedWeapons.Any(x => x.weaponType == currentWeapon.weaponType))
                 {
+                    tryCount++;
                     continue;
                 }
                 // 최대 레벨이 아닌 경우에만 선택
@@ -100,7 +147,8 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         // 새로운 SubWeapon 선택 (weaponGrade = 0)
         var availableNewWeapons = subWeaponStats.Where(x =>
             x.weaponGrade == 0 &&
-            !currentSubWeapons.Any(c => c.weaponType == x.weaponType)
+            !currentSubWeapons.Any(c => c.weaponType == x.weaponType) &&
+            !listedWeapons.Any(l => l.weaponType == x.weaponType)
         ).ToList();
 
         if (availableNewWeapons.Count > 0)
@@ -114,6 +162,57 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
 
     public void CreateItemList()
     {
+        Debug.Log("[LevelUpSelectManager] CreateItemList started");
+
+        // 모든 필수 인스턴스 null 체크
+        if (BackendDataManager.Instance == null)
+        {
+            Debug.LogError("[LevelUpSelectManager] BackendDataManager.Instance is null!");
+            return;
+        }
+
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("[LevelUpSelectManager] GameManager.Instance is null!");
+            return;
+        }
+
+        // 중요: 여기서 PlayerAttack null 체크 전에 레벨업 패널을 먼저 표시
+        if (levelUpUI == null)
+        {
+            Debug.LogError("[LevelUpSelectManager] levelUpUI is null!");
+            // UI 찾기 시도
+            levelUpUI = FindAnyObjectByType<LevelUpUI>();
+            if (levelUpUI == null)
+            {
+                Debug.LogError("[LevelUpSelectManager] Could not find LevelUpUI in scene!");
+                return;
+            }
+        }
+
+        // 레벨업 패널 표시 명령 직접 호출
+        if (levelUpUI != null)
+        {
+            Debug.Log("[LevelUpSelectManager] 레벨업 UI 표시 명령 실행");
+            // 레벨업 패널 표시 메서드를 직접 호출
+            levelUpUI.ShowLevelUpPanel();
+        }
+
+        // PlayerAttack은 아이템 생성에만 필요하므로 여기서 null 체크
+        PlayerAttack playerAttack = GameManager.Instance.playerAttack;
+        if (playerAttack == null)
+        {
+            Debug.LogError("[LevelUpSelectManager] PlayerAttack is null!");
+            // PlayerAttack이 null이면 아이템 생성은 건너뛰지만, 패널은 이미 표시됨
+            return;
+        }
+
+        if (WeaponStatProvider.Instance == null)
+        {
+            Debug.LogError("[LevelUpSelectManager] WeaponStatProvider.Instance is null!");
+            return;
+        }
+
         // 백엔드에서 메인 무기 데이터 가져오기
         LitJson.JsonData userMainWeaponData = BackendDataManager.Instance.GetUserMainWeaponData();
 
@@ -136,7 +235,6 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
 
         List<WeaponStatProvider.SubWeaponStat> subWeaponStats = WeaponStatProvider.Instance.subWeaponStats;
 
-        PlayerAttack playerAttack = GameManager.Instance.playerAttack;
         Weapon.MainWeapon currentMainWeapon = playerAttack.mainWeapon;
         List<Weapon.SubWeapon> currentSubWeapons = playerAttack.subWeapons;
 
@@ -174,8 +272,25 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
                             typeof(Weapon.MainWeapon.WeaponType),
                             userData["weaponType"].ToString()
                         );
-                        Debug.Log($"[LevelUpSelectManager] 선택된 무기 타입: {weaponType}");
-                        levelUpUI.SetMainWeaponItem(userData, successCount);
+
+                        // 메인 무기 표시명 가져오기
+                        string displayName = WeaponStatProvider.Instance.weaponStats.Find(x => x.weaponType == weaponType).displayName;
+                        Debug.Log($"[LevelUpSelectManager] 선택된 무기 타입: {weaponType}, 표시명: {displayName}");
+
+                        // 메인 무기 아이콘 가져오기
+                        Sprite weaponIcon = null;
+                        GameObject weaponPrefab = Resources.Load<GameObject>($"Prefabs/Player/Weapon/MainWeapon/{weaponType}");
+                        if (weaponPrefab != null && weaponPrefab.GetComponent<SpriteRenderer>() != null)
+                        {
+                            weaponIcon = weaponPrefab.GetComponent<SpriteRenderer>().sprite;
+                            Debug.Log($"[LevelUpSelectManager] 메인 무기 아이콘 로드 성공: {weaponType}");
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[LevelUpSelectManager] 메인 무기 아이콘 로드 실패: {weaponType}");
+                        }
+
+                        levelUpUI.SetMainWeaponItem(userData, successCount, displayName, weaponIcon);
                         listedMainWeapons.Add(userData);
                         succeeded = true;
                     }
@@ -183,7 +298,7 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
 
                 case SelectItemType.SubWeapon:
                     // SubWeapon이 6개 이상인 경우에는 선택하지 않음
-                    if (playerAttack.subWeapons.Count == 6)
+                    if (playerAttack.subWeapons.Count >= 6)
                     {
                         totalTryCount++;
                         continue;
@@ -191,9 +306,26 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
                     WeaponStatProvider.SubWeaponStat subWeaponStat = GetSubWeaponOption(subWeaponStats, currentSubWeapons, listedSubWeapons);
                     if (!Equals(subWeaponStat, default))
                     {
+                        // 서브 무기 표시명 가져오기
+                        string displayName = subWeaponStat.displayName;
+                        Debug.Log($"[LevelUpSelectManager] 선택된 서브 무기: {subWeaponStat.weaponType}, 표시명: {displayName}, 등급: {subWeaponStat.weaponGrade}");
+
+                        // 서브 무기 아이콘 가져오기
+                        Sprite weaponIcon = null;
+                        SubWeaponSO subWeaponSO = Resources.Load<SubWeaponSO>($"ScriptableObjects/SubWeapon/{displayName}/{displayName}_{subWeaponStat.weaponGrade}");
+                        if (subWeaponSO != null)
+                        {
+                            weaponIcon = subWeaponSO.weaponSprite;
+                            Debug.Log($"[LevelUpSelectManager] 서브 무기 아이콘 로드 성공: {displayName}_{subWeaponStat.weaponGrade}");
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[LevelUpSelectManager] 서브 무기 아이콘 로드 실패: {displayName}_{subWeaponStat.weaponGrade}");
+                        }
+
                         // UI 버튼에 서브 무기 정보 설정
                         subWeaponOptions.Add(subWeaponStat);
-                        levelUpUI.SetSubWeaponItem(subWeaponStat, successCount);
+                        levelUpUI.SetSubWeaponItem(subWeaponStat, successCount, displayName, weaponIcon);
                         listedSubWeapons.Add(subWeaponStat);
                         succeeded = true;
                     }
@@ -213,10 +345,12 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             totalTryCount++;
         }
 
+        Debug.Log($"[LevelUpSelectManager] Total try count: {totalTryCount}, Success count: {successCount}");
+
         // 만약 3개의 선택지를 채우지 못했다면 로그 출력
         if (successCount < 3)
         {
-            Debug.LogWarning($"[LevelUpSelectManager] Only created {successCount} items after {totalTryCount} attempts");
+            Debug.LogError($"[LevelUpSelectManager] Failed to create full item list. Only {successCount} items created.");
         }
     }
 
@@ -281,5 +415,4 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         }
     }
 #endif
-
 }
