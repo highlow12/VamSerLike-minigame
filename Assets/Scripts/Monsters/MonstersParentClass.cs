@@ -45,7 +45,13 @@ public abstract class Monster : MonoBehaviour
 
     //protected abstract void DropLoot();
     protected abstract void Attack();
+
+    public float DemoAttack()
+    {
+        return damage;
+    }
 }
+
 
 // 일반 몬스터 클래스
 public class NormalMonster : Monster

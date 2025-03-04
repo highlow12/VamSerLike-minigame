@@ -32,18 +32,22 @@ public class DemoUI : MonoBehaviour
         // Display version at bottom left
         DisplayVersion();
         
+        // Display close button in top right
+        DisplayCloseButton();
+        
         if (!showWeaponUI) 
             return;
             
-        // Create a window in the top right corner
+        // Create a window in the left side (moved from right)
         int windowWidth = 200;
         int windowHeight = 300;
         int padding = 10;
         
-        GUI.Box(new Rect(Screen.width - windowWidth - padding, padding, windowWidth, windowHeight), "무기 선택");
+        // Changed position to left side
+        GUI.Box(new Rect(padding, padding, windowWidth, windowHeight), "무기 선택");
         
-        // Create a scrollable area for weapon options
-        Rect scrollViewRect = new Rect(Screen.width - windowWidth - padding + 10, padding + 30, windowWidth - 20, windowHeight - 40);
+        // Create a scrollable area for weapon options - updated for left positioning
+        Rect scrollViewRect = new Rect(padding + 10, padding + 30, windowWidth - 20, windowHeight - 40);
         Rect contentRect = new Rect(0, 0, windowWidth - 40, 50 * Enum.GetValues(typeof(Weapon.MainWeapon.WeaponType)).Length);
         
         scrollPosition = GUI.BeginScrollView(scrollViewRect, scrollPosition, contentRect);
@@ -72,6 +76,32 @@ public class DemoUI : MonoBehaviour
         }
         
         GUI.EndScrollView();
+    }
+    
+    // New method to display close button
+    private void DisplayCloseButton()
+    {
+        int buttonWidth = 100;
+        int buttonHeight = 40;
+        int padding = 10;
+        
+        // Style for close button
+        GUIStyle closeButtonStyle = new GUIStyle(GUI.skin.button);
+        closeButtonStyle.normal.textColor = Color.white;
+        closeButtonStyle.fontSize = 16;
+        
+        // Draw close button in top right corner
+        if (GUI.Button(new Rect(Screen.width - buttonWidth - padding, padding, buttonWidth, buttonHeight), "게임 종료", closeButtonStyle))
+        {
+            // Close the application
+            Debug.Log("Game closing...");
+            Application.Quit();
+            
+            // This helps when testing in the Unity editor
+            #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+            #endif
+        }
     }
     
     private void DisplayVersion()

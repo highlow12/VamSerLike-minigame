@@ -1063,7 +1063,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &619394801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1080,7 +1080,7 @@ MonoBehaviour:
   m_LightType: 4
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
@@ -2715,7 +2715,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 555364450076536779, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
       propertyPath: baseMoveSpeed
-      value: 5.39
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 3901380010685635139, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
       propertyPath: m_Size.x
@@ -2724,6 +2724,42 @@ PrefabInstance:
     - target: {fileID: 3901380010685635139, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
       propertyPath: m_Size.y
       value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113459164063494271, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
+      propertyPath: m_Color.b
+      value: 0.47792813
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113459164063494271, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
+      propertyPath: m_Color.g
+      value: 0.47792813
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113459164063494271, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
+      propertyPath: m_Color.r
+      value: 0.5660378
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113459164063494271, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
+      propertyPath: m_Intensity
+      value: 2.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113459164063494271, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
+      propertyPath: m_FalloffIntensity
+      value: 0.528
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113459164063494271, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
+      propertyPath: m_PointLightInnerAngle
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113459164063494271, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
+      propertyPath: m_PointLightOuterAngle
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113459164063494271, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
+      propertyPath: m_PointLightInnerRadius
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113459164063494271, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
+      propertyPath: m_PointLightOuterRadius
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6727135283973004618, guid: b7c1708bd4534fd4e80a8e29a064c6bf, type: 3}
       propertyPath: m_Name
