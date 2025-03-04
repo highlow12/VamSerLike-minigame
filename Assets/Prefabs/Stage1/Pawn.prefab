@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 735617066777269435}
   - component: {fileID: -7120237781983450005}
   - component: {fileID: -3235819683044363637}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pawn
   m_TagString: Monster
   m_Icon: {fileID: 0}
