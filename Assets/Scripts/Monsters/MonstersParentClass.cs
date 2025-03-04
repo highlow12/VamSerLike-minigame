@@ -30,9 +30,9 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual void Die()
     {
+        Debug.Log("Dead: " + gameObject.name);
         isDead = true;
-        PoolAble poolAble = GetComponent<PoolAble>();
-        poolAble?.ReleaseObject();
+        MonsterPoolManager.Instance.ReturnMonsterToPool(gameObject,GetComponent<MonsterIdentify>().monsterName);
         // 사망 처리 로직
         DropLoot();
     }

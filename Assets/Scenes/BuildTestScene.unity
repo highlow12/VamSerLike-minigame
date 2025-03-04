@@ -139,7 +139,7 @@ MonoBehaviour:
   gameStartTime: 0
   currentPatternIndex: 0
   currentWaveIndex: 0
-  stageSpawnPattern: {fileID: 11400000, guid: 024d84a3ca76eeb4a943fa716cbea2b3, type: 2}
+  stageSpawnPattern: {fileID: 11400000, guid: a9cc1b736dd97cd46baecc755ad5011f, type: 2}
   waveSpawnPattern: {fileID: 11400000, guid: c9063697e3774d44798685a7e0ef9fba, type: 2}
 --- !u!1 &45077537
 GameObject:
