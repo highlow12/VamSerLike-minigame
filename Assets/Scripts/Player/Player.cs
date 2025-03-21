@@ -200,6 +200,8 @@ public class Player : MonoBehaviour
             if (monster != null)
             {
                 // 몬스터 대미지 로직
+                //TODO: Delete DemoAttack
+                health -= monster.DemoAttack();
             }
         }
     }

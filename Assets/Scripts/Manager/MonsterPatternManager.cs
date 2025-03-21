@@ -3,21 +3,21 @@ using UnityEngine;
 
 public class MonsterPatternManager : Singleton<MonsterPatternManager>
 {
-    // Make these public for MonsterPatternTestUi
+    // Public properties for monitoring and UI access
     public float gameStartTime;
     public List<WaveInstance> activeWaves = new();
     public int currentPatternIndex = 0;
-    public int currentWaveIndex = 0;  // 현재 실행 중인 웨이브 인덱스
+    public int currentWaveIndex = 0;
     public StageSpawnPattern stageSpawnPattern;
     public WavePatternData waveSpawnPattern;
 
-    // 웨이브 관리용 내부 클래스 (수정됨)
+    // Wave management class with clearer responsibilities
     public class WaveInstance
     {
-        public WavePattern wavePattern; // WavePattern을 저장
+        public WavePattern wavePattern;
         public int currentPatternIndex;
-        public float waveStartTime;  // 웨이브가 시작된 실제 시간
-        public List<GameObject> spawnedMonsters; // 추가: 웨이브에서 생성된 몬스터들
+        public float waveStartTime;
+        public List<GameObject> spawnedMonsters;
 
         public WaveInstance(WavePattern wavePattern, float startTime)
         {
@@ -26,9 +26,20 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
             waveStartTime = startTime;
             spawnedMonsters = new List<GameObject>();
         }
+
+        // Check if this wave has remaining patterns to spawn
+        public bool HasRemainingPatterns() => currentPatternIndex < wavePattern.wavePattern.patterns.Count;
+
+        // Get next pattern's scheduled start time
+        public float GetNextPatternStartTime() => 
+            waveStartTime + wavePattern.wavePattern.patterns[currentPatternIndex].startTime;
+
+        // Check if all patterns have been executed and monsters are cleared
+        public bool IsCompleted() => !HasRemainingPatterns() && spawnedMonsters.Count == 0;
     }
 
-    class PatternInstance
+    // Pattern management class with clearer responsibilities
+    public class PatternInstance
     {
         public SpawnPatternData patternData;
         public float spawnTime;
@@ -40,10 +51,32 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
             this.spawnTime = spawnTime;
             spawnedMonsters = new List<GameObject>();
         }
+
+        // Check if pattern duration has expired
+        public bool HasExpired(float currentTime) => 
+            patternData.duration > 0f && currentTime >= spawnTime + patternData.duration;
+
+        // Handle monster cleanup for this pattern
+        public void CleanupMonsters()
+        {
+            if (patternData.patternType == SpawnPatternType.Random)
+            {
+                MonsterSpawner.Instance.StopSpawningMonster(patternData.monsterName);
+            }
+            else
+            {
+                foreach (var monster in spawnedMonsters)
+                {
+                    if (monster) 
+                        MonsterPoolManager.Instance.ReturnMonsterToPool(monster, monster.GetComponent<MonsterIdentify>().monsterName);
+                }
+            }
+        }
     }
 
-    List<PatternInstance> activePatterns = new();
-    float nextWaveSpawnTime = 0f;
+    // Private fields
+    private List<PatternInstance> activePatterns = new();
+    private float nextWaveSpawnTime = 0f;
 
     void Start()
     {
@@ -55,29 +88,30 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
         stageSpawnPattern.SortPatternsByStartTime();
         this.stageSpawnPattern = stageSpawnPattern;
     }
+
     public void SetWaveSpawnPattern(WavePatternData waveSpawnPattern)
     {
         this.waveSpawnPattern = waveSpawnPattern;
         currentWaveIndex = 0;
-        // 게임 시작부터 첫 웨이브 시작까지의 절대 시간 설정
-        nextWaveSpawnTime = gameStartTime + waveSpawnPattern.wavePattern[0].waveStartTime;
+        
+        // Calculate absolute time for first wave
+        if (waveSpawnPattern != null && waveSpawnPattern.wavePattern.Count > 0)
+            nextWaveSpawnTime = gameStartTime + waveSpawnPattern.wavePattern[0].waveStartTime;
     }
+
     public SpawnPatternData? GetNextPattern()
     {
         if (stageSpawnPattern == null || stageSpawnPattern.patterns.Count == 0)
             return null;
-        return stageSpawnPattern.patterns[currentPatternIndex];
+        
+        return currentPatternIndex < stageSpawnPattern.patterns.Count ? 
+            stageSpawnPattern.patterns[currentPatternIndex] : null;
     }
-    public void SpawnNextPattern() // SpawnNextPattern()은 다음 패턴을 스폰합니다. 게임 매니저에서 호출합니다.
+
+    // Creates a formation based on the pattern type
+    private SpawnFormation CreateFormation(SpawnPatternData pattern)
     {
-        if (stageSpawnPattern == null || stageSpawnPattern.patterns.Count == 0 || stageSpawnPattern.patterns.Count <= currentPatternIndex)
-            return;
-
-        var pattern = stageSpawnPattern.patterns[currentPatternIndex];
-        currentPatternIndex++;
-        //stageSpawnPattern.patterns.RemoveAt(0);
-
-        SpawnFormation formation = pattern.patternType switch
+        return pattern.patternType switch
         {
             SpawnPatternType.Circle => new CircleFormation(pattern, pattern.wiggle),
             SpawnPatternType.Square => new SquareFormation(pattern, pattern.wiggle),
@@ -86,54 +120,60 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
             SpawnPatternType.Random => new RandomFormation(pattern, pattern.wiggle),
             _ => throw new System.NotImplementedException("Not implemented pattern type")
         };
+    }
 
-        Vector2 playerPos = GameManager.Instance.player.transform.position;
-        Vector2[] spawnPositions = formation.GetSpawnPositions(playerPos);
-
+    // Spawns monsters using the provided pattern and adds them to the appropriate collections
+    private PatternInstance SpawnMonstersWithPattern(SpawnPatternData pattern, WaveInstance currentWave = null)
+    {
         var patternInstance = new PatternInstance(pattern, Time.time);
-
-        // RandomFormation일 경우 StartRandomSpawning()을 호출합니다.
-        if (formation.GetType() == typeof(RandomFormation))
+        var formation = CreateFormation(pattern);
+        Vector2 playerPos = GameManager.Instance.player.transform.position;
+        
+        if (formation is RandomFormation)
         {
             MonsterSpawner.Instance.StartRandomSpawning(pattern.monsterName);
         }
-        else // 그 외의 경우 몬스터를 직접 생성합니다.
+        else
         {
+            Vector2[] spawnPositions = formation.GetSpawnPositions(playerPos);
             foreach (var position in spawnPositions)
             {
-                var monster = MonsterSpawner.Instance.SpawnMonster(
-                    pattern.monsterName,
-                    position
-                );
-                // 현재 활성화된 웨이브가 있다면 생성된 몬스터를 리스트에 추가
-                if (activeWaves.Count > 0)
-                {
-                    activeWaves[^1].spawnedMonsters.Add(monster);
-                }
+                var monster = MonsterSpawner.Instance.SpawnMonster(pattern.monsterName, position);
                 patternInstance.spawnedMonsters.Add(monster);
+                
+                // Add monster to wave if applicable
+                currentWave?.spawnedMonsters.Add(monster);
             }
         }
+        
         activePatterns.Add(patternInstance);
+        return patternInstance;
     }
 
-    // 웨이브 전용 SpawnNextPattern 호출 (수정됨)
-    void ProcessWave(WaveInstance wave)
+    // Spawn the next pattern from the stage spawn pattern
+    public void SpawnNextPattern()
     {
-        // 전역 값 임시 저장
-        var origStage = stageSpawnPattern;
-        var origIndex = currentPatternIndex;
+        if (stageSpawnPattern == null || currentPatternIndex >= stageSpawnPattern.patterns.Count)
+            return;
 
-        stageSpawnPattern = wave.wavePattern.wavePattern; // WavePattern 내부의 StageSpawnPattern 사용
-        currentPatternIndex = wave.currentPatternIndex;
-        SpawnNextPattern();
-        wave.currentPatternIndex = currentPatternIndex;
-
-        // 전역 값 복원
-        stageSpawnPattern = origStage;
-        currentPatternIndex = origIndex;
+        var pattern = stageSpawnPattern.patterns[currentPatternIndex];
+        currentPatternIndex++;
+        
+        SpawnMonstersWithPattern(pattern, activeWaves.Count > 0 ? activeWaves[^1] : null);
     }
 
-    // 새로운 웨이브 시작 : WavePatternData의 내부 WavePattern 이용 (수정됨)
+    // Process wave pattern spawning without modifying global state
+    private void ProcessWavePattern(WaveInstance wave)
+    {
+        if (wave.HasRemainingPatterns())
+        {
+            var pattern = wave.wavePattern.wavePattern.patterns[wave.currentPatternIndex];
+            SpawnMonstersWithPattern(pattern, wave);
+            wave.currentPatternIndex++;
+        }
+    }
+
+    // Start a new wave from the wave pattern data
     public void StartNewWave()
     {
         if (waveSpawnPattern == null || currentWaveIndex >= waveSpawnPattern.wavePattern.Count)
@@ -144,92 +184,79 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
         currentWaveIndex++;
     }
 
-    // Update에서 웨이브 진행 및 신규 웨이브 시작 처리 (수정됨)
-    private void Update()
+    // Update wave management - removes dead monsters and processes finished waves
+    private void UpdateWaveMonsters()
     {
-        // 기존 활성 웨이브 처리 (먼저 체크하여 웨이브 종료 여부 확인)
         for (int i = activeWaves.Count - 1; i >= 0; i--)
         {
             WaveInstance wave = activeWaves[i];
-            var patterns = wave.wavePattern.wavePattern.patterns;
-
-            // 패턴은 시간에 따라 진행
-            if (wave.currentPatternIndex < patterns.Count)
-            {
-                float patternStartTime = wave.waveStartTime + patterns[wave.currentPatternIndex].startTime;
-                if (Time.time >= patternStartTime)
-                {
-                    ProcessWave(wave);
-                }
-            }
-
-            // 웨이브 종료 조건: 모든 패턴이 실행되고 AND 모든 몬스터가 죽었을 때
-            if (wave.currentPatternIndex >= patterns.Count && AllMonstersDead(wave))
+            CleanupDeadMonsters(wave);
+            
+            // Check if this wave has completed
+            if (wave.IsCompleted())
             {
                 activeWaves.RemoveAt(i);
             }
         }
+    }
 
-        // 다음 웨이브 시작 조건 체크
-        if (waveSpawnPattern != null && currentWaveIndex < waveSpawnPattern.wavePattern.Count)
+    // Clean up monsters that have been destroyed
+    private void CleanupDeadMonsters(WaveInstance wave)
+    {
+        for (int i = wave.spawnedMonsters.Count - 1; i >= 0; i--)
         {
-            float currentWaveStartTime = gameStartTime + waveSpawnPattern.wavePattern[currentWaveIndex].waveStartTime;
-            bool timeToStart = Time.time >= currentWaveStartTime;
-            bool previousWaveFinished = activeWaves.Count == 0;
-
-            // 시작 시간이 되었고 이전 웨이브가 끝났다면 새 웨이브 시작
-            if (timeToStart && previousWaveFinished)
+            var monster = wave.spawnedMonsters[i];
+            if (monster == null || !monster.activeInHierarchy)
             {
-                StartNewWave();
+                wave.spawnedMonsters.RemoveAt(i);
             }
         }
+    }
 
-        // Remove patterns after duration
+    // Check if it's time to spawn the next pattern in a wave
+    private void CheckWavePatternSpawns()
+    {
+        foreach (var wave in activeWaves)
+        {
+            if (wave.HasRemainingPatterns() && Time.time >= wave.GetNextPatternStartTime())
+            {
+                ProcessWavePattern(wave);
+            }
+        }
+    }
+
+    // Check if it's time to start a new wave
+    private void CheckNewWaveStart()
+    {
+        if (waveSpawnPattern != null && 
+            currentWaveIndex < waveSpawnPattern.wavePattern.Count && 
+            activeWaves.Count == 0 && 
+            Time.time >= gameStartTime + waveSpawnPattern.wavePattern[currentWaveIndex].waveStartTime)
+        {
+            StartNewWave();
+        }
+    }
+
+    // Clean up patterns that have exceeded their duration
+    private void CleanupExpiredPatterns()
+    {
         for (int i = activePatterns.Count - 1; i >= 0; i--)
         {
-            var pat = activePatterns[i];
-            // duration이 0 이하라면 삭제하지 않음
-            if (pat.patternData.duration <= 0f) continue;
-
-            if (Time.time >= pat.spawnTime + pat.patternData.duration)
+            var pattern = activePatterns[i];
+            if (pattern.HasExpired(Time.time))
             {
-                if (pat.patternData.patternType == SpawnPatternType.Random)
-                {
-                    MonsterSpawner.Instance.StopSpawningMonster(pat.patternData.monsterName);
-                }
-                else
-                {
-                    foreach (var monster in pat.spawnedMonsters)
-                    {
-                        if (monster) MonsterPoolManager.Instance.ReturnMonsterToPool(monster, monster.GetComponent<MonsterIdentify>().monsterName);
-                    }
-                }
+                pattern.CleanupMonsters();
                 activePatterns.RemoveAt(i);
             }
         }
     }
 
-    // 해당 웨이브의 몬스터들이 모두 죽었는지 확인하는 함수 (구현 필요)
-    bool AllMonstersDead(WaveInstance wave)
+    private void Update()
     {
-        // 웨이브에 등록된 몬스터가 없으면 true 반환
-        if (wave.spawnedMonsters.Count == 0)
-            return true;
-
-        // 모든 몬스터를 순회하면서 상태 확인
-        for (int i = wave.spawnedMonsters.Count - 1; i >= 0; i--)
-        {
-            var monster = wave.spawnedMonsters[i];
-
-            // 몬스터가 없거나 비활성화되었다면 리스트에서 제거
-            if (monster == null || !monster.activeInHierarchy)
-            {
-                wave.spawnedMonsters.RemoveAt(i);
-                continue;
-            }
-        }
-
-        // 남은 몬스터가 없으면 true, 있으면 false 반환
-        return wave.spawnedMonsters.Count == 0;
+        // Main update sequence
+        UpdateWaveMonsters();
+        CheckWavePatternSpawns();
+        CheckNewWaveStart();
+        CleanupExpiredPatterns();
     }
 }
