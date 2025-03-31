@@ -67,6 +67,7 @@ public class GameManager : Singleton<GameManager>
      }
      private bool _isGamePaused = false;
 
+     public StageResources stageResources; // 스테이지 리소스 참조
 
      public override void Awake()
      {
@@ -78,6 +79,15 @@ public class GameManager : Singleton<GameManager>
 
           SetGameState(GameState.InGame);
           playerAssetData = BackendDataManager.Instance.GetUserAssetData();
+
+#if UNITY_EDITOR
+          // Check if DebugGUI_GameManager exists on this object and add it if not
+          if (gameObject.GetComponent<DebugGUI_GameManager>() == null)
+          {
+               gameObject.AddComponent<DebugGUI_GameManager>().enabled = true;
+               Debug.Log("DebugGUI_GameManager was automatically added to GameManager object");
+          }
+#endif
      }
 
      // Set game state
@@ -102,6 +112,7 @@ public class GameManager : Singleton<GameManager>
                }
           }
           bool result = DropItemManager.Instance.SetProbabilityTitle($"Stage{stageNumber}_DropItemProb");
+
           if (!result)
           {
 #if UNITY_EDITOR
@@ -143,6 +154,82 @@ public class GameManager : Singleton<GameManager>
                }
           }
           return result;
+     }
+
+     // 스테이지 시각적 요소 업데이트
+     public bool UpdateStageVisuals(int stageNumber)
+     {
+          StageResources.StageData stageData = stageResources.GetStageData(stageNumber);
+          if (stageData == null)
+          {
+#if UNITY_EDITOR
+               DebugConsole.Line errorLog = new()
+               {
+                    text = $"[{gameTimer}] Stage data not found for stage {stageNumber}",
+                    messageType = DebugConsole.MessageType.Local,
+                    tick = gameTimer
+               };
+               DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
+#endif
+               return false;
+          }
+
+          // 맵 배경 스프라이트 변경
+          UpdateMapBackgrounds(stageData.mapBackground);
+
+          // 장애물 스프라이트 변경
+          UpdateObstacleSprites(stageData.obstacleSprites);
+          return true;
+     }
+
+     // 씬에서 "Square"가 포함된 오브젝트를 찾아 맵 배경 스프라이트 적용
+     private void UpdateMapBackgrounds(Sprite mapSprite)
+     {
+          if (mapSprite == null)
+          {
+#if UNITY_EDITOR
+               Debug.LogError("Map sprite is null");
+#endif
+               return;
+          }
+
+
+          // 활성화된 모든 오브젝트 중에서 "Square"가 포함된 이름을 가진 오브젝트 찾기
+          SpriteRenderer[] spriteRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None);
+
+          foreach (SpriteRenderer renderer in spriteRenderers)
+          {
+               if (renderer.gameObject.name.Contains("Square"))
+               {
+                    renderer.sprite = mapSprite;
+               }
+          }
+     }
+
+     // 씬에서 "Obstarcle"이 포함된 오브젝트를 찾아 랜덤 장애물 스프라이트 적용
+     private void UpdateObstacleSprites(List<Sprite> obstacleSprites)
+     {
+          if (obstacleSprites == null || obstacleSprites.Count == 0)
+          {
+#if UNITY_EDITOR
+               Debug.LogError("Obstacle sprites list is null or empty");
+#endif
+               return;
+          }
+
+          // 활성화된 모든 오브젝트 중에서 "Obstarcle"이 포함된 이름을 가진 오브젝트 찾기
+          SpriteRenderer[] spriteRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None);
+          System.Random random = new System.Random();
+
+          foreach (SpriteRenderer renderer in spriteRenderers)
+          {
+               if (renderer.gameObject.name.Contains("Obstarcle"))
+               {
+                    // 장애물 스프라이트 중 랜덤하게 선택
+                    int randomIndex = random.Next(0, obstacleSprites.Count);
+                    renderer.sprite = obstacleSprites[randomIndex];
+               }
+          }
      }
 
      void FixedUpdate()

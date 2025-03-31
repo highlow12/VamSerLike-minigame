@@ -6,6 +6,14 @@ using UnityEngine;
 public class MapMove : MonoBehaviour
 {
     public float offset = 2;
+    public GameObject[] obstarcles;
+    void Start()
+    {
+        foreach (var item in obstarcles)
+        {
+            item.transform.position = transform.position + new Vector3(Random.Range(-offset/4, offset/4), Random.Range(-offset/4, offset/4), 0);
+        }
+    }
     private void OnTriggerExit2D(Collider2D collision)
     {
 
@@ -13,6 +21,7 @@ public class MapMove : MonoBehaviour
         {
             return;
         }
+        
         //플레이어의 position
         Vector3 playerpos = GameManager.Instance.player.transform.position;
         //이 오브젝트의 position
@@ -36,6 +45,11 @@ public class MapMove : MonoBehaviour
         else if (diffX < diffY)
         {
             transform.Translate(Vector3.up * dirY * offset);
+        }
+
+        foreach (var item in obstarcles)
+        {
+            item.transform.position = transform.position + new Vector3(Random.Range(-offset/4, offset/4), Random.Range(-offset/4, offset/4), 0);
         }
     }
 }

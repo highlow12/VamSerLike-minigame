@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6041e0a2c5fcea140b5331d04fd934ae, type: 3}
+  m_Name: StageResources
+  m_EditorClassIdentifier: 
+  stages:
+  - stageNumber: 1
+    mapBackground: {fileID: 1971131294733462199, guid: bb5310c44466215419b7b95ec28d55c8, type: 3}
+    obstacleSprites:
+    - {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+  - stageNumber: 2
+    mapBackground: {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+    obstacleSprites:
+    - {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+  - stageNumber: 3
+    mapBackground: {fileID: 1971131294733462199, guid: bb5310c44466215419b7b95ec28d55c8, type: 3}
+    obstacleSprites:
+    - {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+  - stageNumber: 4
+    mapBackground: {fileID: 1971131294733462199, guid: bb5310c44466215419b7b95ec28d55c8, type: 3}
+    obstacleSprites:
+    - {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+  - stageNumber: 5
+    mapBackground: {fileID: 1971131294733462199, guid: bb5310c44466215419b7b95ec28d55c8, type: 3}
+    obstacleSprites:
+    - {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
