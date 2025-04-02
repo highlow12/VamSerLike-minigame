@@ -5,9 +5,10 @@ using System.Collections.Generic;
 public class QueenMovement : BossMonster
 {
     public Animator animator { get; private set; }
-    float stateTimer;
+    float StateTimer;
     [SerializeField] public float moveSpeed = 1;
     [SerializeField] public float idleRange = 5;
+    // Removed duplicate attackRange field - we'll use the one inherited from the parent class
     public bool canTakeDamage = false;
     public float[] chaseTimeRange = new float[2];
     public float[] idleTimerRange = new float[2];
@@ -16,30 +17,39 @@ public class QueenMovement : BossMonster
         Idle = 0,
         Chase = 1
     }
+    
+    // Initialize the StateTimer in the Start or Awake method
+    protected override void Start()
+    {
+        base.Start();
+        // Initialize with a reasonable default value
+        StateTimer = 0;
+    }
+    
     protected override void checkeState()
     {
-        // stateTimer를 지난 프레임 이후 경과한 시간만큼 감소시킨다
-        stateTimer -= Time.deltaTime;
+        // StateTimer를 지난 프레임 이후 경과한 시간만큼 감소시킨다
+        StateTimer -= Time.deltaTime;
 
         // if를 사용한 이유: switch의 case문은 컴파일 시에 값이 정해져 있어야 한다
         if (monsterFSM.currentState == states[(int)QueenAction.Idle])
         {
-            // stateTimer가 0보다 크면 함수를 종료한다
-            if (stateTimer > 0) return;
+            // StateTimer가 0보다 크면 함수를 종료한다
+            if (StateTimer > 0) return;
 
-            // stateTimer를 chaseTimeRange 범위 내의 랜덤 값으로 설정한다
-            stateTimer = Random.Range(chaseTimeRange.Min(), chaseTimeRange.Max());
+            // StateTimer를 chaseTimeRange 범위 내의 랜덤 값으로 설정한다
+            StateTimer = Random.Range(chaseTimeRange.Min(), chaseTimeRange.Max());
 
             // 몬스터의 상태를 Chase로 변경한다
             monsterFSM.ChangeState(states[(int)QueenAction.Chase]);
         }
         else if (monsterFSM.currentState == states[(int)QueenAction.Chase])
         {
-            // stateTimer가 0보다 크면 함수를 종료한다
-            if (stateTimer > 0) return;
+            // StateTimer가 0보다 크면 함수를 종료한다
+            if (StateTimer > 0) return;
 
-            // stateTimer를 idleTimerRange 범위 내의 랜덤 값으로 설정한다
-            stateTimer = Random.Range(idleTimerRange.Min(), idleTimerRange.Max());
+            // StateTimer를 idleTimerRange 범위 내의 랜덤 값으로 설정한다
+            StateTimer = Random.Range(idleTimerRange.Min(), idleTimerRange.Max());
 
             // 몬스터의 상태를 Idle로 변경한다
             monsterFSM.ChangeState(states[(int)QueenAction.Idle]);
