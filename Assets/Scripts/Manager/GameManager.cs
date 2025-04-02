@@ -174,25 +174,33 @@ public class GameManager : Singleton<GameManager>
                return false;
           }
 
-          // 맵 배경 스프라이트 변경
-          UpdateMapBackgrounds(stageData.mapBackground);
+          // 맵 배경 스프라이트 변경 (랜덤 선택)
+          UpdateMapBackgrounds(stageData.mapBackgrounds);
 
           // 장애물 스프라이트 변경
           UpdateObstacleSprites(stageData.obstacleSprites);
           return true;
      }
 
-     // 씬에서 "Square"가 포함된 오브젝트를 찾아 맵 배경 스프라이트 적용
-     private void UpdateMapBackgrounds(Sprite mapSprite)
+     // 씬에서 "Square"가 포함된 오브젝트를 찾아 맵 배경 스프라이트 적용 (랜덤 선택)
+     private void UpdateMapBackgrounds(List<Sprite> mapSprites)
      {
-          if (mapSprite == null)
+          if (mapSprites == null || mapSprites.Count == 0)
           {
 #if UNITY_EDITOR
-               Debug.LogError("Map sprite is null");
+               Debug.LogError("Map sprites list is null or empty");
 #endif
                return;
           }
 
+          // 스프라이트 목록에서 랜덤하게 하나 선택
+          System.Random random = new System.Random();
+          int randomIndex = random.Next(0, mapSprites.Count);
+          Sprite selectedMapSprite = mapSprites[randomIndex];
+
+#if UNITY_EDITOR
+          Debug.Log($"Selected map sprite index: {randomIndex} out of {mapSprites.Count}");
+#endif
 
           // 활성화된 모든 오브젝트 중에서 "Square"가 포함된 이름을 가진 오브젝트 찾기
           SpriteRenderer[] spriteRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None);
@@ -201,7 +209,7 @@ public class GameManager : Singleton<GameManager>
           {
                if (renderer.gameObject.name.Contains("Square"))
                {
-                    renderer.sprite = mapSprite;
+                    renderer.sprite = selectedMapSprite;
                }
           }
      }
