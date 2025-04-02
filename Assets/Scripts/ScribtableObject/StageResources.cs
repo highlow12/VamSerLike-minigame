@@ -9,7 +9,7 @@ public class StageResources : ScriptableObject
     public class StageData
     {
         public int stageNumber;
-        public Sprite mapBackground; // 맵 배경 스프라이트
+        public List<Sprite> mapBackgrounds = new List<Sprite>(); // 여러 맵 배경 스프라이트 목록
         public List<Sprite> obstacleSprites = new List<Sprite>(); // 장애물에 사용할 수 있는 스프라이트 목록
     }
     

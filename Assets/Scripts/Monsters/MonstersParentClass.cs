@@ -30,7 +30,9 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual void Die()
     {
+#if UNITY_EDITOR
         Debug.Log("Dead: " + gameObject.name);
+#endif
         isDead = true;
         MonsterPoolManager.Instance.ReturnMonsterToPool(gameObject,GetComponent<MonsterIdentify>().monsterName);
         // 사망 처리 로직
@@ -49,6 +51,23 @@ public abstract class Monster : MonoBehaviour
     public float DemoAttack()
     {
         return damage;
+    }
+
+    /// <summary>
+    /// Resets the monster's health to its maximum value.
+    /// </summary>
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+        isDead = false;
+    }
+
+    /// <summary>
+    /// Resets the monster's position to a default or predefined value.
+    /// </summary>
+    public void ResetPosition()
+    {
+        transform.position = Vector3.zero; // 기본 위치로 초기화 (필요에 따라 수정 가능)
     }
 }
 
@@ -115,7 +134,7 @@ public class NormalMonster : Monster
     protected virtual void CheckAttackRange()
     {
 #if UNITY_EDITOR
-        throw new System.NotImplementedException();
+        ////throw new System.NotImplementedException();
 #endif
     }
 
@@ -125,7 +144,7 @@ public class NormalMonster : Monster
     protected override void Attack()
     {
 #if UNITY_EDITOR
-        throw new System.NotImplementedException();
+        ////throw new System.NotImplementedException();
 #endif
     }
 }
@@ -168,7 +187,7 @@ public abstract class BossMonster : Monster
     protected override void Attack()
     {
 #if UNITY_EDITOR
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
 #endif
     }
 }
