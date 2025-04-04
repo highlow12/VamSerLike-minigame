@@ -240,6 +240,36 @@ public class GameManager : Singleton<GameManager>
           }
      }
 
+     // Update stage mechanics using StageResources
+     public bool UpdateStageMechanics(int stageNumber)
+     {
+          StageResources.StageData stageData = stageResources.GetStageData(stageNumber);
+          if (stageData == null)
+          {
+#if UNITY_EDITOR
+               DebugConsole.Line errorLog = new()
+               {
+                    text = $"[{gameTimer}] Stage data not found for stage {stageNumber}",
+                    messageType = DebugConsole.MessageType.Local,
+                    tick = gameTimer
+               };
+               DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
+#endif
+               return false;
+          }
+
+          // Update stage monster data
+          MonsterSpawner.Instance.UpdateStageMonsterData(stageData.stageMonsterData);
+
+          // Update stage spawn pattern
+          MonsterPatternManager.Instance.SetStageSpawnPattern(stageData.stageSpawnPattern);
+
+          // Update wave pattern data
+          MonsterPatternManager.Instance.SetWaveSpawnPattern(stageData.wavePatternData);
+
+          return true;
+     }
+
      void FixedUpdate()
      {
           if (gameState == GameState.InGame)

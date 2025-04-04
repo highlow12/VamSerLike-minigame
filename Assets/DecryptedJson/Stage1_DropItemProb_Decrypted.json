@@ -1,0 +1,27 @@
+
+[
+    {
+        "itemName" : "Medikit",
+        "itemId"   : 0,
+        "displayName" : "\uD790\uD329",
+        "percent"     : 2
+    },
+    {
+        "itemName" : "Magnet",
+        "itemId"   : 1,
+        "displayName" : "\uC790\uC11D",
+        "percent"     : 0.5
+    },
+    {
+        "itemName" : "Sight",
+        "itemId"   : 2,
+        "displayName" : "\uC2DC\uC57C \uC81C\uD55C \uD574\uC81C",
+        "percent"     : 1
+    },
+    {
+        "itemName" : "Experience",
+        "itemId"   : 3,
+        "displayName" : "\uACBD\uD5D8\uCE58",
+        "percent"     : 96.5
+    }
+]

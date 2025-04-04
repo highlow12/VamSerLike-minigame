@@ -14,22 +14,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stages:
   - stageNumber: 1
-    mapBackground: {fileID: 1971131294733462199, guid: bb5310c44466215419b7b95ec28d55c8, type: 3}
+    mapBackgrounds:
+    - {fileID: 1971131294733462199, guid: bb5310c44466215419b7b95ec28d55c8, type: 3}
     obstacleSprites:
     - {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+    stageMonsterData: {fileID: 0}
+    stageSpawnPattern: {fileID: 0}
+    wavePatternData: {fileID: 0}
   - stageNumber: 2
-    mapBackground: {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+    mapBackgrounds:
+    - {fileID: 803738672970555508, guid: 337fec639d7ac0540a0db61ca26af138, type: 3}
+    - {fileID: 855680751639471858, guid: ff68ef8f554b02a4181b1e0e7a0d7de1, type: 3}
+    - {fileID: 2248087094991479669, guid: 8a95c7c4bd22ae3479dcb29765fae4fc, type: 3}
     obstacleSprites:
-    - {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+    - {fileID: -2585592439925248027, guid: f39514d1b37ea194384ecda0dcddaf88, type: 3}
+    - {fileID: -8062730715599019620, guid: c1f8dba5ceac87f449b916299badea01, type: 3}
+    - {fileID: -4815517168337725227, guid: d3c1c9fa1aaf0b446a6a930672b4afc5, type: 3}
+    stageMonsterData: {fileID: 0}
+    stageSpawnPattern: {fileID: 0}
+    wavePatternData: {fileID: 0}
   - stageNumber: 3
-    mapBackground: {fileID: 1971131294733462199, guid: bb5310c44466215419b7b95ec28d55c8, type: 3}
+    mapBackgrounds:
+    - {fileID: -4168523715565770878, guid: bdc175a5fd82b454a934b5426d341b0c, type: 3}
     obstacleSprites:
-    - {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+    - {fileID: 3985163546221772602, guid: 50f3d4dbf4cf4aa47af29ec884d2c88c, type: 3}
+    stageMonsterData: {fileID: 0}
+    stageSpawnPattern: {fileID: 0}
+    wavePatternData: {fileID: 0}
   - stageNumber: 4
-    mapBackground: {fileID: 1971131294733462199, guid: bb5310c44466215419b7b95ec28d55c8, type: 3}
+    mapBackgrounds:
+    - {fileID: 8883681417763184529, guid: 69c879de2f17f6741a6dde3d838d7ed9, type: 3}
     obstacleSprites:
-    - {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+    - {fileID: 7629393285796341909, guid: 4dbee78495cc9d147b100a8380047e43, type: 3}
+    - {fileID: 8627295045097078598, guid: 74c73dd8375887641a0f7af292ebfa99, type: 3}
+    - {fileID: 8599562291598222810, guid: f20033bdd5b8cd34eacb2c71a249813e, type: 3}
+    stageMonsterData: {fileID: 0}
+    stageSpawnPattern: {fileID: 0}
+    wavePatternData: {fileID: 0}
   - stageNumber: 5
-    mapBackground: {fileID: 1971131294733462199, guid: bb5310c44466215419b7b95ec28d55c8, type: 3}
+    mapBackgrounds:
+    - {fileID: 9185388814402559179, guid: fac016448d07322469bf600f71369812, type: 3}
+    - {fileID: 318743152074091626, guid: 44927a8c71af68946bf6039b6f88bea9, type: 3}
+    - {fileID: 1198575353297110192, guid: f5096d9781f09454c879bbabacb8d6e5, type: 3}
+    - {fileID: 689943999569612664, guid: cd425945d7ee6044da178b0531ca0a22, type: 3}
     obstacleSprites:
-    - {fileID: 9019160837475788064, guid: d8959243d91b5e34297495b0eefb72ad, type: 3}
+    - {fileID: 5188235057303950974, guid: a8474eba4bc77f642905d3973cf9c4f7, type: 3}
+    - {fileID: -4587781089393717109, guid: 1efe0af7ec93d674f91f58bd7c83cd3b, type: 3}
+    stageMonsterData: {fileID: 0}
+    stageSpawnPattern: {fileID: 0}
+    wavePatternData: {fileID: 0}
