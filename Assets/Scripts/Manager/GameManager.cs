@@ -229,16 +229,27 @@ public class GameManager : Singleton<GameManager>
           SpriteRenderer[] spriteRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None);
           System.Random random = new System.Random();
 
-          foreach (SpriteRenderer renderer in spriteRenderers)
+          foreach (var renderer in spriteRenderers)
           {
-               if (renderer.gameObject.name.Contains("Obstarcle"))
+               if (!renderer.gameObject.name.Contains("Obstarcle")) continue;
+                
+               GameObject obstacleObject = renderer.gameObject;
+
+               // 기존 콜라이더 제거
+               Collider2D[] existingColliders = obstacleObject.GetComponents<Collider2D>();
+               foreach (Collider2D collider in existingColliders)
                {
-                    // 장애물 스프라이트 중 랜덤하게 선택
-                    int randomIndex = random.Next(0, obstacleSprites.Count);
-                    renderer.sprite = obstacleSprites[randomIndex];
+                    Destroy(collider);
                }
+
+               // 장애물 스프라이트 중 랜덤하게 선택
+               int randomIndex = random.Next(0, obstacleSprites.Count);
+               renderer.sprite = obstacleSprites[randomIndex];
+
+               // 새 폴리곤 콜라이더 추가
+               var newCollider = obstacleObject.AddComponent<PolygonCollider2D>();
           }
-     }
+    }
 
      // Update stage mechanics using StageResources
      public bool UpdateStageMechanics(int stageNumber)
