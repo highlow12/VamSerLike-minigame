@@ -98,14 +98,14 @@ public class NormalMonster : Monster
         {
             if (Vector2.Distance(transform.position, playerTransform.position) < attackRange)
             {
-                Attack();
+                CheckAttackRange();
             }
             else
             {
                 Move();
             }
 
-            CheckAttackRange();
+            
 
         }
     }

@@ -174,6 +174,16 @@ public class Player : MonoBehaviour
         health = Mathf.Clamp(health + newAmount, 0f, maxHealth);
     }
 
+    public void TakeDamage(float damage)
+    {
+        damage = Mathf.Max(damage, 1f); // Ensure damage is at least 1
+        if (playerSpecialEffect.HasFlag(PlayerSpecialEffect.Invincible))
+        {
+            return;
+        }
+        health -= damage;
+    }
+
     public void ApplySpecialEffect(PlayerSpecialEffect specialEffect, float duration = 5f)
     {
         GameManager.Instance.ChangeValueForDuration(
