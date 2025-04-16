@@ -90,5 +90,25 @@
   {
     "name": "TrainCaptain",
     "korName": "기관사"
+  },
+  {
+    "name": "IceGhost-Red",
+    "korName": "얼음유령-빨강"
+  },
+  {
+    "name": "IceGhost-Blue",
+    "korName": "얼음유령-파랑"
+  },
+  {
+    "name": "Snowman",
+    "korName": "눈사람"
+  },
+  {
+    "name": "hunter",
+    "korName": "사냥꾼"
+  },
+  {
+    "name": "FigureGhost",
+    "korName": "피겨유령"
   }
 ]
