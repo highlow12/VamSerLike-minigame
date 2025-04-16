@@ -45,15 +45,5 @@ public class DebugGUI_GameManager : MonoBehaviour
     // Method to set the game stage
     public void SetGameStage(int stageNumber)
     {
-        Debug.Log($"Setting Stage: {stageNumber}");
-        if (GameManager.Instance != null)
-        {
-            bool success = GameManager.Instance.UpdateStageVisuals(stageNumber);
-            Debug.LogWarning($"Set Stage {stageNumber}: {(success ? "Success" : "Failed")}");
-        }
-        else
-        {
-            Debug.LogWarning("GameManager instance not found!");
-        }
     }
 }

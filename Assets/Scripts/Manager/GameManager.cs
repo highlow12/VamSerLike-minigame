@@ -5,6 +5,7 @@ using System.Linq;
 using LitJson;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -66,8 +67,6 @@ public class GameManager : Singleton<GameManager>
           }
      }
      private bool _isGamePaused = false;
-
-     public StageResources stageResources; // 스테이지 리소스 참조
 
      public override void Awake()
      {
@@ -154,131 +153,6 @@ public class GameManager : Singleton<GameManager>
                }
           }
           return result;
-     }
-
-     // 스테이지 시각적 요소 업데이트
-     public bool UpdateStageVisuals(int stageNumber)
-     {
-          StageResources.StageData stageData = stageResources.GetStageData(stageNumber);
-          if (stageData == null)
-          {
-#if UNITY_EDITOR
-               DebugConsole.Line errorLog = new()
-               {
-                    text = $"[{gameTimer}] Stage data not found for stage {stageNumber}",
-                    messageType = DebugConsole.MessageType.Local,
-                    tick = gameTimer
-               };
-               DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
-#endif
-               return false;
-          }
-
-          // 맵 배경 스프라이트 변경 (랜덤 선택)
-          UpdateMapBackgrounds(stageData.mapBackgrounds);
-
-          // 장애물 스프라이트 변경
-          UpdateObstacleSprites(stageData.obstacleSprites);
-          return true;
-     }
-
-     // 씬에서 "Square"가 포함된 오브젝트를 찾아 맵 배경 스프라이트 적용 (랜덤 선택)
-     private void UpdateMapBackgrounds(List<Sprite> mapSprites)
-     {
-          if (mapSprites == null || mapSprites.Count == 0)
-          {
-#if UNITY_EDITOR
-               Debug.LogError("Map sprites list is null or empty");
-#endif
-               return;
-          }
-
-          // 스프라이트 목록에서 랜덤하게 하나 선택
-          System.Random random = new System.Random();
-          int randomIndex = random.Next(0, mapSprites.Count);
-          Sprite selectedMapSprite = mapSprites[randomIndex];
-
-#if UNITY_EDITOR
-          Debug.Log($"Selected map sprite index: {randomIndex} out of {mapSprites.Count}");
-#endif
-
-          // 활성화된 모든 오브젝트 중에서 "Square"가 포함된 이름을 가진 오브젝트 찾기
-          SpriteRenderer[] spriteRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None);
-
-          foreach (SpriteRenderer renderer in spriteRenderers)
-          {
-               if (renderer.gameObject.name.Contains("Square"))
-               {
-                    renderer.sprite = selectedMapSprite;
-               }
-          }
-     }
-
-     // 씬에서 "Obstarcle"이 포함된 오브젝트를 찾아 랜덤 장애물 스프라이트 적용
-     private void UpdateObstacleSprites(List<Sprite> obstacleSprites)
-     {
-          if (obstacleSprites == null || obstacleSprites.Count == 0)
-          {
-#if UNITY_EDITOR
-               Debug.LogError("Obstacle sprites list is null or empty");
-#endif
-               return;
-          }
-
-          // 활성화된 모든 오브젝트 중에서 "Obstarcle"이 포함된 이름을 가진 오브젝트 찾기
-          SpriteRenderer[] spriteRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None);
-          System.Random random = new System.Random();
-
-          foreach (var renderer in spriteRenderers)
-          {
-               if (!renderer.gameObject.name.Contains("Obstarcle")) continue;
-                
-               GameObject obstacleObject = renderer.gameObject;
-
-               // 기존 콜라이더 제거
-               Collider2D[] existingColliders = obstacleObject.GetComponents<Collider2D>();
-               foreach (Collider2D collider in existingColliders)
-               {
-                    Destroy(collider);
-               }
-
-               // 장애물 스프라이트 중 랜덤하게 선택
-               int randomIndex = random.Next(0, obstacleSprites.Count);
-               renderer.sprite = obstacleSprites[randomIndex];
-
-               // 새 폴리곤 콜라이더 추가
-               var newCollider = obstacleObject.AddComponent<PolygonCollider2D>();
-          }
-    }
-
-     // Update stage mechanics using StageResources
-     public bool UpdateStageMechanics(int stageNumber)
-     {
-          StageResources.StageData stageData = stageResources.GetStageData(stageNumber);
-          if (stageData == null)
-          {
-#if UNITY_EDITOR
-               DebugConsole.Line errorLog = new()
-               {
-                    text = $"[{gameTimer}] Stage data not found for stage {stageNumber}",
-                    messageType = DebugConsole.MessageType.Local,
-                    tick = gameTimer
-               };
-               DebugConsole.Instance.MergeLine(errorLog, "#FF0000");
-#endif
-               return false;
-          }
-
-          // Update stage monster data
-          MonsterSpawner.Instance.UpdateStageMonsterData(stageData.stageMonsterData);
-
-          // Update stage spawn pattern
-          MonsterPatternManager.Instance.SetStageSpawnPattern(stageData.stageSpawnPattern);
-
-          // Update wave pattern data
-          MonsterPatternManager.Instance.SetWaveSpawnPattern(stageData.wavePatternData);
-
-          return true;
      }
 
      void FixedUpdate()
