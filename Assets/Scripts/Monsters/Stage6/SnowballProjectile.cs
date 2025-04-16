@@ -49,10 +49,6 @@ public class SnowballProjectile : MonoBehaviour
             }
             Destroy(gameObject);
         }
-        // 벽이나 장애물과 충돌 시 소멸
-        else if (other.CompareTag("Wall") || other.CompareTag("Obstacle"))
-        {
-            Destroy(gameObject);
-        }
+
     }
 }
