@@ -5,6 +5,7 @@ using System.Linq;
 using LitJson;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -67,7 +68,6 @@ public class GameManager : Singleton<GameManager>
      }
      private bool _isGamePaused = false;
 
-
      public override void Awake()
      {
           base.Awake();
@@ -78,6 +78,15 @@ public class GameManager : Singleton<GameManager>
 
           SetGameState(GameState.InGame);
           playerAssetData = BackendDataManager.Instance.GetUserAssetData();
+
+#if UNITY_EDITOR
+          // Check if DebugGUI_GameManager exists on this object and add it if not
+          if (gameObject.GetComponent<DebugGUI_GameManager>() == null)
+          {
+               gameObject.AddComponent<DebugGUI_GameManager>().enabled = true;
+               Debug.Log("DebugGUI_GameManager was automatically added to GameManager object");
+          }
+#endif
      }
 
      // Set game state
@@ -102,6 +111,7 @@ public class GameManager : Singleton<GameManager>
                }
           }
           bool result = DropItemManager.Instance.SetProbabilityTitle($"Stage{stageNumber}_DropItemProb");
+
           if (!result)
           {
 #if UNITY_EDITOR

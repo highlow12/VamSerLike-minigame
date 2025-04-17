@@ -108,41 +108,33 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
             stageSpawnPattern.patterns[currentPatternIndex] : null;
     }
 
-    // Creates a formation based on the pattern type
-    private SpawnFormation CreateFormation(SpawnPatternData pattern)
-    {
-        return pattern.patternType switch
-        {
-            SpawnPatternType.Circle => new CircleFormation(pattern, pattern.wiggle),
-            SpawnPatternType.Square => new SquareFormation(pattern, pattern.wiggle),
-            SpawnPatternType.Line => new LineFormation(pattern, pattern.wiggle),
-            SpawnPatternType.Triangle => new TriangleFormation(pattern, pattern.wiggle),
-            SpawnPatternType.Random => new RandomFormation(pattern, pattern.wiggle),
-            _ => throw new System.NotImplementedException("Not implemented pattern type")
-        };
-    }
-
-    // Spawns monsters using the provided pattern and adds them to the appropriate collections
+    // 스폰 패턴에 따라 몬스터들을 스폰하고 적절한 컬렉션에 추가
     private PatternInstance SpawnMonstersWithPattern(SpawnPatternData pattern, WaveInstance currentWave = null)
     {
         var patternInstance = new PatternInstance(pattern, Time.time);
-        var formation = CreateFormation(pattern);
+        var formation = SpawnFormation.CreateFormation(pattern, pattern.wiggle);
         Vector2 playerPos = GameManager.Instance.player.transform.position;
         
-        if (formation is RandomFormation)
+        if (pattern.patternType == SpawnPatternType.Random)
         {
             MonsterSpawner.Instance.StartRandomSpawning(pattern.monsterName);
         }
         else
         {
             Vector2[] spawnPositions = formation.GetSpawnPositions(playerPos);
-            foreach (var position in spawnPositions)
+            if (spawnPositions != null && spawnPositions.Length > 0)
             {
-                var monster = MonsterSpawner.Instance.SpawnMonster(pattern.monsterName, position);
-                patternInstance.spawnedMonsters.Add(monster);
-                
-                // Add monster to wave if applicable
-                currentWave?.spawnedMonsters.Add(monster);
+                foreach (var position in spawnPositions)
+                {
+                    var monster = MonsterSpawner.Instance.SpawnMonster(pattern.monsterName, position);
+                    if (monster != null)
+                    {
+                        patternInstance.spawnedMonsters.Add(monster);
+                        
+                        // Add monster to wave if applicable
+                        currentWave?.spawnedMonsters.Add(monster);
+                    }
+                }
             }
         }
         

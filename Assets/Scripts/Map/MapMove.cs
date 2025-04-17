@@ -6,6 +6,16 @@ using UnityEngine;
 public class MapMove : MonoBehaviour
 {
     public float offset = 2;
+    public GameObject[] obstarcles;
+    public GameObject[] obstarcles_Optional;
+    void Start()
+    {
+        setObstacle(obstarcles);
+        if (obstarcles_Optional.Length > 0)
+        {
+            setObstacle(obstarcles_Optional);
+        }
+    }
     private void OnTriggerExit2D(Collider2D collision)
     {
 
@@ -13,6 +23,7 @@ public class MapMove : MonoBehaviour
         {
             return;
         }
+        
         //플레이어의 position
         Vector3 playerpos = GameManager.Instance.player.transform.position;
         //이 오브젝트의 position
@@ -36,6 +47,22 @@ public class MapMove : MonoBehaviour
         else if (diffX < diffY)
         {
             transform.Translate(Vector3.up * dirY * offset);
+        }
+
+        setObstacle(obstarcles);
+        if (obstarcles_Optional.Length > 0)
+        {
+            setObstacle(obstarcles_Optional);
+        }
+    }
+
+    void setObstacle(GameObject[] _obstarcles)
+    {
+        foreach (var item in _obstarcles)
+        {
+            item.transform.position = transform.position + new Vector3(Random.Range(-offset/4, offset/4), Random.Range(-offset/4, offset/4), 0);
+            //item의 각도를 90도 간격으로 랜덤하게 변화
+            item.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 4) * 90);
         }
     }
 }

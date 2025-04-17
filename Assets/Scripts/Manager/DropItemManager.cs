@@ -68,21 +68,30 @@ public class DropItemManager : Singleton<DropItemManager>
                 string itemId = currentStageDropItemData[i]["itemId"].ToString();
                 Item.DropItemType parsedItemId = (Item.DropItemType)Enum.Parse(typeof(Item.DropItemType), itemId);
                 string itemName = Enum.GetName(typeof(Item.DropItemType), parsedItemId);
-                // 경험치일 경우 추가 로직 실행
+
                 if (parsedItemId == Item.DropItemType.Experience)
                 {
                     DropExperience(position);
+#if UNITY_EDITOR
+                    Debug.Log($"[DropItem] Dropped Experience at {position}. Random: {random:F3}, AccumulatedProbability: {accumulatedProbability:F3}");
+#endif
                 }
                 else
                 {
                     GameObject dropItem = ObjectPoolManager.Instance.GetGo(itemName);
                     dropItem.transform.position = position;
+#if UNITY_EDITOR
+                    Debug.Log($"[DropItem] Dropped item {itemName} at {position}. Random: {random:F3}, AccumulatedProbability: {accumulatedProbability:F3}");
+#endif
                     // 아이템일 경우에는 경험치도 추가 생성
                     DropExperience(position);
                 }
                 return itemName;
             }
         }
+#if UNITY_EDITOR
+        Debug.Log($"[DropItem] No item dropped at {position}. Random: {random:F3}");
+#endif
         return "Void";
     }
     // <summary>
@@ -116,6 +125,8 @@ public class DropItemManager : Singleton<DropItemManager>
         // probs가 null이면 defaultExpProbs로 초기화
         probs ??= defaultExpProbs;
 #if UNITY_EDITOR
+        // DebugConsole 관련 코드 주석 처리
+        /*
         DebugConsole.Line line = new()
         {
             text = $"{GameManager.Instance.gameTimer} - Normalized exp probs: {probs.GetElements()}",
@@ -123,6 +134,7 @@ public class DropItemManager : Singleton<DropItemManager>
             tick = GameManager.Instance.gameTimer
         };
         DebugConsole.Instance.MergeLine(line, "#00FF00");
+        */
 #endif
 
         float expRandom = UnityEngine.Random.Range(0.0f, 1.0f);
