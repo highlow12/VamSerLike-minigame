@@ -114,12 +114,35 @@ TextureImporter:
         width: 478
         height: 829
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
-      physicsShape: []
-      tessellationDetail: -1
+      physicsShape:
+      - - {x: 140, y: -289.5}
+        - {x: 162, y: -205.5}
+        - {x: 238, y: 105.5}
+        - {x: 238, y: 132.5}
+        - {x: 218, y: 243.5}
+        - {x: 210, y: 269.5}
+        - {x: 204, y: 284.5}
+        - {x: 191, y: 322.5}
+        - {x: 153, y: 355.5}
+        - {x: 83, y: 388.5}
+        - {x: 43, y: 395.5}
+        - {x: -28, y: 395.5}
+        - {x: -51, y: 389.5}
+        - {x: -128, y: 354.5}
+        - {x: -139, y: 345.5}
+        - {x: -163, y: 324.5}
+        - {x: -187, y: 279.5}
+        - {x: -212, y: 142.5}
+        - {x: -212, y: 107.5}
+        - {x: -120, y: -279.5}
+        - {x: -116, y: -289.5}
+        - {x: -112, y: -292.5}
+        - {x: 137, y: -292.5}
+      tessellationDetail: 0.042
       bones: []
       spriteID: 83e3b9ffaeda0acd0800000000000000
       internalID: -2548846164269384136
@@ -136,12 +159,12 @@ TextureImporter:
         width: 37
         height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 11040d2904ae30580800000000000000
       internalID: -8861982078673076207
@@ -158,12 +181,12 @@ TextureImporter:
         width: 37
         height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: c5e0a5a4b42147840800000000000000
       internalID: 5220817982608510556
@@ -175,7 +198,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 6b9eda3239856c04da6f8266880eb2a4
     internalID: 0
     vertices: []
     indices: 
