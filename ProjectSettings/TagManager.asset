@@ -65,5 +65,8 @@ TagManager:
   - name: UI
     uniqueID: 2626510181
     locked: 0
+  - name: ShaderMask
+    uniqueID: 3476156781
+    locked: 0
   m_RenderingLayers:
   - Default
