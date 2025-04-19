@@ -24,10 +24,12 @@
     *   게임 저장 및 로드 프로세스를 관리하는 중앙 관리자입니다.
     *   `SaveGameAsync()`: 현재 게임 상태를 비동기적으로 저장합니다. (JSON 직렬화 → Rijndael 암호화 → 파일 저장)
     *   `LoadGameDataAsync()`: 저장된 데이터를 비동기적으로 로드합니다. (파일 읽기 → Rijndael 복호화 → JSON 역직렬화)
-    *   `RestoreLoadedData(SaveData data, RestoreStateResultCallback callback)`: `LoadGameDataAsync`로 로드된 데이터를 사용하여 게임 상태를 복원하고, 결과를 콜백으로 알립니다.
+    *   `RestoreLoadedData(SaveData data, RestoreStateResultCallback callback, bool cleanupOrphanedData)`: `LoadGameDataAsync`로 로드된 데이터를 사용하여 게임 상태를 복원하고, 결과를 콜백으로 알립니다. 선택적으로 제거된 객체의 데이터를 정리할 수 있습니다.
     *   `CacheAllSaveableObjects()`: 모든 `ISaveable` 객체를 찾아 캐싱하여 성능을 최적화합니다.
-    *   `SaveGameWithPlayerDataAsync()`: 기본 게임 상태뿐만 아니라 `LocalDataManager`에서 플레이어 데이터(메인 무기, 스킨 등)를 함께 저장합니다.
-    *   `LoadGameWithPlayerDataAsync()`: 게임 상태를 로드하고 `LocalDataManager`의 플레이어 데이터도 함께 복원합니다.
+    *   `EnsureCacheInitialized()`: 캐시가 초기화되었는지 확인하고, 초기화되지 않았다면 초기화합니다.
+    *   `CleanupOrphanedData(SaveData saveData)`: 저장 데이터에서 더 이상 게임에 존재하지 않는 객체의 상태를 정리합니다.
+    *   `SaveGameWithPlayerDataAsync(bool? cleanupOrphanedData)`: 기본 게임 상태뿐만 아니라 `LocalDataManager`에서 플레이어 데이터(메인 무기, 스킨 등)를 함께 저장합니다. 선택적으로 제거된 객체의 데이터를 정리할 수 있습니다.
+    *   `LoadGameWithPlayerDataAsync(bool cleanupOrphanedData)`: 게임 상태를 로드하고 `LocalDataManager`의 플레이어 데이터도 함께 복원합니다. 선택적으로 제거된 객체의 데이터를 정리할 수 있습니다.
 
 5.  **`LocalDataManager` (연동):**
     *   플레이어의 메인 무기, 스킨 등 개인 데이터를 외부 프로그램을 통한 임의 수정이 불가능한 암호화된 형식으로 저장합니다.
@@ -59,10 +61,18 @@
 5.  **파일 안전성:**
     *   임시 파일을 사용한 원자적 파일 쓰기 (저장 중 충돌 시 파일 손상 방지)
     *   자동 백업 파일 생성 및 복원 기능
+    *   각 로드 시도마다 메인 파일과 백업 파일 모두 확인하여 데이터 복구 가능성 증가
 
 6.  **성능 최적화:**
     *   `ISaveable` 객체 캐싱으로 `FindObjectsByType` 호출 최소화
+    *   `SaveManager.EnsureCacheInitialized()`를 통한 중복 검사 방지 및 일관된 캐싱
     *   `SaveManager.CacheAllSaveableObjects()`를 씬 로드 후 호출하여 캐시 갱신
+
+7.  **데이터 정리 메커니즘:**
+    *   게임에 더 이상 존재하지 않는 객체의 데이터를 자동으로 정리하는 기능
+    *   선택적으로 활성화/비활성화 가능한 데이터 정리 옵션 (`cleanupSaveDataOnSave`)
+    *   저장 또는 로드 시 불필요한 데이터를 정리하여 파일 크기 최적화
+    *   특별 접두사(LocalPlayer)로 시작하는 내부 관리 데이터는 보존
 
 ## 사용 방법
 
@@ -197,12 +207,12 @@ public class GameController : MonoBehaviour
 }
 ```
 
-### 3. 플레이어 데이터를 포함한 게임 저장하기
+### 3. 플레이어 데이터를 포함한 게임 저장하기 (데이터 정리 옵션 사용)
 
-`LocalDataManager`에 저장된 메인 무기, 스킨 등 플레이어 데이터를 포함하여 저장하려면 `SaveGameWithPlayerDataAsync` 메서드를 호출합니다. 이 메서드는 기본 게임 상태뿐만 아니라 `LocalDataManager`의 데이터도 함께 저장합니다.
+`LocalDataManager`에 저장된 메인 무기, 스킨 등 플레이어 데이터를 포함하여 저장하려면 `SaveGameWithPlayerDataAsync` 메서드를 호출합니다. 이 메서드는 기본 게임 상태뿐만 아니라 `LocalDataManager`의 데이터도 함께 저장합니다. 선택적으로 더 이상 게임에 존재하지 않는 객체의 데이터를 정리할 수도 있습니다.
 
 ```csharp
-public async void SaveGameWithPlayerData()
+public async void SaveGameWithPlayerData(bool cleanupOrphanedData = true)
 {
     // UI 로딩 표시
     if (savingIndicator != null) savingIndicator.SetActive(true);
@@ -212,7 +222,7 @@ public async void SaveGameWithPlayerData()
     Debug.Log("플레이어 데이터를 포함한 게임 저장 시작...");
 #endif
 
-    bool success = await SaveManager.Instance.SaveGameWithPlayerDataAsync();
+    bool success = await SaveManager.Instance.SaveGameWithPlayerDataAsync(cleanupOrphanedData);
 
     // 결과에 따른 UI 처리
     if (success)
@@ -238,7 +248,7 @@ public async void SaveGameWithPlayerData()
 
 ### 4. 게임 로드하기
 
-게임을 로드하려면 먼저 `LoadGameDataAsync`를 호출하여 `SaveData` 객체를 비동기적으로 가져온 다음, **메인 스레드에서** `RestoreLoadedData`를 호출하여 실제 상태를 복원합니다. 개선된 시스템에서는 결과 콜백을 제공하여 복원 성공/실패 여부를 알립니다.
+게임을 로드하려면 먼저 `LoadGameDataAsync`를 호출하여 `SaveData` 객체를 비동기적으로 가져온 다음, **메인 스레드에서** `RestoreLoadedData`를 호출하여 실제 상태를 복원합니다. 개선된 시스템에서는 결과 콜백을 제공하여 복원 성공/실패 여부를 알립니다. 또한 제거된 객체의 데이터를 정리하는 옵션도 제공합니다.
 
 ```csharp
 using UnityEngine;
@@ -251,7 +261,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject loadingIndicator;
     [SerializeField] private Text statusText;
 
-    public async void LoadGame()
+    public async void LoadGame(bool cleanupOrphanedData = false)
     {
         // UI 로딩 표시
         if (loadingIndicator != null) loadingIndicator.SetActive(true);
@@ -285,7 +295,7 @@ public class GameController : MonoBehaviour
                     Debug.LogWarning($"게임 상태 복원 일부 실패: {errorMessage}");
 #endif
                 }
-            });
+            }, cleanupOrphanedData); // 선택적으로 제거된 객체 데이터 정리
         }
         else
         {
@@ -303,12 +313,12 @@ public class GameController : MonoBehaviour
 }
 ```
 
-### 5. 플레이어 데이터를 포함한 게임 로드하기
+### 5. 플레이어 데이터를 포함한 게임 로드하기 (데이터 정리 옵션 사용)
 
-플레이어 데이터를 포함하여 게임을 로드하려면 `LoadGameWithPlayerDataAsync`를 호출합니다. 이 메서드는 게임 상태를 로드하고 `LocalDataManager`의 플레이어 데이터도 함께 복원합니다.
+플레이어 데이터를 포함하여 게임을 로드하려면 `LoadGameWithPlayerDataAsync`를 호출합니다. 이 메서드는 게임 상태를 로드하고 `LocalDataManager`의 플레이어 데이터도 함께 복원합니다. 선택적으로 더 이상 게임에 존재하지 않는 객체의 데이터를 정리할 수도 있습니다.
 
 ```csharp
-public async void LoadGameWithPlayerData()
+public async void LoadGameWithPlayerData(bool cleanupOrphanedData = true)
 {
     // UI 로딩 표시
     if (loadingIndicator != null) loadingIndicator.SetActive(true);
@@ -318,8 +328,8 @@ public async void LoadGameWithPlayerData()
     Debug.Log("플레이어 데이터를 포함한 게임 데이터 로드 시작...");
 #endif
 
-    // 게임과 플레이어 데이터 함께 로드
-    SaveData loadedData = await SaveManager.Instance.LoadGameWithPlayerDataAsync();
+    // 게임과 플레이어 데이터 함께 로드 (데이터 정리 옵션 사용)
+    SaveData loadedData = await SaveManager.Instance.LoadGameWithPlayerDataAsync(cleanupOrphanedData);
 
     if (loadedData != null)
     {
@@ -361,7 +371,7 @@ public async void LoadGameWithPlayerData()
 
 ### 6. 성능 최적화를 위한 캐싱
 
-씬을 로드한 후나 새로운 저장 가능 객체가 생성 또는 파괴된 경우 `ISaveable` 객체 캐시를 업데이트해야 합니다. 이는 성능 최적화에 중요합니다.
+씬을 로드한 후나 새로운 저장 가능 객체가 생성 또는 파괴된 경우 `ISaveable` 객체 캐시를 업데이트해야 합니다. 이는 성능 최적화에 중요합니다. SaveManager는 내부적으로 EnsureCacheInitialized를 사용하여 중복 초기화를 방지하지만, 씬 변경 시 명시적인 캐시 갱신이 필요합니다.
 
 ```csharp
 using UnityEngine;
@@ -371,7 +381,7 @@ public class SaveSystemInitializer : MonoBehaviour
 {
     private void Start()
     {
-        // 시작 시 캐싱 수행
+        // 시작 시 캐싱 수행 (내부적으로 EnsureCacheInitialized 호출)
         SaveManager.Instance.CacheAllSaveableObjects();
     }
 
@@ -393,6 +403,26 @@ public class SaveSystemInitializer : MonoBehaviour
         // 새 씬에서 캐싱 수행
         SaveManager.Instance.CacheAllSaveableObjects();
     }
+}
+```
+
+### 7. 제거된 객체 데이터 정리 설정 변경하기
+
+SaveManager는 기본적으로 저장 시 제거된 객체 데이터를 정리하도록 설정되어 있습니다. 이 설정은 SaveManager의 인스펙터에서 변경하거나 코드에서 직접 변경할 수 있습니다.
+
+```csharp
+// 인스펙터에서 접근 가능한 SaveManager 필드
+[SerializeField] private bool cleanupSaveDataOnSave = true;
+
+// 코드에서 설정 변경 (예: 성능이 중요한 모바일 빌드에서 비활성화)
+public void ConfigureSaveSettings(bool enableDataCleanup)
+{
+    // SaveManager를 상속하는 클래스에 해당 필드와 접근자가 있다고 가정
+    SaveManager.Instance.SetCleanupOnSaveEnabled(enableDataCleanup);
+    
+#if UNITY_EDITOR
+    Debug.Log($"저장 데이터 자동 정리 기능 {(enableDataCleanup ? "활성화됨" : "비활성화됨")}");
+#endif
 }
 ```
 
@@ -429,9 +459,31 @@ LocalDataManager에서 관리하는 플레이어 데이터는 다음과 같습�
 ## 오류 처리 및 재시도
 
 *   **자동 재시도:** 저장/로드 실패 시 최대 3회까지 자동으로 재시도합니다. (간격: 500ms)
-*   **백업 활용:** 메인 저장 파일 로드에 실패하면 백업 파일에서 복원을 시도합니다.
+*   **백업 활용:** 메인 저장 파일 로드에 실패하면 백업 파일에서 복원을 시도합니다. 각 로드 시도마다 백업 파일도 확인합니다.
 *   **복원 콜백:** `RestoreLoadedData`에 콜백을 제공하여 복원 결과를 처리할 수 있습니다.
 *   **실패 추적:** 복원에 실패한 객체들의 ID 목록을 제공합니다.
+
+## 데이터 정리 메커니즘
+
+SaveManager는 더 이상 게임에 존재하지 않는 객체의 데이터를 정리하는 메커니즘을 제공합니다:
+
+*   **자동 정리:** 기본적으로 저장 시 제거된 객체 데이터를 자동으로 정리합니다(`cleanupSaveDataOnSave`).
+*   **선택적 정리:** 저장/로드 메서드에 파라미터를 제공하여 데이터 정리 여부를 선택할 수 있습니다.
+*   **특수 데이터 보존:** 특정 접두사(LocalPlayer)로 시작하는 내부 관리 데이터는 자동으로 보존됩니다.
+*   **정리 결과 보고:** 디버그 모드에서는 정리된 데이터의 수를 로그로 출력합니다.
+
+정리 메커니즘은 다음과 같은 이점을 제공합니다:
+* **저장 파일 크기 최적화:** 불필요한 데이터 제거로 파일 크기를 줄입니다.
+* **ID 충돌 방지:** 재사용 가능한 ID 충돌 가능성을 줄입니다.
+* **저장 시스템 정확성:** 현재 게임 상태를 정확하게 반영하는 저장 파일을 유지합니다.
+
+## 캐시 초기화 메커니즘
+
+SaveManager는 중복 캐시 초기화를 방지하기 위한 개선된 메커니즘을 제공합니다:
+
+*   **EnsureCacheInitialized:** 모든 관련 메서드에서 일관되게 사용하는 내부 유틸리티 함수입니다.
+*   **중복 검사 제거:** SaveGameAsync, RestoreLoadedData, SaveGameWithPlayerDataAsync 등의 메서드에서 중복 검사 대신 유틸리티 함수를 사용합니다.
+*   **성능 최적화:** 불필요한 FindObjectsByType 호출을 방지하여 성능을 개선합니다.
 
 ## 주의사항
 
@@ -442,3 +494,5 @@ LocalDataManager에서 관리하는 플레이어 데이터는 다음과 같습�
 *   `RestoreLoadedData`는 캐시된 `ISaveable` 객체를 사용하여 상태를 복원하므로, 로드 시점에 필요한 모든 객체가 씬에 로드되어 있어야 합니다.
 *   씬 전환 후에는 반드시 `SaveManager.Instance.CacheAllSaveableObjects()`를 호출하여 캐시를 새로고침해야 합니다.
 *   플레이어 데이터는 LocalDataManager에서 관리되므로, 플레이어 관련 스크립트에서 직접 업데이트해야 합니다.
+*   데이터 정리 기능이 활성화된 경우, 저장 파일에서 제거된 객체의 데이터가 삭제됩니다. 이 데이터가 나중에 필요할 수 있다면 정리 기능을 비활성화하는 것이 좋습니다.
+*   내부 관리 데이터(LocalPlayer 접두사)는 정리 대상에서 제외되지만, 다른 중요한 데이터가 있다면 해당 키를 특별히 처리하는 로직을 추가해야 합니다.

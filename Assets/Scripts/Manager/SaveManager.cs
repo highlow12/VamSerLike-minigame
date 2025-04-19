@@ -37,6 +37,12 @@ public class SaveManager : Singleton<SaveManager>
     // 상태 복원 결과를 위한 델리게이트
     public delegate void RestoreStateResultCallback(bool success, string errorMessage);
 
+    // 특수 키 접두사 (내부 관리 데이터를 식별하기 위한 용도)
+    private const string InternalKeyPrefix = "LocalPlayer";
+    
+    // 저장 시 데이터 정리 여부 설정 (퍼포먼스 최적화를 위해 비활성화할 수 있음)
+    [SerializeField] private bool cleanupSaveDataOnSave = true;
+
     // Newtonsoft.Json 설정 (타입 정보 포함, 들여쓰기 없음)
     private static readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings
     {
@@ -132,6 +138,55 @@ public class SaveManager : Singleton<SaveManager>
 #if UNITY_EDITOR
         Debug.Log($"{saveableObjectsCache.Count}개의 ISaveable 객체가 캐싱되었습니다.");
 #endif
+    }
+
+    /// <summary>
+    /// 저장 데이터에서 더 이상 게임에 존재하지 않는 객체의 상태를 정리합니다.
+    /// 내부 관리 데이터(InternalKeyPrefix로 시작하는 키)는 정리하지 않습니다.
+    /// </summary>
+    /// <param name="saveData">정리할 SaveData 객체</param>
+    /// <returns>제거된 항목 수</returns>
+    private int CleanupOrphanedData(SaveData saveData)
+    {
+        if (saveData == null || saveData.objectStates == null || saveableObjectsCache == null)
+        {
+            return 0;
+        }
+
+        int removedCount = 0;
+        List<string> keysToRemove = new List<string>();
+
+        // 제거할 키 식별
+        foreach (string key in saveData.objectStates.Keys)
+        {
+            // 내부 관리 데이터는 보존 (LocalPlayer로 시작하는 키 등)
+            if (key.StartsWith(InternalKeyPrefix))
+            {
+                continue;
+            }
+
+            // 캐시에 없는 객체의 데이터는 제거 대상
+            if (!saveableObjectsCache.ContainsKey(key))
+            {
+                keysToRemove.Add(key);
+            }
+        }
+
+        // 식별된 키 제거
+        foreach (string key in keysToRemove)
+        {
+            saveData.objectStates.Remove(key);
+            removedCount++;
+        }
+
+#if UNITY_EDITOR
+        if (removedCount > 0)
+        {
+            Debug.Log($"저장 데이터 정리: {removedCount}개의 고아 객체 상태가 제거되었습니다.");
+        }
+#endif
+
+        return removedCount;
     }
 
     /// <summary>
@@ -425,7 +480,8 @@ public class SaveManager : Singleton<SaveManager>
     /// </summary>
     /// <param name="saveData">LoadGameDataAsync에서 반환된 SaveData 객체.</param>
     /// <param name="callback">복원 결과를 받을 선택적 콜백.</param>
-    public void RestoreLoadedData(SaveData saveData, RestoreStateResultCallback callback = null)
+    /// <param name="cleanupOrphanedData">제거된 객체의 데이터를 정리할지 여부 (false 시 다음 저장 시 정리)</param>
+    public void RestoreLoadedData(SaveData saveData, RestoreStateResultCallback callback = null, bool cleanupOrphanedData = false)
     {
         if (saveData == null)
         {
@@ -443,12 +499,25 @@ public class SaveManager : Singleton<SaveManager>
         // 캐시 초기화 확인 (중복 검사 대신 유틸리티 함수 사용)
         EnsureCacheInitialized();
 
+        // 불필요한 데이터 정리 옵션이 활성화되어 있으면 로드 직후에 정리
+        int orphanedDataCount = 0;
+        if (cleanupOrphanedData)
+        {
+            orphanedDataCount = CleanupOrphanedData(saveData);
+        }
+
         List<string> failedObjects = new List<string>();
         int restoredCount = 0;
         
         foreach (var kvp in saveData.objectStates)
         {
             string id = kvp.Key;
+            // 내부 관리 데이터는 건너뛰기
+            if (id.StartsWith(InternalKeyPrefix))
+            {
+                continue;
+            }
+
             if (saveableObjectsCache.TryGetValue(id, out ISaveable saveable))
             {
                 try
@@ -479,7 +548,8 @@ public class SaveManager : Singleton<SaveManager>
         string errorMessage = isFullSuccess ? "" : $"{failedObjects.Count}개의 객체 복원 실패";
         
 #if UNITY_EDITOR
-        Debug.Log($"게임 상태가 복원되었습니다. 성공: {restoredCount}, 실패: {failedObjects.Count}");
+        string cleanupMsg = cleanupOrphanedData ? $", 정리된 고아 데이터: {orphanedDataCount}" : "";
+        Debug.Log($"게임 상태가 복원되었습니다. 성공: {restoredCount}, 실패: {failedObjects.Count}{cleanupMsg}");
 #endif
 
         // 결과 콜백 호출
@@ -586,9 +656,11 @@ public class SaveManager : Singleton<SaveManager>
 
     /// <summary>
     /// 게임을 저장하기 전에 추가로 LocalDataManager의 데이터도 포함합니다.
+    /// 저장 전에 불필요한 데이터를 정리하는 옵션이 포함되어 있습니다.
     /// </summary>
+    /// <param name="cleanupOrphanedData">저장 전에 제거된 객체의 데이터를 정리할지 여부 (기본값: 설정값 사용)</param>
     /// <returns>성공 여부를 나타내는 Task<bool></returns>
-    public async Task<bool> SaveGameWithPlayerDataAsync()
+    public async Task<bool> SaveGameWithPlayerDataAsync(bool? cleanupOrphanedData = null)
     {
         // SemaphoreSlim으로 스레드 안전성 확보
         await saveLock.WaitAsync();
@@ -636,7 +708,16 @@ public class SaveManager : Singleton<SaveManager>
             // 2. LocalDataManager의 플레이어 데이터 추가
             AddPlayerDataFromLocalDataManager(saveData);
 
-            // 3. 저장 진행 (원래 SaveGameAsync와 동일한 로직)
+            // 3. 불필요한 데이터 정리 (파라미터 값이나 설정값에 따라)
+            bool shouldCleanup = cleanupOrphanedData ?? cleanupSaveDataOnSave;
+            int removedCount = 0;
+            
+            if (shouldCleanup)
+            {
+                removedCount = CleanupOrphanedData(saveData);
+            }
+
+            // 4. 저장 진행
             bool success = false;
             Exception lastException = null;
             
@@ -675,7 +756,8 @@ public class SaveManager : Singleton<SaveManager>
                     
                     success = true;
 #if UNITY_EDITOR
-                    Debug.Log($"플레이어 데이터를 포함한 게임이 {path}에 암호화되어 저장되었습니다.");
+                    string cleanupMsg = shouldCleanup ? $" (정리된 고아 데이터: {removedCount}개)" : "";
+                    Debug.Log($"플레이어 데이터를 포함한 게임이 {path}에 암호화되어 저장되었습니다.{cleanupMsg}");
 #endif
                 }
                 catch (Exception e)
@@ -706,13 +788,28 @@ public class SaveManager : Singleton<SaveManager>
     /// <summary>
     /// 게임 데이터를 로드하고 LocalDataManager의 플레이어 데이터도 함께 복원합니다.
     /// </summary>
+    /// <param name="cleanupOrphanedData">로드 후 제거된 객체의 데이터를 정리할지 여부</param>
     /// <returns>로드된 SaveData 객체 또는 로드 실패 시 null</returns>
-    public async Task<SaveData> LoadGameWithPlayerDataAsync()
+    public async Task<SaveData> LoadGameWithPlayerDataAsync(bool cleanupOrphanedData = false)
     {
         SaveData loadedData = await LoadGameDataAsync();
         
         if (loadedData != null)
         {
+            // 불필요한 데이터 정리 옵션이 활성화된 경우 정리
+            if (cleanupOrphanedData)
+            {
+                EnsureCacheInitialized(); // 캐시가 최신 상태인지 확인
+                int removedCount = CleanupOrphanedData(loadedData);
+                
+#if UNITY_EDITOR
+                if (removedCount > 0)
+                {
+                    Debug.Log($"로드 중 {removedCount}개의 고아 데이터가 제거되었습니다.");
+                }
+#endif
+            }
+            
             // LocalDataManager의 플레이어 데이터도 함께 복원
             bool playerDataRestored = RestorePlayerDataToLocalDataManager(loadedData);
             
