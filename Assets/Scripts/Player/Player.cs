@@ -164,6 +164,15 @@ public class Player : MonoBehaviour
 
     public void Heal(float amount, HealType healType)
     {
+        // 입력 검증: 음수 값이 입력되면 0으로 처리
+        if (amount < 0)
+        {
+#if UNITY_EDITOR
+            Debug.LogWarning($"Heal 함수에 음수 값({amount})이 전달되었습니다. 0으로 처리됩니다.");
+#endif
+            amount = 0;
+        }
+
         float newAmount = healType switch
         {
             HealType.Fixed => amount,
