@@ -51,7 +51,7 @@ public class SaveManager : Singleton<SaveManager>
         // 필요에 따라 다른 설정 추가 가능 (ReferenceLoopHandling 등)
     };
 
-    private void Awake()
+    public override void Awake()
     {
         // 싱글톤 초기화 이후에 캐시 초기화
         EnsureCacheInitialized();
