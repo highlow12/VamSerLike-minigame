@@ -48,7 +48,7 @@ public class SaveManager : Singleton<SaveManager>
     private void Awake()
     {
         // 싱글톤 초기화 이후에 캐시 초기화
-        CacheAllSaveableObjects();
+        EnsureCacheInitialized();
     }
 
     private string GetSavePath()
@@ -62,6 +62,26 @@ public class SaveManager : Singleton<SaveManager>
         }
         
         return Path.Combine(saveDir, saveFileName);
+    }
+
+    /// <summary>
+    /// 백업 파일 경로를 반환합니다.
+    /// </summary>
+    private string GetBackupPath()
+    {
+        return GetSavePath() + ".bak";
+    }
+    
+    /// <summary>
+    /// saveableObjectsCache가 초기화되었는지 확인하고, 초기화되지 않았다면 초기화합니다.
+    /// 이 메서드는 중복 검사를 방지하기 위한 유틸리티 함수입니다.
+    /// </summary>
+    private void EnsureCacheInitialized()
+    {
+        if (saveableObjectsCache == null || saveableObjectsCache.Count == 0)
+        {
+            CacheAllSaveableObjects();
+        }
     }
     
     /// <summary>
@@ -139,11 +159,8 @@ public class SaveManager : Singleton<SaveManager>
             Debug.Log("비동기 저장 시작 (JSON + Rijndael 암호화)...");
 #endif
 
-            // 캐시가 비어 있으면 초기화
-            if (saveableObjectsCache == null || saveableObjectsCache.Count == 0)
-            {
-                CacheAllSaveableObjects();
-            }
+            // 캐시 초기화 확인 (중복 검사 대신 유틸리티 함수 사용)
+            EnsureCacheInitialized();
 
             // 1. (메인 스레드) 저장할 데이터 캡처
             SaveData saveData = new SaveData();
@@ -201,7 +218,7 @@ public class SaveManager : Singleton<SaveManager>
                         // 기존 파일이 있으면 백업 만들기
                         if (File.Exists(path))
                         {
-                            string backupPath = path + ".bak";
+                            string backupPath = GetBackupPath();
                             if (File.Exists(backupPath))
                             {
                                 File.Delete(backupPath);
@@ -244,8 +261,52 @@ public class SaveManager : Singleton<SaveManager>
     }
 
     /// <summary>
+    /// 주어진 경로에서 암호화된 파일을 로드하는 시도를 합니다.
+    /// </summary>
+    /// <param name="path">로드할 파일 경로</param>
+    /// <returns>로드된 SaveData 객체 또는 실패 시 null</returns>
+    private async Task<SaveData> TryLoadFromPath(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return null;
+        }
+
+        try
+        {
+            // 파일 읽기, 복호화, JSON 역직렬화
+            return await Task.Run(() =>
+            {
+                // 암호화된 바이트 읽기
+                byte[] encryptedBytes = File.ReadAllBytes(path);
+                
+                // LocalDataManager의 복호화 메서드 활용
+                byte[] decryptedBytes = Rijndael.Decrypt(encryptedBytes, EncryptionKey);
+                
+                if (decryptedBytes == null)
+                {
+                    throw new Exception($"파일 복호화 실패: {path}");
+                }
+                
+                // 복호화된 바이트를 JSON 문자열로 변환
+                string jsonString = Encoding.UTF8.GetString(decryptedBytes);
+
+                // Newtonsoft.Json으로 역직렬화
+                return JsonConvert.DeserializeObject<SaveData>(jsonString, jsonSettings);
+            });
+        }
+        catch (Exception e)
+        {
+#if UNITY_EDITOR
+            Debug.LogWarning($"경로 {path}에서 로드 실패: {e.Message}");
+#endif
+            return null;
+        }
+    }
+
+    /// <summary>
     /// Rijndael 암호화된 파일을 비동기적으로 로드하고 역직렬화하여 SaveData 객체를 반환합니다.
-    /// 최대 MaxRetryCount번 재시도합니다.
+    /// 최대 MaxRetryCount번 재시도하며, 각 시도마다 백업 파일도 확인합니다.
     /// </summary>
     /// <returns>로드된 SaveData 객체 또는 로드 실패 시 null.</returns>
     public async Task<SaveData> LoadGameDataAsync()
@@ -268,27 +329,18 @@ public class SaveManager : Singleton<SaveManager>
             Debug.Log("비동기 로드 시작 (Rijndael 암호화 + JSON)...");
 #endif
 
-            string path = GetSavePath();
-            if (!File.Exists(path))
+            string mainPath = GetSavePath();
+            string backupPath = GetBackupPath();
+            
+            // 메인 파일이 없고, 백업이 있는 경우 백업에서 복원
+            if (!File.Exists(mainPath) && File.Exists(backupPath))
             {
-                // 백업 파일이 있는지 확인
-                string backupPath = path + ".bak";
-                if (File.Exists(backupPath))
-                {
 #if UNITY_EDITOR
-                    Debug.Log("주 저장 파일을 찾을 수 없습니다. 백업에서 복원 중...");
+                Debug.Log("주 저장 파일을 찾을 수 없습니다. 백업에서 복원 중...");
 #endif
-                    File.Copy(backupPath, path, true);
-                }
-                else
-                {
-#if UNITY_EDITOR
-                    Debug.LogWarning("저장 파일을 찾을 수 없습니다.");
-#endif
-                    return null;
-                }
+                File.Copy(backupPath, mainPath, true);
             }
-
+            
             SaveData saveData = null;
             Exception lastException = null;
             
@@ -305,31 +357,31 @@ public class SaveManager : Singleton<SaveManager>
                 
                 try
                 {
-                    // (백그라운드 스레드) 파일 읽기, 복호화, JSON 역직렬화
-                    saveData = await Task.Run(() =>
+                    // 먼저 메인 파일에서 시도
+                    saveData = await TryLoadFromPath(mainPath);
+                    
+                    // 메인 파일 로드 실패 시 백업 파일에서 시도
+                    if (saveData == null && File.Exists(backupPath))
                     {
-                        // 암호화된 바이트 읽기
-                        byte[] encryptedBytes = File.ReadAllBytes(path);
+#if UNITY_EDITOR
+                        Debug.Log("메인 파일에서 로드 실패, 백업에서 시도 중...");
+#endif
+                        saveData = await TryLoadFromPath(backupPath);
                         
-                        // LocalDataManager의 복호화 메서드 활용
-                        byte[] decryptedBytes = Rijndael.Decrypt(encryptedBytes, EncryptionKey);
-                        
-                        if (decryptedBytes == null)
+                        // 백업에서 성공적으로 로드되면 메인 파일 복원
+                        if (saveData != null)
                         {
-                            throw new Exception("파일 복호화 실패");
+#if UNITY_EDITOR
+                            Debug.Log("백업에서 성공적으로 로드됨. 메인 파일 복원 중...");
+#endif
+                            File.Copy(backupPath, mainPath, true);
                         }
-                        
-                        // 복호화된 바이트를 JSON 문자열로 변환
-                        string jsonString = Encoding.UTF8.GetString(decryptedBytes);
-
-                        // Newtonsoft.Json으로 역직렬화
-                        return JsonConvert.DeserializeObject<SaveData>(jsonString, jsonSettings);
-                    });
+                    }
                     
                     if (saveData != null)
                     {
 #if UNITY_EDITOR
-                        Debug.Log($"게임 데이터가 {path}에서 복호화되어 로드되었습니다.");
+                        Debug.Log("게임 데이터가 성공적으로 로드되었습니다.");
 #endif
                     }
                 }
@@ -337,25 +389,25 @@ public class SaveManager : Singleton<SaveManager>
                 {
                     lastException = e;
 #if UNITY_EDITOR
-                    Debug.LogWarning($"로드 실패 (시도 {attempt + 1}/{MaxRetryCount}): {e.Message}");
+                    Debug.LogWarning($"로드 시도 {attempt + 1}/{MaxRetryCount} 실패: {e.Message}");
 #endif
-                    
-                    // 마지막 시도 전에 백업 파일로 시도
-                    if (attempt == MaxRetryCount - 1 && File.Exists(path + ".bak"))
-                    {
-#if UNITY_EDITOR
-                        Debug.Log("메인 파일에서 로드 실패, 백업에서 시도 중...");
-#endif
-                        path = path + ".bak";
-                    }
                 }
             }
             
-            if (saveData == null && lastException != null)
+            if (saveData == null)
             {
+                if (lastException != null)
+                {
 #if UNITY_EDITOR
-                Debug.LogError($"모든 로드 시도 실패 ({MaxRetryCount}회): {lastException.Message}\n{lastException.StackTrace}");
+                    Debug.LogError($"모든 로드 시도 실패 ({MaxRetryCount}회): {lastException.Message}\n{lastException.StackTrace}");
 #endif
+                }
+                else
+                {
+#if UNITY_EDITOR
+                    Debug.LogWarning("저장 파일을 찾을 수 없습니다.");
+#endif
+                }
             }
             
             return saveData;
@@ -388,12 +440,8 @@ public class SaveManager : Singleton<SaveManager>
         Debug.Log("로드된 데이터로부터 게임 상태 복원 중...");
 #endif
 
-        // (메인 스레드) ISaveable 객체 찾기 및 상태 복원
-        // 캐시가 비어 있으면 초기화
-        if (saveableObjectsCache == null || saveableObjectsCache.Count == 0)
-        {
-            CacheAllSaveableObjects();
-        }
+        // 캐시 초기화 확인 (중복 검사 대신 유틸리티 함수 사용)
+        EnsureCacheInitialized();
 
         List<string> failedObjects = new List<string>();
         int restoredCount = 0;
@@ -561,11 +609,8 @@ public class SaveManager : Singleton<SaveManager>
             Debug.Log("플레이어 데이터를 포함한 비동기 저장 시작...");
 #endif
 
-            // 캐시가 비어 있으면 초기화
-            if (saveableObjectsCache == null || saveableObjectsCache.Count == 0)
-            {
-                CacheAllSaveableObjects();
-            }
+            // 캐시 초기화 확인 (중복 검사 대신 유틸리티 함수 사용)
+            EnsureCacheInitialized();
 
             // 1. 저장할 데이터 캡처
             SaveData saveData = new SaveData();
@@ -617,7 +662,7 @@ public class SaveManager : Singleton<SaveManager>
                         
                         if (File.Exists(path))
                         {
-                            string backupPath = path + ".bak";
+                            string backupPath = GetBackupPath();
                             if (File.Exists(backupPath))
                             {
                                 File.Delete(backupPath);
