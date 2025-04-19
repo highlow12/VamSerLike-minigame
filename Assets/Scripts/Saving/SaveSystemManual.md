@@ -22,30 +22,45 @@
 
 4.  **`SaveManager` (싱글톤):**
     *   게임 저장 및 로드 프로세스를 관리하는 중앙 관리자입니다.
-    *   `SaveGameAsync()`: 현재 게임 상태를 비동기적으로 저장합니다. (JSON 직렬화 → Base64 인코딩 → 파일 저장)
-    *   `LoadGameDataAsync()`: 저장된 데이터를 비동기적으로 로드합니다. (파일 읽기 → Base64 디코딩 → JSON 역직렬화)
+    *   `SaveGameAsync()`: 현재 게임 상태를 비동기적으로 저장합니다. (JSON 직렬화 → Rijndael 암호화 → 파일 저장)
+    *   `LoadGameDataAsync()`: 저장된 데이터를 비동기적으로 로드합니다. (파일 읽기 → Rijndael 복호화 → JSON 역직렬화)
     *   `RestoreLoadedData(SaveData data, RestoreStateResultCallback callback)`: `LoadGameDataAsync`로 로드된 데이터를 사용하여 게임 상태를 복원하고, 결과를 콜백으로 알립니다.
     *   `CacheAllSaveableObjects()`: 모든 `ISaveable` 객체를 찾아 캐싱하여 성능을 최적화합니다.
+    *   `SaveGameWithPlayerDataAsync()`: 기본 게임 상태뿐만 아니라 `LocalDataManager`에서 플레이어 데이터(메인 무기, 스킨 등)를 함께 저장합니다.
+    *   `LoadGameWithPlayerDataAsync()`: 게임 상태를 로드하고 `LocalDataManager`의 플레이어 데이터도 함께 복원합니다.
+
+5.  **`LocalDataManager` (연동):**
+    *   플레이어의 메인 무기, 스킨 등 개인 데이터를 외부 프로그램을 통한 임의 수정이 불가능한 암호화된 형식으로 저장합니다.
+    *   `SaveManager`는 이 안전한 데이터 저장 메커니즘을 활용하여 모든 게임 데이터를 암호화합니다.
 
 ## 개선된 기능
 
 최근 개선된 저장 시스템은 다음과 같은 추가 기능을 제공합니다:
 
-1.  **스레드 안전성:**
+1.  **Rijndael 암호화:** 
+    *   Base64 인코딩 대신 `LocalDataManager`에서 사용하는 보안성이 높은 Rijndael 암호화 알고리즘을 적용
+    *   외부 프로그램을 통한 임의 수정이 불가능한 형식으로 저장 파일 보호
+    *   동일한 암호화 키를 사용하여 일관된 보안 체계 유지
+
+2.  **플레이어 데이터 통합:**
+    *   `LocalDataManager`에 저장된 메인 무기, 스킨 등의 플레이어 개인 데이터를 게임 저장 시스템에 통합
+    *   별도의 저장/로드 메서드(`SaveGameWithPlayerDataAsync`, `LoadGameWithPlayerDataAsync`)를 통해 플레이어 데이터 포함 가능
+
+3.  **스레드 안전성:**
     *   `SemaphoreSlim`을 사용한 스레드 안전 저장/로드 작업
     *   동시에 여러 저장/로드 요청을 안전하게 처리
     *   저장 중 로드, 또는 로드 중 저장에 대한 보호 메커니즘
 
-2.  **오류 처리 및 재시도 로직:**
+4.  **오류 처리 및 재시도 로직:**
     *   저장/로드 실패 시 자동 재시도 (기본 3회)
     *   상세한 오류 로깅 및 예외 정보
     *   복원 실패 객체에 대한 추적 및 보고
 
-3.  **파일 안전성:**
+5.  **파일 안전성:**
     *   임시 파일을 사용한 원자적 파일 쓰기 (저장 중 충돌 시 파일 손상 방지)
     *   자동 백업 파일 생성 및 복원 기능
 
-4.  **성능 최적화:**
+6.  **성능 최적화:**
     *   `ISaveable` 객체 캐싱으로 `FindObjectsByType` 호출 최소화
     *   `SaveManager.CacheAllSaveableObjects()`를 씬 로드 후 호출하여 캐시 갱신
 
@@ -132,7 +147,7 @@ public class PlayerHealth : MonoBehaviour, ISaveable
 }
 ```
 
-### 2. 게임 저장하기
+### 2. 기본 게임 상태 저장하기
 
 게임 상태를 저장하려면 `SaveManager`의 `SaveGameAsync` 메서드를 호출합니다. 비동기 작업이므로 `async/await`를 사용하는 것이 좋습니다. 새 저장 시스템은 실패 시 최대 3회 자동 재시도 기능을 제공합니다.
 
@@ -182,7 +197,46 @@ public class GameController : MonoBehaviour
 }
 ```
 
-### 3. 게임 로드하기
+### 3. 플레이어 데이터를 포함한 게임 저장하기
+
+`LocalDataManager`에 저장된 메인 무기, 스킨 등 플레이어 데이터를 포함하여 저장하려면 `SaveGameWithPlayerDataAsync` 메서드를 호출합니다. 이 메서드는 기본 게임 상태뿐만 아니라 `LocalDataManager`의 데이터도 함께 저장합니다.
+
+```csharp
+public async void SaveGameWithPlayerData()
+{
+    // UI 로딩 표시
+    if (savingIndicator != null) savingIndicator.SetActive(true);
+    if (statusText != null) statusText.text = "플레이어 데이터 저장 중...";
+    
+#if UNITY_EDITOR
+    Debug.Log("플레이어 데이터를 포함한 게임 저장 시작...");
+#endif
+
+    bool success = await SaveManager.Instance.SaveGameWithPlayerDataAsync();
+
+    // 결과에 따른 UI 처리
+    if (success)
+    {
+        if (statusText != null) statusText.text = "저장 완료!";
+#if UNITY_EDITOR
+        Debug.Log("플레이어 데이터를 포함한 게임 저장 성공!");
+#endif
+    }
+    else
+    {
+        if (statusText != null) statusText.text = "저장 실패!";
+#if UNITY_EDITOR
+        Debug.LogError("플레이어 데이터를 포함한 게임 저장에 실패했습니다!");
+#endif
+    }
+
+    // UI 로딩 숨김 (딜레이 후)
+    await Task.Delay(1000); 
+    if (savingIndicator != null) savingIndicator.SetActive(false);
+}
+```
+
+### 4. 게임 로드하기
 
 게임을 로드하려면 먼저 `LoadGameDataAsync`를 호출하여 `SaveData` 객체를 비동기적으로 가져온 다음, **메인 스레드에서** `RestoreLoadedData`를 호출하여 실제 상태를 복원합니다. 개선된 시스템에서는 결과 콜백을 제공하여 복원 성공/실패 여부를 알립니다.
 
@@ -249,7 +303,63 @@ public class GameController : MonoBehaviour
 }
 ```
 
-### 4. 성능 최적화를 위한 캐싱
+### 5. 플레이어 데이터를 포함한 게임 로드하기
+
+플레이어 데이터를 포함하여 게임을 로드하려면 `LoadGameWithPlayerDataAsync`를 호출합니다. 이 메서드는 게임 상태를 로드하고 `LocalDataManager`의 플레이어 데이터도 함께 복원합니다.
+
+```csharp
+public async void LoadGameWithPlayerData()
+{
+    // UI 로딩 표시
+    if (loadingIndicator != null) loadingIndicator.SetActive(true);
+    if (statusText != null) statusText.text = "플레이어 데이터 로드 중...";
+    
+#if UNITY_EDITOR
+    Debug.Log("플레이어 데이터를 포함한 게임 데이터 로드 시작...");
+#endif
+
+    // 게임과 플레이어 데이터 함께 로드
+    SaveData loadedData = await SaveManager.Instance.LoadGameWithPlayerDataAsync();
+
+    if (loadedData != null)
+    {
+        // 씬 전환 등이 필요하다면 여기서 처리
+        // ...
+
+        // 메인 스레드에서 상태 복원 실행
+        SaveManager.Instance.RestoreLoadedData(loadedData, (success, errorMessage) => 
+        {
+            if (success)
+            {
+                if (statusText != null) statusText.text = "로드 완료!";
+#if UNITY_EDITOR
+                Debug.Log("플레이어 데이터를 포함한 게임이 성공적으로 로드되고 복원되었습니다!");
+#endif
+            }
+            else
+            {
+                if (statusText != null) statusText.text = $"로드 일부 실패! {errorMessage}";
+#if UNITY_EDITOR
+                Debug.LogWarning($"게임 상태 복원 일부 실패: {errorMessage}");
+#endif
+            }
+        });
+    }
+    else
+    {
+        if (statusText != null) statusText.text = "로드 실패 또는 저장 데이터 없음";
+#if UNITY_EDITOR
+        Debug.LogWarning("게임 데이터를 로드하는 데 실패했거나 저장 파일을 찾을 수 없습니다.");
+#endif
+    }
+
+    // UI 로딩 숨김 (딜레이 후)
+    await Task.Delay(1000); 
+    if (loadingIndicator != null) loadingIndicator.SetActive(false);
+}
+```
+
+### 6. 성능 최적화를 위한 캐싱
 
 씬을 로드한 후나 새로운 저장 가능 객체가 생성 또는 파괴된 경우 `ISaveable` 객체 캐시를 업데이트해야 합니다. 이는 성능 최적화에 중요합니다.
 
@@ -288,9 +398,10 @@ public class SaveSystemInitializer : MonoBehaviour
 
 ## 저장 파일 정보
 
-*   **형식:** 데이터는 Newtonsoft.Json으로 직렬화된 후 Base64로 인코딩되어 저장됩니다.
-*   **위치:** `Application.persistentDataPath` 폴더 내에 `gameSave.sav` 파일로 저장됩니다.
-*   **백업:** 저장 시 자동으로 `gameSave.sav.bak` 백업 파일이 생성됩니다.
+*   **형식:** 데이터는 Newtonsoft.Json으로 직렬화된 후 Rijndael 암호화 알고리즘으로 암호화되어 저장됩니다.
+*   **위치:** `Application.persistentDataPath/SaveData` 폴더 내에 `gameSave.enc` 파일로 저장됩니다.
+*   **백업:** 저장 시 자동으로 `gameSave.enc.bak` 백업 파일이 생성됩니다.
+*   **보안:** LocalDataManager와 동일한 암호화 키를 사용하여 외부 프로그램으로부터 데이터를 보호합니다.
 *   **로그:** 저장/로드 관련 상세 로그는 Unity 에디터에서만 출력됩니다 (`#if UNITY_EDITOR`).
 
 ## 스레드 안전성
@@ -302,6 +413,18 @@ public class SaveSystemInitializer : MonoBehaviour
 *   저장 중 로드 또는 로드 중 저장 작업을 안전하게 처리
 
 이러한 동기화는 UI 버튼을 빠르게 여러 번 클릭하거나, 자동 저장과 수동 저장이 동시에 시도되는 경우에도 데이터 손상을 방지합니다.
+
+## 로컬 플레이어 데이터 통합
+
+SaveManager와 LocalDataManager의 통합으로 다음과 같은 이점이 있습니다:
+
+*   **데이터 일관성:** 게임 세이브와 플레이어 데이터(무기, 스킨 등)가 일관되게 유지됩니다.
+*   **통합 보안:** 모든 데이터가 동일한 암호화 방식으로 보호됩니다.
+*   **단일 저장/로드 지점:** `SaveGameWithPlayerDataAsync`와 `LoadGameWithPlayerDataAsync`를 통해 모든 데이터를 한 번에 처리할 수 있습니다.
+
+LocalDataManager에서 관리하는 플레이어 데이터는 다음과 같습니다:
+* **메인 무기 데이터:** 플레이어의 무기 정보 (타입, 레어도 등)
+* **게임 에셋 데이터:** 플레이어의 스킨 및 기타 개인화 항목
 
 ## 오류 처리 및 재시도
 
@@ -318,3 +441,4 @@ public class SaveSystemInitializer : MonoBehaviour
 *   런타임에 동적으로 생성되는 `ISaveable` 객체는 `UniqueID`가 자동으로 생성되지 않으므로, 생성 시점에 고유 ID를 할당하고 관리하는 별도의 로직이 필요할 수 있습니다.
 *   `RestoreLoadedData`는 캐시된 `ISaveable` 객체를 사용하여 상태를 복원하므로, 로드 시점에 필요한 모든 객체가 씬에 로드되어 있어야 합니다.
 *   씬 전환 후에는 반드시 `SaveManager.Instance.CacheAllSaveableObjects()`를 호출하여 캐시를 새로고침해야 합니다.
+*   플레이어 데이터는 LocalDataManager에서 관리되므로, 플레이어 관련 스크립트에서 직접 업데이트해야 합니다.

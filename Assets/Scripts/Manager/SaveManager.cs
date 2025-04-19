@@ -8,11 +8,13 @@ using System;
 using Newtonsoft.Json; // Newtonsoft.Json 사용
 using System.Text;     // Encoding (UTF8, Base64) 사용
 using System.Threading; // SemaphoreSlim 사용
+using CustomEncryption; // Rijndael 암호화 사용
+using LitJson; // LitJson 사용
 
 public class SaveManager : Singleton<SaveManager>
 {
-    // 파일 확장자 변경 (선택 사항)
-    private string saveFileName = "gameSave.sav";
+    // 파일 확장자 변경
+    private string saveFileName = "gameSave.enc"; // 암호화된 파일임을 나타내는 확장자로 변경
     
     // SemaphoreSlim을 사용한 스레드 안전 동기화
     private readonly SemaphoreSlim saveLock = new SemaphoreSlim(1, 1);
@@ -28,6 +30,9 @@ public class SaveManager : Singleton<SaveManager>
     // 재시도 설정
     private const int MaxRetryCount = 3;
     private const int RetryDelayMs = 500; // 500ms
+
+    // 암호화 키 (LocalDataManager와 동일한 키 사용)
+    private const string EncryptionKey = "EnRBcwL791f3oEf/AH2D0D2EhbajQ0yBimSUbLHDTA8=";
     
     // 상태 복원 결과를 위한 델리게이트
     public delegate void RestoreStateResultCallback(bool success, string errorMessage);
@@ -48,7 +53,15 @@ public class SaveManager : Singleton<SaveManager>
 
     private string GetSavePath()
     {
-        return Path.Combine(Application.persistentDataPath, saveFileName);
+        string saveDir = Path.Combine(Application.persistentDataPath, "SaveData");
+        
+        // 디렉토리가 없으면 생성
+        if (!Directory.Exists(saveDir))
+        {
+            Directory.CreateDirectory(saveDir);
+        }
+        
+        return Path.Combine(saveDir, saveFileName);
     }
     
     /// <summary>
@@ -102,7 +115,7 @@ public class SaveManager : Singleton<SaveManager>
     }
 
     /// <summary>
-    /// 게임 상태를 비동기적으로 JSON으로 직렬화하고 Base64 인코딩하여 저장합니다.
+    /// 게임 상태를 비동기적으로 JSON으로 직렬화하고 Rijndael 암호화를 사용하여 안전하게 저장합니다.
     /// 최대 MaxRetryCount번 재시도합니다.
     /// </summary>
     /// <returns>성공 여부를 나타내는 Task<bool></returns>
@@ -123,7 +136,7 @@ public class SaveManager : Singleton<SaveManager>
             isSaving = true;
             
 #if UNITY_EDITOR
-            Debug.Log("비동기 저장 시작 (JSON + Base64)...");
+            Debug.Log("비동기 저장 시작 (JSON + Rijndael 암호화)...");
 #endif
 
             // 캐시가 비어 있으면 초기화
@@ -153,7 +166,7 @@ public class SaveManager : Singleton<SaveManager>
                 }
             }
 
-            // 2. (백그라운드 스레드) JSON 직렬화, Base64 인코딩 및 파일 쓰기
+            // 2. (백그라운드 스레드) JSON 직렬화, 암호화 및 파일 쓰기
             bool success = false;
             Exception lastException = null;
             
@@ -171,7 +184,7 @@ public class SaveManager : Singleton<SaveManager>
                 try
                 {
                     string path = GetSavePath();
-                    await Task.Run(async () =>
+                    await Task.Run(() =>
                     {
                         // 임시 파일에 먼저 쓰기 (파일 손상 방지)
                         string tempPath = path + ".tmp";
@@ -179,15 +192,11 @@ public class SaveManager : Singleton<SaveManager>
                         // Newtonsoft.Json으로 직렬화
                         string jsonString = JsonConvert.SerializeObject(saveData, jsonSettings);
 
-                        // JSON 문자열을 Base64로 인코딩
-                        byte[] jsonBytes = Encoding.UTF8.GetBytes(jsonString);
-                        string base64String = Convert.ToBase64String(jsonBytes);
+                        // LocalDataManager의 암호화 메서드 활용
+                        byte[] encryptedBytes = Rijndael.EncryptString(jsonString, EncryptionKey);
 
-                        // Base64 문자열을 임시 파일에 비동기적으로 쓰기
-                        using (StreamWriter writer = new StreamWriter(tempPath, false, Encoding.UTF8)) // UTF8 인코딩 명시
-                        {
-                            await writer.WriteAsync(base64String);
-                        }
+                        // 암호화된 데이터를 임시 파일에 쓰기
+                        File.WriteAllBytes(tempPath, encryptedBytes);
                         
                         // 기존 파일이 있으면 백업 만들기
                         if (File.Exists(path))
@@ -206,7 +215,7 @@ public class SaveManager : Singleton<SaveManager>
                     
                     success = true;
 #if UNITY_EDITOR
-                    Debug.Log($"게임이 {path}에 비동기적으로 저장되었습니다 (JSON + Base64).");
+                    Debug.Log($"게임이 {path}에 암호화되어 저장되었습니다.");
 #endif
                 }
                 catch (Exception e)
@@ -235,7 +244,7 @@ public class SaveManager : Singleton<SaveManager>
     }
 
     /// <summary>
-    /// Base64로 인코딩된 JSON 파일을 비동기적으로 로드하고 역직렬화하여 SaveData 객체를 반환합니다.
+    /// Rijndael 암호화된 파일을 비동기적으로 로드하고 역직렬화하여 SaveData 객체를 반환합니다.
     /// 최대 MaxRetryCount번 재시도합니다.
     /// </summary>
     /// <returns>로드된 SaveData 객체 또는 로드 실패 시 null.</returns>
@@ -256,7 +265,7 @@ public class SaveManager : Singleton<SaveManager>
             isLoading = true;
             
 #if UNITY_EDITOR
-            Debug.Log("비동기 로드 시작 (JSON + Base64)...");
+            Debug.Log("비동기 로드 시작 (Rijndael 암호화 + JSON)...");
 #endif
 
             string path = GetSavePath();
@@ -296,20 +305,22 @@ public class SaveManager : Singleton<SaveManager>
                 
                 try
                 {
-                    // (백그라운드 스레드) 파일 읽기, Base64 디코딩, JSON 역직렬화
-                    saveData = await Task.Run(async () =>
+                    // (백그라운드 스레드) 파일 읽기, 복호화, JSON 역직렬화
+                    saveData = await Task.Run(() =>
                     {
-                        string base64String;
-                        // Base64 문자열을 파일에서 비동기적으로 읽기
-                        using (StreamReader reader = new StreamReader(path, Encoding.UTF8)) // UTF8 인코딩 명시
+                        // 암호화된 바이트 읽기
+                        byte[] encryptedBytes = File.ReadAllBytes(path);
+                        
+                        // LocalDataManager의 복호화 메서드 활용
+                        byte[] decryptedBytes = Rijndael.Decrypt(encryptedBytes, EncryptionKey);
+                        
+                        if (decryptedBytes == null)
                         {
-                            base64String = await reader.ReadToEndAsync();
+                            throw new Exception("파일 복호화 실패");
                         }
-
-                        // Base64 문자열을 JSON 바이트로 디코딩
-                        byte[] jsonBytes = Convert.FromBase64String(base64String);
-                        // JSON 바이트를 문자열로 변환
-                        string jsonString = Encoding.UTF8.GetString(jsonBytes);
+                        
+                        // 복호화된 바이트를 JSON 문자열로 변환
+                        string jsonString = Encoding.UTF8.GetString(decryptedBytes);
 
                         // Newtonsoft.Json으로 역직렬화
                         return JsonConvert.DeserializeObject<SaveData>(jsonString, jsonSettings);
@@ -318,46 +329,25 @@ public class SaveManager : Singleton<SaveManager>
                     if (saveData != null)
                     {
 #if UNITY_EDITOR
-                        Debug.Log($"게임 데이터가 {path}에서 비동기적으로 로드되었습니다 (JSON + Base64).");
+                        Debug.Log($"게임 데이터가 {path}에서 복호화되어 로드되었습니다.");
 #endif
                     }
                 }
-                catch (FormatException fe) // Base64 디코딩 실패
-                {
-                    lastException = fe;
-#if UNITY_EDITOR
-                    Debug.LogWarning($"Base64 디코딩 실패 (시도 {attempt + 1}/{MaxRetryCount}): {fe.Message}");
-#endif
-                    // 백업 파일로 시도
-                    if (attempt == MaxRetryCount - 1 && File.Exists(path + ".bak"))
-                    {
-#if UNITY_EDITOR
-                        Debug.Log("메인 파일에서 로드 실패, 백업에서 시도 중...");
-#endif
-                        path = path + ".bak";
-                    }
-                }
-                catch (JsonException je) // JSON 역직렬화 실패
-                {
-                    lastException = je;
-#if UNITY_EDITOR
-                    Debug.LogWarning($"JSON 역직렬화 실패 (시도 {attempt + 1}/{MaxRetryCount}): {je.Message}");
-#endif
-                    // 백업 파일로 시도
-                    if (attempt == MaxRetryCount - 1 && File.Exists(path + ".bak"))
-                    {
-#if UNITY_EDITOR
-                        Debug.Log("메인 파일에서 로드 실패, 백업에서 시도 중...");
-#endif
-                        path = path + ".bak";
-                    }
-                }
-                catch (Exception e) // 기타 예외
+                catch (Exception e)
                 {
                     lastException = e;
 #if UNITY_EDITOR
                     Debug.LogWarning($"로드 실패 (시도 {attempt + 1}/{MaxRetryCount}): {e.Message}");
 #endif
+                    
+                    // 마지막 시도 전에 백업 파일로 시도
+                    if (attempt == MaxRetryCount - 1 && File.Exists(path + ".bak"))
+                    {
+#if UNITY_EDITOR
+                        Debug.Log("메인 파일에서 로드 실패, 백업에서 시도 중...");
+#endif
+                        path = path + ".bak";
+                    }
                 }
             }
             
@@ -461,67 +451,238 @@ public class SaveManager : Singleton<SaveManager>
         loadLock.Dispose();
     }
 
-    // --- 사용 예시 (다른 스크립트에서 호출) ---
-    /*
-    public async void HandleSaveButtonClicked()
+    /// <summary>
+    /// LocalDataManager에 저장된 플레이어 데이터를 저장 시스템에 추가합니다.
+    /// 이 메서드는 메인 무기, 스킨 등 중요한 플레이어 데이터를 안전하게 저장합니다.
+    /// </summary>
+    /// <param name="saveData">저장 데이터 객체</param>
+    public void AddPlayerDataFromLocalDataManager(SaveData saveData)
     {
-        // UI 비활성화 또는 로딩 인디케이터 표시
-#if UNITY_EDITOR
-        Debug.Log("저장 버튼 클릭됨. 저장 시작...");
-#endif
-        bool success = await SaveManager.Instance.SaveGameAsync();
-        if (success)
+        if (saveData == null)
         {
-            // 저장 성공 메시지 표시
+            Debug.LogError("SaveData가 null입니다");
+            return;
         }
-        else
+
+        try
         {
-            // 저장 실패 메시지 표시
+            // LocalDataManager에서 유저 메인 무기 데이터 가져오기
+            JsonData mainWeaponData = LocalDataManager.Instance.GetLocalUserMainWeaponData();
+            if (mainWeaponData != null)
+            {
+                // 메인 무기 데이터를 저장 시스템에 추가
+                saveData.objectStates["LocalPlayerMainWeapon"] = mainWeaponData.ToJson();
+            }
+
+            // LocalDataManager에서 게임 에셋 데이터 가져오기 (스킨 등)
+            JsonData gameAssetData = LocalDataManager.Instance.GetLocalUserGameAssetData();
+            if (gameAssetData != null)
+            {
+                // 게임 에셋 데이터를 저장 시스템에 추가
+                saveData.objectStates["LocalPlayerGameAssets"] = gameAssetData.ToJson();
+            }
         }
-        // 저장 완료 후 UI 활성화 또는 인디케이터 숨김
-#if UNITY_EDITOR
-        Debug.Log("저장 작업 완료.");
-#endif
+        catch (Exception ex)
+        {
+            Debug.LogError($"LocalDataManager에서 플레이어 데이터를 가져오는 중 오류 발생: {ex.Message}");
+        }
     }
 
-    public async void HandleLoadButtonClicked()
+    /// <summary>
+    /// 저장된 데이터에서 LocalDataManager로 플레이어 데이터를 복원합니다.
+    /// </summary>
+    /// <param name="saveData">복원할 저장 데이터</param>
+    /// <returns>복원 성공 여부</returns>
+    public bool RestorePlayerDataToLocalDataManager(SaveData saveData)
     {
-        // UI 비활성화 또는 로딩 인디케이터 표시
+        if (saveData == null)
+        {
+            Debug.LogError("SaveData가 null입니다");
+            return false;
+        }
+
+        bool success = true;
+
+        try
+        {
+            // 메인 무기 데이터 복원
+            if (saveData.objectStates.TryGetValue("LocalPlayerMainWeapon", out object mainWeaponObj) && mainWeaponObj is string mainWeaponJson)
+            {
+                JsonData mainWeaponData = JsonMapper.ToObject(mainWeaponJson);
+                if (!LocalDataManager.Instance.UpdateLocalUserMainWeaponData(mainWeaponData))
+                {
+                    Debug.LogError("메인 무기 데이터를 LocalDataManager에 복원하지 못했습니다");
+                    success = false;
+                }
+            }
+
+            // 게임 에셋 데이터 복원 (스킨 등)
+            if (saveData.objectStates.TryGetValue("LocalPlayerGameAssets", out object gameAssetObj) && gameAssetObj is string gameAssetJson)
+            {
+                JsonData gameAssetData = JsonMapper.ToObject(gameAssetJson);
+                if (!LocalDataManager.Instance.UpdateLocalUserGameAssetData(gameAssetData))
+                {
+                    Debug.LogError("게임 에셋 데이터를 LocalDataManager에 복원하지 못했습니다");
+                    success = false;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"LocalDataManager에 플레이어 데이터를 복원하는 중 오류 발생: {ex.Message}");
+            success = false;
+        }
+
+        return success;
+    }
+
+    /// <summary>
+    /// 게임을 저장하기 전에 추가로 LocalDataManager의 데이터도 포함합니다.
+    /// </summary>
+    /// <returns>성공 여부를 나타내는 Task<bool></returns>
+    public async Task<bool> SaveGameWithPlayerDataAsync()
+    {
+        // SemaphoreSlim으로 스레드 안전성 확보
+        await saveLock.WaitAsync();
+        
+        try
+        {
+            if (isSaving)
+            {
 #if UNITY_EDITOR
-        Debug.Log("로드 버튼 클릭됨. 로드 시작...");
+                Debug.LogWarning("저장이 이미 진행 중입니다.");
 #endif
-        SaveData loadedData = await SaveManager.Instance.LoadGameDataAsync();
+                return false;
+            }
+            
+            isSaving = true;
+            
+#if UNITY_EDITOR
+            Debug.Log("플레이어 데이터를 포함한 비동기 저장 시작...");
+#endif
+
+            // 캐시가 비어 있으면 초기화
+            if (saveableObjectsCache == null || saveableObjectsCache.Count == 0)
+            {
+                CacheAllSaveableObjects();
+            }
+
+            // 1. 저장할 데이터 캡처
+            SaveData saveData = new SaveData();
+            saveData.lastSaved = DateTime.UtcNow;
+
+            foreach (var kvp in saveableObjectsCache)
+            {
+                string id = kvp.Key;
+                ISaveable saveable = kvp.Value;
+                
+                try
+                {
+                    saveData.objectStates[id] = saveable.CaptureState();
+                }
+                catch (Exception e)
+                {
+#if UNITY_EDITOR
+                    Debug.LogError($"객체 {id} ({((MonoBehaviour)saveable).gameObject.name})의 상태 캡처 오류: {e.Message}\n{e.StackTrace}", (MonoBehaviour)saveable);
+#endif
+                }
+            }
+            
+            // 2. LocalDataManager의 플레이어 데이터 추가
+            AddPlayerDataFromLocalDataManager(saveData);
+
+            // 3. 저장 진행 (원래 SaveGameAsync와 동일한 로직)
+            bool success = false;
+            Exception lastException = null;
+            
+            for (int attempt = 0; attempt < MaxRetryCount && !success; attempt++)
+            {
+                if (attempt > 0)
+                {
+#if UNITY_EDITOR
+                    Debug.Log($"저장 재시도 중... (시도 {attempt + 1}/{MaxRetryCount})");
+#endif
+                    await Task.Delay(RetryDelayMs);
+                }
+                
+                try
+                {
+                    string path = GetSavePath();
+                    await Task.Run(() =>
+                    {
+                        string tempPath = path + ".tmp";
+                        string jsonString = JsonConvert.SerializeObject(saveData, jsonSettings);
+                        byte[] encryptedBytes = Rijndael.EncryptString(jsonString, EncryptionKey);
+                        File.WriteAllBytes(tempPath, encryptedBytes);
+                        
+                        if (File.Exists(path))
+                        {
+                            string backupPath = path + ".bak";
+                            if (File.Exists(backupPath))
+                            {
+                                File.Delete(backupPath);
+                            }
+                            File.Move(path, backupPath);
+                        }
+                        
+                        File.Move(tempPath, path);
+                    });
+                    
+                    success = true;
+#if UNITY_EDITOR
+                    Debug.Log($"플레이어 데이터를 포함한 게임이 {path}에 암호화되어 저장되었습니다.");
+#endif
+                }
+                catch (Exception e)
+                {
+                    lastException = e;
+#if UNITY_EDITOR
+                    Debug.LogWarning($"저장 시도 {attempt + 1}/{MaxRetryCount} 실패: {e.Message}");
+#endif
+                }
+            }
+            
+            if (!success && lastException != null)
+            {
+#if UNITY_EDITOR
+                Debug.LogError($"모든 저장 시도 실패 ({MaxRetryCount}회): {lastException.Message}\n{lastException.StackTrace}");
+#endif
+            }
+            
+            return success;
+        }
+        finally
+        {
+            isSaving = false;
+            saveLock.Release();
+        }
+    }
+
+    /// <summary>
+    /// 게임 데이터를 로드하고 LocalDataManager의 플레이어 데이터도 함께 복원합니다.
+    /// </summary>
+    /// <returns>로드된 SaveData 객체 또는 로드 실패 시 null</returns>
+    public async Task<SaveData> LoadGameWithPlayerDataAsync()
+    {
+        SaveData loadedData = await LoadGameDataAsync();
+        
         if (loadedData != null)
         {
-            // 씬 전환 등이 필요하다면 여기서 처리
-            // ...
-
-            // 데이터 로드가 완료된 후, 메인 스레드에서 상태 복원
-            SaveManager.Instance.RestoreLoadedData(loadedData, (success, error) => {
-                if (success)
-                {
-                    // 복원 성공 메시지 표시
+            // LocalDataManager의 플레이어 데이터도 함께 복원
+            bool playerDataRestored = RestorePlayerDataToLocalDataManager(loadedData);
+            
 #if UNITY_EDITOR
-                    Debug.Log("로드 및 복원 작업 완료.");
+            if (playerDataRestored)
+            {
+                Debug.Log("플레이어 데이터가 LocalDataManager에 성공적으로 복원되었습니다.");
+            }
+            else
+            {
+                Debug.LogWarning("LocalDataManager에 플레이어 데이터 복원에 일부 실패했습니다.");
+            }
 #endif
-                }
-                else
-                {
-                    // 복원 실패 또는 일부 실패 메시지 표시
-#if UNITY_EDITOR
-                    Debug.LogWarning($"복원 작업 일부 실패: {error}");
-#endif
-                }
-            });
         }
-        else
-        {
-#if UNITY_EDITOR
-            Debug.LogWarning("로드 작업 실패 또는 저장 데이터 없음.");
-#endif
-            // 로드 실패 처리 (예: 새 게임 시작)
-        }
-        // 로드 완료/실패 후 UI 활성화 또는 인디케이터 숨김
+        
+        return loadedData;
     }
-    */
 }
