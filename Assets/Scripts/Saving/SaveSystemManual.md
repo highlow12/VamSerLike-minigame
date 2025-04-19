@@ -22,9 +22,32 @@
 
 4.  **`SaveManager` (싱글톤):**
     *   게임 저장 및 로드 프로세스를 관리하는 중앙 관리자입니다.
-    *   `SaveGameAsync()`: 현재 게임 상태를 비동기적으로 저장합니다. (JSON 직렬화 -> Base64 인코딩 -> 파일 저장)
-    *   `LoadGameDataAsync()`: 저장된 데이터를 비동기적으로 로드합니다. (파일 읽기 -> Base64 디코딩 -> JSON 역직렬화)
-    *   `RestoreLoadedData(SaveData data)`: `LoadGameDataAsync`로 로드된 데이터를 사용하여 게임 상태를 복원합니다. (메인 스레드에서 호출 필요)
+    *   `SaveGameAsync()`: 현재 게임 상태를 비동기적으로 저장합니다. (JSON 직렬화 → Base64 인코딩 → 파일 저장)
+    *   `LoadGameDataAsync()`: 저장된 데이터를 비동기적으로 로드합니다. (파일 읽기 → Base64 디코딩 → JSON 역직렬화)
+    *   `RestoreLoadedData(SaveData data, RestoreStateResultCallback callback)`: `LoadGameDataAsync`로 로드된 데이터를 사용하여 게임 상태를 복원하고, 결과를 콜백으로 알립니다.
+    *   `CacheAllSaveableObjects()`: 모든 `ISaveable` 객체를 찾아 캐싱하여 성능을 최적화합니다.
+
+## 개선된 기능
+
+최근 개선된 저장 시스템은 다음과 같은 추가 기능을 제공합니다:
+
+1.  **스레드 안전성:**
+    *   `SemaphoreSlim`을 사용한 스레드 안전 저장/로드 작업
+    *   동시에 여러 저장/로드 요청을 안전하게 처리
+    *   저장 중 로드, 또는 로드 중 저장에 대한 보호 메커니즘
+
+2.  **오류 처리 및 재시도 로직:**
+    *   저장/로드 실패 시 자동 재시도 (기본 3회)
+    *   상세한 오류 로깅 및 예외 정보
+    *   복원 실패 객체에 대한 추적 및 보고
+
+3.  **파일 안전성:**
+    *   임시 파일을 사용한 원자적 파일 쓰기 (저장 중 충돌 시 파일 손상 방지)
+    *   자동 백업 파일 생성 및 복원 기능
+
+4.  **성능 최적화:**
+    *   `ISaveable` 객체 캐싱으로 `FindObjectsByType` 호출 최소화
+    *   `SaveManager.CacheAllSaveableObjects()`를 씬 로드 후 호출하여 캐시 갱신
 
 ## 사용 방법
 
@@ -111,47 +134,78 @@ public class PlayerHealth : MonoBehaviour, ISaveable
 
 ### 2. 게임 저장하기
 
-게임 상태를 저장하려면 `SaveManager`의 `SaveGameAsync` 메서드를 호출합니다. 비동기 작업이므로 `async/await`를 사용하는 것이 좋습니다.
+게임 상태를 저장하려면 `SaveManager`의 `SaveGameAsync` 메서드를 호출합니다. 비동기 작업이므로 `async/await`를 사용하는 것이 좋습니다. 새 저장 시스템은 실패 시 최대 3회 자동 재시도 기능을 제공합니다.
 
 ```csharp
 using UnityEngine;
 using System.Threading.Tasks;
+using UnityEngine.UI; // UI 요소를 위한 네임스페이스
 
 public class GameController : MonoBehaviour
 {
+    // 옵션: UI 요소
+    [SerializeField] private GameObject savingIndicator;
+    [SerializeField] private Text statusText;
+
     public async void SaveGame()
     {
+        // UI 로딩 표시
+        if (savingIndicator != null) savingIndicator.SetActive(true);
+        if (statusText != null) statusText.text = "저장 중...";
+        
 #if UNITY_EDITOR
-        Debug.Log("Saving game...");
+        Debug.Log("게임 저장 시작...");
 #endif
-        // UI 로딩 표시 등
 
-        await SaveManager.Instance.SaveGameAsync();
+        bool success = await SaveManager.Instance.SaveGameAsync();
 
-        // UI 로딩 숨김 등
+        // 결과에 따른 UI 처리
+        if (success)
+        {
+            if (statusText != null) statusText.text = "저장 완료!";
 #if UNITY_EDITOR
-        Debug.Log("Game saved!");
+            Debug.Log("게임 저장 성공!");
 #endif
+        }
+        else
+        {
+            if (statusText != null) statusText.text = "저장 실패!";
+#if UNITY_EDITOR
+            Debug.LogError("게임 저장에 실패했습니다!");
+#endif
+        }
+
+        // UI 로딩 숨김 (딜레이 후)
+        await Task.Delay(1000); // 1초 딜레이 (선택 사항)
+        if (savingIndicator != null) savingIndicator.SetActive(false);
     }
 }
 ```
 
 ### 3. 게임 로드하기
 
-게임을 로드하려면 먼저 `LoadGameDataAsync`를 호출하여 `SaveData` 객체를 비동기적으로 가져온 다음, **메인 스레드에서** `RestoreLoadedData`를 호출하여 실제 상태를 복원합니다.
+게임을 로드하려면 먼저 `LoadGameDataAsync`를 호출하여 `SaveData` 객체를 비동기적으로 가져온 다음, **메인 스레드에서** `RestoreLoadedData`를 호출하여 실제 상태를 복원합니다. 개선된 시스템에서는 결과 콜백을 제공하여 복원 성공/실패 여부를 알립니다.
 
 ```csharp
 using UnityEngine;
 using System.Threading.Tasks;
+using UnityEngine.UI; // UI 요소를 위한 네임스페이스
 
 public class GameController : MonoBehaviour
 {
+    // 옵션: UI 요소
+    [SerializeField] private GameObject loadingIndicator;
+    [SerializeField] private Text statusText;
+
     public async void LoadGame()
     {
+        // UI 로딩 표시
+        if (loadingIndicator != null) loadingIndicator.SetActive(true);
+        if (statusText != null) statusText.text = "로드 중...";
+        
 #if UNITY_EDITOR
-        Debug.Log("Loading game data...");
+        Debug.Log("게임 데이터 로드 시작...");
 #endif
-        // UI 로딩 표시 등
 
         SaveData loadedData = await SaveManager.Instance.LoadGameDataAsync();
 
@@ -160,34 +214,107 @@ public class GameController : MonoBehaviour
             // 씬 전환 등이 필요하다면 여기서 처리
             // ...
 
-            // 메인 스레드에서 상태 복원 실행
-            SaveManager.Instance.RestoreLoadedData(loadedData);
+            // 메인 스레드에서 상태 복원 실행 (콜백으로 결과 처리)
+            SaveManager.Instance.RestoreLoadedData(loadedData, (success, errorMessage) => 
+            {
+                if (success)
+                {
+                    if (statusText != null) statusText.text = "로드 완료!";
 #if UNITY_EDITOR
-            Debug.Log("Game loaded and restored!");
+                    Debug.Log("게임이 성공적으로 로드되고 복원되었습니다!");
 #endif
+                }
+                else
+                {
+                    if (statusText != null) statusText.text = $"로드 일부 실패! {errorMessage}";
+#if UNITY_EDITOR
+                    Debug.LogWarning($"게임 상태 복원 일부 실패: {errorMessage}");
+#endif
+                }
+            });
         }
         else
         {
+            if (statusText != null) statusText.text = "로드 실패 또는 저장 데이터 없음";
 #if UNITY_EDITOR
-            Debug.LogWarning("Failed to load game data or no save file found.");
+            Debug.LogWarning("게임 데이터를 로드하는 데 실패했거나 저장 파일을 찾을 수 없습니다.");
 #endif
             // 로드 실패 처리 (예: 새 게임 시작)
         }
 
-        // UI 로딩 숨김 등
+        // UI 로딩 숨김 (딜레이 후)
+        await Task.Delay(1000); // 1초 딜레이 (선택 사항)
+        if (loadingIndicator != null) loadingIndicator.SetActive(false);
+    }
+}
+```
+
+### 4. 성능 최적화를 위한 캐싱
+
+씬을 로드한 후나 새로운 저장 가능 객체가 생성 또는 파괴된 경우 `ISaveable` 객체 캐시를 업데이트해야 합니다. 이는 성능 최적화에 중요합니다.
+
+```csharp
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class SaveSystemInitializer : MonoBehaviour
+{
+    private void Start()
+    {
+        // 시작 시 캐싱 수행
+        SaveManager.Instance.CacheAllSaveableObjects();
+    }
+
+    // 씬 전환 완료 후 캐싱 새로고침
+    private void OnEnable() 
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable() 
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 씬 로드 후 캐시 리셋
+        SaveManager.Instance.ResetCache();
+        // 새 씬에서 캐싱 수행
+        SaveManager.Instance.CacheAllSaveableObjects();
     }
 }
 ```
 
 ## 저장 파일 정보
 
-*   **형식:** 데이터는 JSON으로 직렬화된 후 Base64로 인코딩되어 저장됩니다. (간단한 난독화)
-*   **위치:** `Application.persistentDataPath` 폴더 내에 `gameSave.sav` 파일로 저장됩니다. (경로는 `SaveManager.cs`에서 변경 가능)
+*   **형식:** 데이터는 Newtonsoft.Json으로 직렬화된 후 Base64로 인코딩되어 저장됩니다.
+*   **위치:** `Application.persistentDataPath` 폴더 내에 `gameSave.sav` 파일로 저장됩니다.
+*   **백업:** 저장 시 자동으로 `gameSave.sav.bak` 백업 파일이 생성됩니다.
 *   **로그:** 저장/로드 관련 상세 로그는 Unity 에디터에서만 출력됩니다 (`#if UNITY_EDITOR`).
+
+## 스레드 안전성
+
+개선된 저장 시스템은 `SemaphoreSlim`을 사용하여 다음과 같은 스레드 안전 기능을 제공합니다:
+
+*   동시에 여러 저장 요청이 들어오더라도 한 번에 하나만 처리
+*   동시에 여러 로드 요청이 들어오더라도 한 번에 하나만 처리
+*   저장 중 로드 또는 로드 중 저장 작업을 안전하게 처리
+
+이러한 동기화는 UI 버튼을 빠르게 여러 번 클릭하거나, 자동 저장과 수동 저장이 동시에 시도되는 경우에도 데이터 손상을 방지합니다.
+
+## 오류 처리 및 재시도
+
+*   **자동 재시도:** 저장/로드 실패 시 최대 3회까지 자동으로 재시도합니다. (간격: 500ms)
+*   **백업 활용:** 메인 저장 파일 로드에 실패하면 백업 파일에서 복원을 시도합니다.
+*   **복원 콜백:** `RestoreLoadedData`에 콜백을 제공하여 복원 결과를 처리할 수 있습니다.
+*   **실패 추적:** 복원에 실패한 객체들의 ID 목록을 제공합니다.
 
 ## 주의사항
 
 *   `ISaveable`을 구현하는 모든 GameObject에는 `UniqueID` 컴포넌트가 반드시 필요합니다.
-*   `CaptureState`에서 반환하는 객체는 반드시 `[System.Serializable]` 속성을 가지거나 Newtonsoft.Json이 직렬화할 수 있는 타입이어야 합니다. 복잡한 참조(예: 다른 MonoBehaviour) 대신 ID를 저장하는 것을 권장합니다.
-*   런타임(게임 실행 중)에 동적으로 생성되는 `ISaveable` 객체는 `UniqueID`가 자동으로 생성되지 않으므로, 생성 시점에 고유 ID를 할당하고 관리하는 별도의 로직이 필요할 수 있습니다.
-*   `RestoreLoadedData`는 씬의 모든 `ISaveable` 객체를 찾아서 상태를 복원하므로, 로드 시점에 필요한 모든 객체가 씬에 로드되어 있어야 합니다.
+*   `CaptureState`에서 반환하는 객체는 반드시 `[System.Serializable]` 속성을 가지거나 Newtonsoft.Json이 직렬화할 수 있는 타입이어야 합니다.
+*   복잡한 참조(예: 다른 MonoBehaviour) 대신 ID를 저장하는 것을 권장합니다.
+*   런타임에 동적으로 생성되는 `ISaveable` 객체는 `UniqueID`가 자동으로 생성되지 않으므로, 생성 시점에 고유 ID를 할당하고 관리하는 별도의 로직이 필요할 수 있습니다.
+*   `RestoreLoadedData`는 캐시된 `ISaveable` 객체를 사용하여 상태를 복원하므로, 로드 시점에 필요한 모든 객체가 씬에 로드되어 있어야 합니다.
+*   씬 전환 후에는 반드시 `SaveManager.Instance.CacheAllSaveableObjects()`를 호출하여 캐시를 새로고침해야 합니다.
