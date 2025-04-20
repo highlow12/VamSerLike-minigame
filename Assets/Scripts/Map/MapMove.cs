@@ -8,6 +8,7 @@ public class MapMove : MonoBehaviour
     public float offset = 2;
     public GameObject[] obstarcles;
     public GameObject[] obstarcles_Optional;
+    public bool changeAngle = false;
     void Start()
     {
         setObstacle(obstarcles);
@@ -62,7 +63,7 @@ public class MapMove : MonoBehaviour
         {
             item.transform.position = transform.position + new Vector3(Random.Range(-offset/4, offset/4), Random.Range(-offset/4, offset/4), 0);
             //item의 각도를 90도 간격으로 랜덤하게 변화
-            item.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 4) * 90);
+            if (changeAngle) item.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 4) * 90);
         }
     }
 }
