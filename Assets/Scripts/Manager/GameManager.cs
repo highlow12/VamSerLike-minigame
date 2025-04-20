@@ -5,6 +5,7 @@ using System.Linq;
 using LitJson;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -15,11 +16,8 @@ public class GameManager : Singleton<GameManager>
         GameOver
     }
 
-    // 레벨업 이벤트 수정 - 이벤트를 null 체크 없이 호출할 수 있도록 함
-    // 델리게이트 정의
     public delegate void OnPlayerLevelChanged();
-    // 이벤트 초기화하여 null이 되지 않도록 함
-    public event OnPlayerLevelChanged onPlayerLevelChanged = delegate { };
+    public event OnPlayerLevelChanged onPlayerLevelChanged;
     public delegate void OnGamePaused();
     public event OnGamePaused onGamePaused;
 
@@ -46,20 +44,16 @@ public class GameManager : Singleton<GameManager>
     public float playerExperienceMultiplier = 1.0f;
     public float experienceToLevelUp = 100;
     public float playerExperience = 0;
-
-    // playerLevel 프로퍼티 수정
     public long playerLevel
     {
         get => _playerLevel;
         set
         {
-            Debug.Log($"[GameManager] 레벨 변경: {_playerLevel} -> {value}");
+            if (value > 1)
+            {
+                onPlayerLevelChanged?.Invoke();
+            }
             _playerLevel = value;
-
-            // value > 1 체크는 제거하고 항상 이벤트 발생
-            Debug.Log($"[GameManager] onPlayerLevelChanged 이벤트 호출");
-            // null 체크가 필요 없음 - 빈 델리게이트로 초기화했기 때문
-            onPlayerLevelChanged.Invoke();
         }
     }
     private long _playerLevel = 1;
@@ -74,26 +68,25 @@ public class GameManager : Singleton<GameManager>
     }
     private bool _isGamePaused = false;
 
-    // 레벨업 대기열 관리를 위한 변수 추가
-    public bool isProcessingLevelUp { get; private set; } = false;
-    private Queue<Action> levelUpQueue = new Queue<Action>();
-
     public override void Awake()
     {
         base.Awake();
-        Debug.Log("[GameManager] Awake 호출됨");
-
-        // 테스트를 위해 레벨업 이벤트 기본 구독자 추가
-        onPlayerLevelChanged += () => { Debug.Log("[GameManager] 레벨업 이벤트 기본 처리기 호출됨"); };
-
         onGamePaused += () =>
         {
             Time.timeScale = IsGamePaused ? 0 : 1;
-            Debug.Log($"[GameManager] Time.timeScale 설정됨: {Time.timeScale}");
         };
 
         SetGameState(GameState.InGame);
         playerAssetData = BackendDataManager.Instance.GetUserAssetData();
+
+#if UNITY_EDITOR
+        // Check if DebugGUI_GameManager exists on this object and add it if not
+        //if (gameObject.GetComponent<DebugGUI_GameManager>() == null)
+        //{
+        //    gameObject.AddComponent<DebugGUI_GameManager>().enabled = true;
+        //    Debug.Log("DebugGUI_GameManager was automatically added to GameManager object");
+        //}
+#endif
     }
 
     // Set game state
@@ -118,6 +111,7 @@ public class GameManager : Singleton<GameManager>
             }
         }
         bool result = DropItemManager.Instance.SetProbabilityTitle($"Stage{stageNumber}_DropItemProb");
+
         if (!result)
         {
 #if UNITY_EDITOR
@@ -226,84 +220,87 @@ public class GameManager : Singleton<GameManager>
         setter(getter() - changeValue);
     }
 
-    public void AddExperience(float experience)
+    public void ChangeValueForDuration(Action<Enum> setter, Func<Enum> getter, Enum changeValue, float duration)
     {
-        // 경험치 추가
-        playerExperience += experience * playerExperienceMultiplier;
-        Debug.Log($"[GameManager] 경험치 {experience} 추가됨. 현재 경험치: {playerExperience}/{experienceToLevelUp}");
+        StartCoroutine(ChangeValueForDurationCoroutine(setter, getter, changeValue, duration));
+    }
 
-        // 중요: 레벨업 체크 전에 레벨업 처리 중인지 확인
-        if (!isProcessingLevelUp && playerExperience >= experienceToLevelUp)
+    // Dictionary to track active enum effect coroutines
+    private Dictionary<Enum, Coroutine> activeEnumEffects = new Dictionary<Enum, Coroutine>();
+
+    private IEnumerator ChangeValueForDurationCoroutine(Action<Enum> setter, Func<Enum> getter, Enum changeValue, float duration)
+    {
+        Enum currentValue = getter();
+        bool alreadyHasFlag = false;
+
+        // Check if the value already has the flag
+        if (currentValue != null && changeValue != null &&
+            Convert.ToInt32(currentValue) != 0 &&
+            (Convert.ToInt32(currentValue) & Convert.ToInt32(changeValue)) == Convert.ToInt32(changeValue))
         {
-            Debug.Log($"[GameManager] 레벨업 조건 충족: {playerExperience} >= {experienceToLevelUp}");
-            ProcessLevelUp();
+            alreadyHasFlag = true;
+
+            // 이미 실행 중인 코루틴이 있으면 중지
+            if (activeEnumEffects.TryGetValue(changeValue, out Coroutine existingCoroutine))
+            {
+                if (existingCoroutine != null)
+                {
+                    StopCoroutine(existingCoroutine);
+                }
+                // 딕셔너리에서 이전 코루틴을 제거 (나중에 새 코루틴으로 다시 추가됨)
+                activeEnumEffects.Remove(changeValue);
+            }
+        }
+
+        if (!alreadyHasFlag)
+        {
+            // 값이 없는 경우에만 추가
+            setter((Enum)Enum.ToObject(getter().GetType(), Convert.ToInt32(getter()) | Convert.ToInt32(changeValue)));
+        }
+
+        // 현재 코루틴을 딕셔너리에 등록
+        activeEnumEffects[changeValue] = StartCoroutine(RemoveValueAfterDelay(setter, getter, changeValue, duration));
+
+        yield break; // 실제 대기는 RemoveValueAfterDelay에서 처리
+    }
+
+    private IEnumerator RemoveValueAfterDelay(Action<Enum> setter, Func<Enum> getter, Enum changeValue, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        // 지정된 시간이 지나면 값을 제거
+        setter((Enum)Enum.ToObject(getter().GetType(), Convert.ToInt32(getter()) & ~Convert.ToInt32(changeValue)));
+
+        // 딕셔너리에서 코루틴 제거
+        if (activeEnumEffects.ContainsKey(changeValue))
+        {
+            activeEnumEffects.Remove(changeValue);
         }
     }
 
-    // 레벨업 처리를 시작하는 메서드
-    private void ProcessLevelUp()
+    public void AddExperience(float experience)
     {
-        if (isProcessingLevelUp)
+        playerExperience += experience * playerExperienceMultiplier;
+        // Leveling logic - needs to be edited
+        if (playerExperience >= experienceToLevelUp)
         {
-            Debug.Log("[GameManager] 이미 레벨업 처리 중입니다.");
-            return;
-        }
-
-        isProcessingLevelUp = true;
-        Debug.Log("[GameManager] 레벨업 처리 시작");
-
-        // 한 번에 한 레벨만 상승
-        float expToUse = experienceToLevelUp;
-        playerExperience -= expToUse;
-
-        // 레벨 증가
-        long previousLevel = playerLevel;
-        playerLevel = playerLevel + 1;
-
-        Debug.Log($"[GameManager] 레벨 변경: {previousLevel} -> {playerLevel}");
-
-        // 레벨에 따른 경험치 요구량 설정
-        switch (playerLevel)
-        {
-            case 2:
-                experienceToLevelUp = 300;
-                break;
-            case 3:
-                experienceToLevelUp = 1000;
-                break;
-            default:
-                experienceToLevelUp += 1000;
-                break;
-        }
-
-        Debug.Log($"[GameManager] 다음 레벨까지 필요 경험치: {experienceToLevelUp}");
-
-        // 중요: 레벨업 이벤트를 마지막에 발생시켜 UI가 표시되도록 함
-        if (onPlayerLevelChanged != null)
-        {
-            Debug.Log($"[GameManager] onPlayerLevelChanged 이벤트 호출. 구독자 수: {onPlayerLevelChanged?.GetInvocationList()?.Length ?? 0}");
-            onPlayerLevelChanged.Invoke();
-        }
-        else
-        {
-            Debug.LogError("[GameManager] onPlayerLevelChanged is null!");
-            isProcessingLevelUp = false;
+            LevelUp();
+#if UNITY_EDITOR
+            DebugConsole.Line levelUpLog = new()
+            {
+                text = $"[{gameTimer}] Player leveled up to {playerLevel}",
+                messageType = DebugConsole.MessageType.Local,
+                tick = gameTimer
+            };
+            DebugConsole.Instance.MergeLine(levelUpLog, "#00FF00");
+#endif
         }
     }
 
     private void LevelUp()
     {
-        Debug.Log($"[GameManager] LevelUp 시작: 현재 경험치={playerExperience}/{experienceToLevelUp}, 현재 레벨={playerLevel}");
-
-        // 중요: 여러 레벨을 건너뛰지 않고 한 번에 한 레벨씩 증가시킴
-        float requiredExp = experienceToLevelUp;
-        playerExperience -= requiredExp;
-        long previousLevel = playerLevel;
-        playerLevel = playerLevel + 1;
-
-        Debug.Log($"[GameManager] 레벨 변경: {previousLevel} -> {playerLevel}");
-
-        // 레벨에 따른 경험치 요구량 설정
+        playerExperience -= experienceToLevelUp;
+        playerLevel++;
         switch (playerLevel)
         {
             case 2:
@@ -316,79 +313,7 @@ public class GameManager : Singleton<GameManager>
                 experienceToLevelUp += 1000;
                 break;
         }
-
-        Debug.Log($"[GameManager] 다음 레벨까지 필요 경험치: {experienceToLevelUp}");
-
-        // 남은 경험치로 추가 레벨업 가능한지 체크
-        if (playerExperience >= experienceToLevelUp)
-        {
-            Debug.Log($"[GameManager] 추가 레벨업 가능: 남은 경험치 {playerExperience} >= 필요 경험치 {experienceToLevelUp}");
-            // 다음 레벨업을 대기열에 추가
-            QueueNextLevelUp();
-        }
     }
 
-    private void QueueNextLevelUp()
-    {
-        // 대기열에 다음 레벨업 체크 작업 추가
-        levelUpQueue.Enqueue(() => {
-            if (playerExperience >= experienceToLevelUp)
-            {
-                Debug.Log($"[GameManager] 대기열에서 다음 레벨업 처리");
-                LevelUp();
-            }
-            else
-            {
-                isProcessingLevelUp = false;
-            }
-        });
 
-        // 다음 작업 처리 시작
-        ProcessNextLevelUp();
-    }
-
-    private void ProcessNextLevelUp()
-    {
-        if (levelUpQueue.Count > 0)
-        {
-            Debug.Log($"[GameManager] 레벨업 대기열 크기: {levelUpQueue.Count}");
-            // LevelUpUI가 닫힐 때 호출될 콜백 등록
-            LevelUpUI levelUpUI = FindAnyObjectByType<LevelUpUI>();
-            if (levelUpUI != null)
-            {
-                levelUpUI.onPanelClosed += OnLevelUpPanelClosed;
-            }
-            else
-            {
-                // UI 찾을 수 없으면 바로 다음 처리
-                OnLevelUpPanelClosed();
-            }
-        }
-    }
-
-    // LevelUpUI 패널이 닫혔을 때 호출될 콜백
-    public void OnLevelUpPanelClosed()
-    {
-        Debug.Log("[GameManager] OnLevelUpPanelClosed 호출됨");
-
-        // 대기열에서 다음 작업 가져와 실행
-        if (levelUpQueue.Count > 0)
-        {
-            Action nextAction = levelUpQueue.Dequeue();
-            nextAction?.Invoke();
-        }
-        else
-        {
-            // 중요: 이 부분이 먼저 실행되어야 함 - 다음 레벨업이 즉시 처리될 수 있도록
-            isProcessingLevelUp = false;
-
-            // 남은 경험치로 추가 레벨업 가능한지 확인
-            if (playerExperience >= experienceToLevelUp)
-            {
-                Debug.Log($"[GameManager] 패널 닫힌 후 추가 레벨업 확인: {playerExperience} >= {experienceToLevelUp}");
-                // 직접 ProcessLevelUp 호출
-                ProcessLevelUp();
-            }
-        }
-    }
 }

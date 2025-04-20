@@ -276,16 +276,6 @@ public class LevelUpUI : MonoBehaviour
         onPanelClosed?.Invoke();
         Debug.Log("[LevelUpUI] onPanelClosed 이벤트 발생");
 
-        // GameManager에 알림 (마지막에 실행)
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.OnLevelUpPanelClosed();
-        }
-        else
-        {
-            Debug.LogError("[LevelUpUI] GameManager.Instance가 null입니다!");
-        }
-
         // 게임 재개 (가장 마지막에 실행)
         GameManager.IsGamePaused = false;
     }

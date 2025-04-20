@@ -4,11 +4,27 @@ using System.Collections;
 
 public class BackgroundController : MonoBehaviour
 {
-    [SerializeField] private RectTransform[] backgrounds;
+    public RectTransform[] backgrounds; // ì¸ìŠ¤í™í„°ì—ì„œ í™•ì¸ ê°€ëŠ¥í•˜ë„ë¡ publicìœ¼ë¡œ ë³€ê²½
     public float transitionSpeed = 5f;
-    private int currentBackgroundIndex = 1;  // 2¹ø È­¸é(ÀÎµ¦½º 1)À» ½ÃÀÛ È­¸éÀ¸·Î
+    private int currentBackgroundIndex = 1;  // 2ë²ˆ ë©”ë‰´(ì¸ë±ìŠ¤ 1)ê°€ ì‹œì‘ ë©”ë‰´ì…ë‹ˆë‹¤
     private bool isTransitioning = false;
-    private readonly Vector2 BASE_RESOLUTION = new Vector2(1080f, 2340f);
+    private readonly Vector2 BASE_RESOLUTION = new Vector2(1920f, 1080f); // PC í•´ìƒë„ë¡œ ë³€ê²½
+
+    private void Start()
+    {
+        // ìë™ìœ¼ë¡œ ë°°ê²½í™”ë©´ ì°¸ì¡°ë¥¼ ì°¾ë„ë¡ ì¶”ê°€
+        if (backgrounds == null || backgrounds.Length == 0)
+        {
+            backgrounds = new RectTransform[3];
+            backgrounds[0] = transform.Find("equipment")?.GetComponent<RectTransform>();
+            backgrounds[1] = transform.Find("main")?.GetComponent<RectTransform>();
+            backgrounds[2] = transform.Find("store")?.GetComponent<RectTransform>();
+            
+            Debug.Log($"ìë™ìœ¼ë¡œ ë°°ê²½í™”ë©´ ì°¾ìŒ: {backgrounds[0] != null}, {backgrounds[1] != null}, {backgrounds[2] != null}");
+        }
+        
+        Initialize();
+    }
 
     public void Initialize()
     {
@@ -18,7 +34,7 @@ public class BackgroundController : MonoBehaviour
             return;
         }
 
-        // ÇöÀç ÀÎµ¦½º¸¦ 1(2¹ø È­¸é)·Î ¼³Á¤
+        // ì‹œì‘ì€ ì¸ë±ìŠ¤ 1(2ë²ˆ ë©”ë‰´)ë¡œ ì„¤ì •
         currentBackgroundIndex = 1;
         SetupBackgrounds();
     }
@@ -29,16 +45,16 @@ public class BackgroundController : MonoBehaviour
         {
             if (backgrounds[i] == null) continue;
 
-            // Å©±â ¼³Á¤
+            // í¬ê¸° ì„¤ì •
             backgrounds[i].sizeDelta = BASE_RESOLUTION;
 
-            // À§Ä¡ ¼³Á¤ (2¹ø È­¸éÀÌ Áß¾Ó¿¡ ¿Àµµ·Ï)
+            // ìœ„ì¹˜ ì„¤ì • (2ë²ˆ ë©”ë‰´ë¥¼ ì¤‘ì•™ì— ë°°ì¹˜í•©ë‹ˆë‹¤)
             float xPos = (i - currentBackgroundIndex) * BASE_RESOLUTION.x;
             backgrounds[i].anchoredPosition = new Vector2(xPos, 0);
 
             Debug.Log($"Setting background {i} position to: {xPos}, 0");
 
-            // Image ÄÄÆ÷³ÍÆ® ¼³Á¤
+            // Image ì»´í¬ë„ŒíŠ¸ì˜ ì„¤ì •
             var image = backgrounds[i].GetComponent<Image>();
             if (image != null)
             {
@@ -58,7 +74,7 @@ public class BackgroundController : MonoBehaviour
 
             backgrounds[i].sizeDelta = BASE_RESOLUTION;
 
-            // ÇöÀç ÀÎµ¦½º ±âÁØÀ¸·Î À§Ä¡ ¾÷µ¥ÀÌÆ®
+            // í˜„ì¬ ì¸ë±ìŠ¤ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ìœ„ì¹˜ ì¡°ì •
             float xPos = (i - currentBackgroundIndex) * BASE_RESOLUTION.x;
             backgrounds[i].anchoredPosition = new Vector2(xPos, 0);
         }
@@ -95,7 +111,7 @@ public class BackgroundController : MonoBehaviour
         Vector2[] startPositions = new Vector2[backgrounds.Length];
         Vector2[] targetPositions = new Vector2[backgrounds.Length];
 
-        // ½ÃÀÛ À§Ä¡¿Í ¸ñÇ¥ À§Ä¡ °è»ê
+        // ì‹œì‘ ìœ„ì¹˜ì™€ ëª©í‘œ ìœ„ì¹˜ ì„¤ì •
         for (int i = 0; i < backgrounds.Length; i++)
         {
             if (backgrounds[i] == null) continue;
@@ -117,7 +133,7 @@ public class BackgroundController : MonoBehaviour
             yield return null;
         }
 
-        // ÃÖÁ¾ À§Ä¡ ¼³Á¤
+        // ìµœì¢… ìœ„ì¹˜ ì„¤ì •
         for (int i = 0; i < backgrounds.Length; i++)
         {
             if (backgrounds[i] == null) continue;
