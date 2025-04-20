@@ -6,10 +6,77 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using Newtonsoft.Json; // Newtonsoft.Json 사용
+using Newtonsoft.Json.Linq; // JObject 사용
+using Newtonsoft.Json.Converters; // StringEnumConverter 사용
 using System.Text;     // Encoding (UTF8, Base64) 사용
 using System.Threading; // SemaphoreSlim 사용
 using CustomEncryption; // Rijndael 암호화 사용
 using LitJson; // LitJson 사용
+
+// Unity 타입을 위한 커스텀 JSON 컨버터
+public class Vector3Converter : JsonConverter
+{
+    public override bool CanConvert(Type objectType)
+    {
+        return objectType == typeof(Vector3);
+    }
+
+    public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    {
+        JObject jo = JObject.Load(reader);
+        float x = jo["x"].Value<float>();
+        float y = jo["y"].Value<float>();
+        float z = jo["z"].Value<float>();
+        return new Vector3(x, y, z);
+    }
+
+    public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, JsonSerializer serializer)
+    {
+        Vector3 v = (Vector3)value;
+        writer.WriteStartObject();
+        writer.WritePropertyName("x");
+        writer.WriteValue(v.x);
+        writer.WritePropertyName("y");
+        writer.WriteValue(v.y);
+        writer.WritePropertyName("z");
+        writer.WriteValue(v.z);
+        writer.WriteEndObject();
+    }
+}
+
+// Quaternion 직렬화를 위한 컨버터도 추가
+public class QuaternionConverter : JsonConverter
+{
+    public override bool CanConvert(Type objectType)
+    {
+        return objectType == typeof(Quaternion);
+    }
+
+    public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    {
+        JObject jo = JObject.Load(reader);
+        float x = jo["x"].Value<float>();
+        float y = jo["y"].Value<float>();
+        float z = jo["z"].Value<float>();
+        float w = jo["w"].Value<float>();
+        return new Quaternion(x, y, z, w);
+    }
+
+    public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, JsonSerializer serializer)
+    {
+        Quaternion q = (Quaternion)value;
+        writer.WriteStartObject();
+        writer.WritePropertyName("x");
+        writer.WriteValue(q.x);
+        writer.WritePropertyName("y");
+        writer.WriteValue(q.y);
+        writer.WritePropertyName("z");
+        writer.WriteValue(q.z);
+        writer.WritePropertyName("w");
+        writer.WriteValue(q.w);
+        writer.WriteEndObject();
+    }
+}
 
 public class SaveManager : Singleton<SaveManager>
 {
@@ -47,17 +114,34 @@ public class SaveManager : Singleton<SaveManager>
     private static readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings
     {
         TypeNameHandling = TypeNameHandling.Auto, // 객체 타입 정보 포함 (중요!)
-        Formatting = Formatting.None // 파일 크기 줄이기 위해 들여쓰기 없음
-        // 필요에 따라 다른 설정 추가 가능 (ReferenceLoopHandling 등)
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore, // 순환 참조 무시
+        Formatting = Formatting.None, // 파일 크기 줄이기 위해 들여쓰기 없음
+        Converters = new List<JsonConverter> 
+        {
+            new Vector3Converter(), // Vector3 직렬화를 위한 컨버터
+            new QuaternionConverter(), // Quaternion 직렬화를 위한 컨버터
+            new StringEnumConverter() // Enum을 문자열로 직렬화
+        }
     };
+
+    // 메인 스레드에서 계산된 경로들을 캐싱하기 위한 변수들
+    private string cachedSavePath = null;
+    private string cachedBackupPath = null;
 
     public override void Awake()
     {
+        base.Awake();
+        
+        // 메인 스레드에서 경로 캐싱
+        cachedSavePath = CalculateSavePath();
+        cachedBackupPath = cachedSavePath + ".bak";
+        
         // 싱글톤 초기화 이후에 캐시 초기화
         EnsureCacheInitialized();
     }
 
-    private string GetSavePath()
+    // 메인 스레드에서만 호출해야 함 - Application.persistentDataPath 접근
+    private string CalculateSavePath()
     {
         string saveDir = Path.Combine(Application.persistentDataPath, "SaveData");
         
@@ -70,12 +154,33 @@ public class SaveManager : Singleton<SaveManager>
         return Path.Combine(saveDir, saveFileName);
     }
 
+    private string GetSavePath()
+    {
+        // 캐싱된 경로 반환 (Awake에서 초기화됨)
+        if (string.IsNullOrEmpty(cachedSavePath))
+        {
+            // 만약 아직 초기화되지 않았다면 메인 스레드에서 계산 (경고: 이상적이지 않음)
+            Debug.LogWarning("GetSavePath: 경로가 캐싱되지 않았습니다. 초기화되었는지 확인하세요.");
+            cachedSavePath = CalculateSavePath();
+            cachedBackupPath = cachedSavePath + ".bak";
+        }
+        return cachedSavePath;
+    }
+
     /// <summary>
     /// 백업 파일 경로를 반환합니다.
     /// </summary>
     private string GetBackupPath()
     {
-        return GetSavePath() + ".bak";
+        // 캐싱된 백업 경로 반환
+        if (string.IsNullOrEmpty(cachedBackupPath))
+        {
+            // 만약 아직 초기화되지 않았다면 메인 스레드에서 계산 (경고: 이상적이지 않음)
+            Debug.LogWarning("GetBackupPath: 경로가 캐싱되지 않았습니다. 초기화되었는지 확인하세요.");
+            cachedSavePath = CalculateSavePath();
+            cachedBackupPath = cachedSavePath + ".bak";
+        }
+        return cachedBackupPath;
     }
     
     /// <summary>
@@ -238,6 +343,10 @@ public class SaveManager : Singleton<SaveManager>
                 }
             }
 
+            // 메인 스레드에서 경로 미리 가져오기
+            string path = GetSavePath();
+            string backupPath = GetBackupPath();
+            
             // 2. (백그라운드 스레드) JSON 직렬화, 암호화 및 파일 쓰기
             bool success = false;
             Exception lastException = null;
@@ -255,7 +364,7 @@ public class SaveManager : Singleton<SaveManager>
                 
                 try
                 {
-                    string path = GetSavePath();
+                    // 백그라운드 스레드에서 실행될 작업에 경로를 전달
                     await Task.Run(() =>
                     {
                         // 임시 파일에 먼저 쓰기 (파일 손상 방지)
@@ -273,7 +382,6 @@ public class SaveManager : Singleton<SaveManager>
                         // 기존 파일이 있으면 백업 만들기
                         if (File.Exists(path))
                         {
-                            string backupPath = GetBackupPath();
                             if (File.Exists(backupPath))
                             {
                                 File.Delete(backupPath);
@@ -717,6 +825,10 @@ public class SaveManager : Singleton<SaveManager>
                 removedCount = CleanupOrphanedData(saveData);
             }
 
+            // 메인 스레드에서 경로 미리 가져오기
+            string path = GetSavePath();
+            string backupPath = GetBackupPath();
+
             // 4. 저장 진행
             bool success = false;
             Exception lastException = null;
@@ -733,7 +845,7 @@ public class SaveManager : Singleton<SaveManager>
                 
                 try
                 {
-                    string path = GetSavePath();
+                    // 백그라운드 스레드에서 실행될 작업에 경로를 전달
                     await Task.Run(() =>
                     {
                         string tempPath = path + ".tmp";
@@ -743,7 +855,6 @@ public class SaveManager : Singleton<SaveManager>
                         
                         if (File.Exists(path))
                         {
-                            string backupPath = GetBackupPath();
                             if (File.Exists(backupPath))
                             {
                                 File.Delete(backupPath);
