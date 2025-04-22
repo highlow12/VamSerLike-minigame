@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Default_Cam
-  m_Shader: {fileID: -6465566751694194690, guid: 026be778d0b1a40198cbfcf31282fece, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: ca818d81bed984a0396aa35febf87187, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
