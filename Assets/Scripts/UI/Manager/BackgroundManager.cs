@@ -6,7 +6,7 @@ public class BackgroundManager : MonoBehaviour
 
     [SerializeField] private BackgroundController backgroundController;
     [SerializeField] private InputHandler inputHandler;
-    [SerializeField] private ScreenSizeHandler screenSizeHandler;
+    //[SerializeField] private ScreenSizeHandler screenSizeHandler;
 
     private void Awake()
     {
@@ -24,16 +24,16 @@ public class BackgroundManager : MonoBehaviour
             backgroundController = GetComponentInChildren<BackgroundController>();
         if (inputHandler == null)
             inputHandler = GetComponentInChildren<InputHandler>();
-        if (screenSizeHandler == null)
-            screenSizeHandler = GetComponentInChildren<ScreenSizeHandler>();
+        //if (screenSizeHandler == null)
+        //    screenSizeHandler = GetComponentInChildren<ScreenSizeHandler>();
 
         // 컴포넌트가 없다면 자동으로 추가
         if (backgroundController == null)
             backgroundController = gameObject.AddComponent<BackgroundController>();
         if (inputHandler == null)
             inputHandler = gameObject.AddComponent<InputHandler>();
-        if (screenSizeHandler == null)
-            screenSizeHandler = gameObject.AddComponent<ScreenSizeHandler>();
+        //if (screenSizeHandler == null)
+        //    screenSizeHandler = gameObject.AddComponent<ScreenSizeHandler>();
     }
 
     private void Start()
@@ -45,8 +45,8 @@ public class BackgroundManager : MonoBehaviour
     {
         if (backgroundController != null)
             backgroundController.Initialize();
-        if (screenSizeHandler != null)
-            screenSizeHandler.Initialize();
+        //if (screenSizeHandler != null)
+        //    screenSizeHandler.Initialize();
         if (inputHandler != null)
             inputHandler.Initialize(OnSwipeDetected);
     }
