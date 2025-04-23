@@ -22,7 +22,7 @@ public abstract class Monster : MonoBehaviour
         float actualDamage = Mathf.Max(damage, 1);
         currentHealth -= actualDamage;
 
-        if (currentHealth <= 0 && !isDead)
+        if (currentHealth <= 0)
         {
             Die();
         }

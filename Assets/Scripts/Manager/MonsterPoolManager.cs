@@ -162,6 +162,7 @@ public class MonsterPoolManager : Singleton<MonsterPoolManager>
     /// <param name="monsterName">몬스터 이름</param>
     public void ReturnMonsterToPool(GameObject monster, string monsterName)
     {
+        monster.SetActive(false);
         if (monster == null || string.IsNullOrEmpty(monsterName))
         {
             Debug.LogWarning($"Cannot return invalid monster to pool: {monsterName}");
@@ -176,7 +177,7 @@ public class MonsterPoolManager : Singleton<MonsterPoolManager>
 
         // 몬스터 상태 초기화
         ResetMonsterState(monster);
-        monster.SetActive(false);
+        
         
         // 풀 최대 크기 제한 확인
         if (monsterPools[monsterName].Count < GetMaxPoolSize(monsterName))
