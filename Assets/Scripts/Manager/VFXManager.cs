@@ -20,6 +20,14 @@ public class VFXManager : MonoBehaviour
     public Material _noiseMaterial;
     Material noiseMaterial;
 
+    public Material _eyeMaterial;
+    Material eyeMaterial;
+
+    public GameObject up;
+    public GameObject down;
+
+    bool eyeBlink = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -29,6 +37,7 @@ public class VFXManager : MonoBehaviour
 
         invertMaterial = Instantiate(_invertMaterial);
         noiseMaterial = Instantiate(_noiseMaterial);
+        eyeMaterial = Instantiate(_eyeMaterial);
 
         volume = GetComponent<Volume>();
         volume.profile.TryGet(out chromaticAberration);
@@ -36,9 +45,43 @@ public class VFXManager : MonoBehaviour
         volume.profile.TryGet(out bloom);
         volume.profile.TryGet(out lensDistortion);
 
-        // AnimateInvertColor(0, 10000f);
+        eyeBlink = true;
+
+        // AnimateInvertColor(0, 1000f);
+        // AnimateNoise();
+        // AnimateChromaticAberration(1, 5000f);
+        // AnimateLensDistortion(1, 1, 5000f);
+        // AnimateLensDistortion(0.5f, 1f, 2500f);
+        StartCoroutine(EyeBlinkLoop());
     }
 
+    // -0.75f ~ 0.75f
+    IEnumerator EyeBlink(float value)
+    {
+        spriteRenderer.material = eyeMaterial;
+        
+        float oldValue = eyeMaterial.GetFloat("_T");
+        float elapsedTime = 0f;
+
+        while (elapsedTime < 500f)
+        {
+            elapsedTime += Time.deltaTime * 1000;
+            float t = Mathf.Clamp01(elapsedTime / 500f);
+            eyeMaterial.SetFloat("_T", Mathf.Lerp(oldValue, value, t));
+            yield return null;
+        }
+    }
+
+    IEnumerator EyeBlinkLoop() {
+        while (eyeBlink) {
+            StartCoroutine(EyeBlink(1));
+            yield return new WaitForSeconds(0.5f);
+            StartCoroutine(EyeBlink(0f));
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    // Animate chromatic aberration effect
     IEnumerator ChromaticAberration(float value, float duration)
     {
         float oldValue = chromaticAberration.intensity.value;
@@ -53,6 +96,7 @@ public class VFXManager : MonoBehaviour
         }
     }
 
+    // Animate lens distortion effect
     IEnumerator LensDistortion(float value, float scale, float duration)
     {
         float oldValue = lensDistortion.intensity.value;
@@ -69,6 +113,9 @@ public class VFXManager : MonoBehaviour
         }
     }
 
+    // Invert color effect
+    // value: 0 = inverted, 1 = normal
+    // duration: time to complete the effect (in milliseconds)
     IEnumerator InvertColor(float value, float duration)
     {
         float oldValue = invertMaterial.GetFloat("_T");
@@ -86,11 +133,16 @@ public class VFXManager : MonoBehaviour
         }
     }
 
+    // Animate chromatic aberration effect
+    // value: 0 = no effect, 1 = full effect
     public void AnimateChromaticAberration(float value, float duration)
     {
         StartCoroutine(ChromaticAberration(value, duration));
     }
 
+    // Animate lens distortion effect
+    // value: 0 = no effect, 1 = full effect
+    // scale: 0 = no effect, 1 = full effect
     public void AnimateLensDistortion(float value, float scale, float duration)
     {
         StartCoroutine(LensDistortion(value, scale, duration));
@@ -99,6 +151,16 @@ public class VFXManager : MonoBehaviour
     public void AnimateInvertColor(float value, float duration)
     {
         StartCoroutine(InvertColor(value, duration));
+    }
+
+    public void AnimateNoise() {
+        spriteRenderer.material = noiseMaterial;
+    }
+
+    public void Normalize()
+    {
+        spriteRenderer.material = defaultMaterial;
+        spriteRenderer.color = new Color(1, 1, 1);
     }
 
     public void BlackOut()
