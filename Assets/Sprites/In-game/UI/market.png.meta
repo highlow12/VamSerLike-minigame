@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a892e208f0ba1ae499c5dfc633cf5fea
+guid: ce7f5c1f268d8a54abe6bb34976d74dc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8864331362044364093
-    second: "mirror_glow(\uC784\uC2DC)_0"
+      213: 2609851761605400732
+    second: market_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "mirror_glow(\uC784\uC2DC)_0"
+      name: market_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 178
-        height: 353
+        width: 577
+        height: 1109
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d354206986e640b70800000000000000
-      internalID: 8864331362044364093
+      spriteID: c98daee795e083420800000000000000
+      internalID: 2609851761605400732
       vertices: []
       indices: 
       edges: []
