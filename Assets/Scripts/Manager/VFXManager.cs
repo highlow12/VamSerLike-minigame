@@ -19,9 +19,10 @@ public class VFXManager : MonoBehaviour
     Material invertMaterial;
     public Material _noiseMaterial;
     Material noiseMaterial;
-
     public Material _eyeMaterial;
     Material eyeMaterial;
+    public Material _voronoiMaterial;
+    Material voronoiMaterial;
 
     public GameObject up;
     public GameObject down;
@@ -38,6 +39,7 @@ public class VFXManager : MonoBehaviour
         invertMaterial = Instantiate(_invertMaterial);
         noiseMaterial = Instantiate(_noiseMaterial);
         eyeMaterial = Instantiate(_eyeMaterial);
+        voronoiMaterial = Instantiate(_voronoiMaterial);
 
         volume = GetComponent<Volume>();
         volume.profile.TryGet(out chromaticAberration);
@@ -52,7 +54,22 @@ public class VFXManager : MonoBehaviour
         // AnimateChromaticAberration(1, 5000f);
         // AnimateLensDistortion(1, 1, 5000f);
         // AnimateLensDistortion(0.5f, 1f, 2500f);
-        StartCoroutine(EyeBlinkLoop());
+        // StartCoroutine(EyeBlinkLoop());
+    }
+
+    IEnumerator Voronoi(float a, float b, float duration)
+    {
+        spriteRenderer.material = voronoiMaterial;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime * 1000;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            voronoiMaterial.SetFloat("_Intense", Mathf.Lerp(a, b, t));
+            yield return null;
+        }
     }
 
     // -0.75f ~ 0.75f
@@ -161,6 +178,11 @@ public class VFXManager : MonoBehaviour
     {
         spriteRenderer.material = defaultMaterial;
         spriteRenderer.color = new Color(1, 1, 1);
+    }
+
+    public void AnimateVoronoi(float a, float b, float duration)
+    {
+        StartCoroutine(Voronoi(a, b, duration));
     }
 
     public void BlackOut()
