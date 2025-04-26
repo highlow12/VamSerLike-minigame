@@ -100,8 +100,15 @@ public class SoundManager : Singleton<SoundManager>
 
     private void SaveVolumeSettings(string name, float volume)
     {
-        PlayerPrefs.SetFloat(name, volume);
-        PlayerPrefs.Save();
+        try
+        {
+            PlayerPrefs.SetFloat(name, volume);
+            PlayerPrefs.Save();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Failed to save PlayerPrefs: " + e.Message);
+        }
     }
 
     // 볼륨 조절 메서드들
@@ -445,7 +452,7 @@ public class SoundManager : Singleton<SoundManager>
         
         // 해당 오디오 소스를 풀에 반환
         int soundID = activeAudioSources.FirstOrDefault(x => x.Value == audioSource).Key;
-        if (soundID != 0) // 기본값 0이 아닌 경우만
+        if (soundID != 0 && activeAudioSources.ContainsKey(soundID)) // Ensure soundID is valid and still active
         {
             ReturnAudioSource(soundID);
         }
