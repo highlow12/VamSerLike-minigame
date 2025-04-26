@@ -135,13 +135,14 @@ class QueenChase : BaseState
 
     public override void OnStateEnter()
     {
+        VFXManager.Instance.AnimateNoise();
         _monster.canTakeDamage = false;
         _monster.animator.SetTrigger("Move");
     }
 
     public override void OnStateExit()
     {
-
+        VFXManager.Instance.Normalize();
     }
 
     public override void OnStateUpdate()

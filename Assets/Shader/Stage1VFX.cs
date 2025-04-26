@@ -3,27 +3,37 @@ using UnityEngine;
 
 public class Stage1VFX : MonoBehaviour
 {
-    float time = 0f;
-    public VFXManager vfxManager;
+    // float time = 0f;
+
+    void Start()
+    {
+        StartCoroutine(VFX());
+    }
 
     // Update is called once per frame
     void Update()
     {
+        // time += Time.deltaTime;
     }
 
     IEnumerator VFX()
     {
-        vfxManager.AnimateVoronoi(0f, 0.5f, 1500f);
+        VFXManager.Instance.AnimateVoronoi(0f, 0.5f, 1500f);
         yield return new WaitForSeconds(1.5f);
-        vfxManager.AnimateVoronoi(0.5f, 0, 1500f);
+        VFXManager.Instance.AnimateVoronoi(0.5f, 0, 1500f);
          yield return new WaitForSeconds(1.5f);
-        vfxManager.Normalize();
+        VFXManager.Instance.Normalize();
         yield return new WaitForSeconds(177f);
 
-        vfxManager.BlackOut();
+        VFXManager.Instance.BlackOut();
+        yield return new WaitForSeconds(1f);
+        VFXManager.Instance.Normalize();
+        yield return new WaitForSeconds(29f);
+
+        VFXManager.Instance.AnimateNoise();
         yield return new WaitForSeconds(2f);
-        // 그림 일기 연출
-        vfxManager.Normalize();
+        VFXManager.Instance.Normalize();
         // 그림 일기 소환
+        yield return new WaitForSeconds(1f);
     }
 }

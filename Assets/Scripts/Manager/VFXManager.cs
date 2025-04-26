@@ -6,6 +6,12 @@ using UnityEngine.Rendering.Universal;
 
 public class VFXManager : MonoBehaviour
 {
+    public static VFXManager Instance { get; private set; }
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     Volume volume;
     ChromaticAberration chromaticAberration;
     Vignette vignette;
