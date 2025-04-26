@@ -153,7 +153,70 @@ SoundManager.Instance.AddSoundGroup("Explosion", 3, 0.2f);
 SoundManager.Instance.PlaySFX(explosionClip, 1.0f, "Explosion");
 ```
 
-## 5. 주의사항 및 팁
+## 5. 모든 메서드 설명
+
+### 5.1. 초기화 및 핵심 메서드
+
+| 메서드명 | 설명 | 매개변수 | 반환 값 |
+|---------|------|---------|---------|
+| `Awake()` | 싱글톤 초기화, 풀 및 믹서 초기화 호출 | 없음 | 없음 |
+| `Start()` | 기본 사운드 그룹(발자국) 설정 | 없음 | 없음 |
+| `InitializePool()` | 유니티 내장 오브젝트 풀 초기화 | 없음 | 없음 |
+| `InitializeMixer()` | 오디오 믹서 초기화 및 볼륨 설정 로드 | 없음 | 없음 |
+| `CreateAudioSource()` | 새 오디오 소스 생성 (풀 콜백용) | 없음 | AudioSource |
+| `OnTakeFromPool(AudioSource)` | 풀에서 오디오소스 가져올 때 호출되는 콜백 | audioSource: 풀에서 가져온 오디오소스 | 없음 |
+| `OnReturnToPool(AudioSource)` | 오디오소스를 풀로 반환할 때 호출되는 콜백 | audioSource: 반환할 오디오소스 | 없음 |
+| `OnDestroyAudioSource(AudioSource)` | 오디오소스 객체 파괴 시 호출되는 콜백 | audioSource: 제거할 오디오소스 | 없음 |
+
+### 5.2. 사운드 재생 메서드
+
+| 메서드명 | 설명 | 매개변수 | 반환 값 |
+|---------|------|---------|---------|
+| `PlaySFX(AudioClip, float, string, bool)` | 2D 효과음 재생 | clip: 오디오 클립<br>volume: 볼륨(0~1)<br>groupName: 사운드 그룹 이름<br>loop: 반복 재생 여부 | 사운드 ID (int) |
+| `PlaySFXAtPosition(AudioClip, Vector3, float, float, float, string, bool)` | 3D 위치 기반 효과음 재생 | clip: 오디오 클립<br>position: 재생 위치<br>volume: 볼륨(0~1)<br>minDistance: 최소 거리<br>maxDistance: 최대 거리<br>groupName: 사운드 그룹 이름<br>loop: 반복 재생 여부 | 사운드 ID (int) |
+| `PlayMusic(AudioClip, float, bool, float)` | 배경 음악 재생 | clip: 오디오 클립<br>volume: 볼륨(0~1)<br>loop: 반복 재생 여부<br>fadeInTime: 페이드인 시간 | 사운드 ID (int) |
+| `PlayUISound(AudioClip, float)` | UI 사운드 재생 | clip: 오디오 클립<br>volume: 볼륨(0~1) | 사운드 ID (int) |
+| `PlayFootstep(AudioClip, Vector3, float)` | 발자국 소리 재생 (제한된 동시 발음) | clip: 오디오 클립<br>position: 재생 위치<br>volume: 볼륨(0~1) | 사운드 ID (int) |
+
+### 5.3. 사운드 제어 메서드
+
+| 메서드명 | 설명 | 매개변수 | 반환 값 |
+|---------|------|---------|---------|
+| `ReturnAudioSource(int)` | 특정 ID의 사운드를 풀로 반환 | soundID: 사운드 ID | 없음 |
+| `StopSound(int)` | 특정 ID의 사운드 중지 | soundID: 사운드 ID | 없음 |
+| `StopAllSounds()` | 모든 사운드 중지 및 풀로 반환 | 없음 | 없음 |
+| `ModifySound(int, float?, Vector3?)` | 재생 중인 사운드 속성 수정 | soundID: 사운드 ID<br>volume: 볼륨(NULL 시 변경 안 함)<br>position: 위치(NULL 시 변경 안 함) | 성공 여부(bool) |
+| `PauseAllSounds()` | 모든 사운드 일시 정지 | 없음 | 없음 |
+| `ResumeAllSounds()` | 모든 사운드 재생 재개 | 없음 | 없음 |
+
+### 5.4. 볼륨 및 설정 관련 메서드
+
+| 메서드명 | 설명 | 매개변수 | 반환 값 |
+|---------|------|---------|---------|
+| `LoadVolumeSettings()` | 저장된 볼륨 설정 로드 | 없음 | 없음 |
+| `SaveVolumeSettings(string, float)` | 볼륨 설정 저장 | name: 저장 키<br>volume: 볼륨 값 | 없음 |
+| `SetMasterVolume(float)` | 마스터 볼륨 설정 | volume: 볼륨 값(0~1) | 없음 |
+| `SetMusicVolume(float)` | 음악 볼륨 설정 | volume: 볼륨 값(0~1) | 없음 |
+| `SetSFXVolume(float)` | 효과음 볼륨 설정 | volume: 볼륨 값(0~1) | 없음 |
+| `SetUIVolume(float)` | UI 사운드 볼륨 설정 | volume: 볼륨 값(0~1) | 없음 |
+| `ConvertToDecibel(float)` | 선형 볼륨을 데시벨로 변환 | volume: 선형 볼륨 값(0~1) | 데시벨 값(float) |
+| `SetMute(bool)` | 전체 음소거 설정 | isMuted: 음소거 여부 | 없음 |
+
+### 5.5. 사운드 그룹 관련 메서드
+
+| 메서드명 | 설명 | 매개변수 | 반환 값 |
+|---------|------|---------|---------|
+| `AddSoundGroup(string, int, float)` | 새 사운드 그룹 추가 | groupName: 그룹 이름<br>maxConcurrentSounds: 최대 동시 재생 수<br>minTimeBetweenSounds: 최소 재생 간격(초) | 없음 |
+
+### 5.6. 코루틴 메서드
+
+| 메서드명 | 설명 | 매개변수 | 반환 값 |
+|---------|------|---------|---------|
+| `FadeIn(AudioSource, float, float)` | 페이드인 효과 적용 | audioSource: 오디오소스<br>targetVolume: 목표 볼륨<br>fadeTime: 페이드 시간 | IEnumerator |
+| `FadeOutAndStop(AudioSource, float)` | 페이드아웃 후 정지 | audioSource: 오디오소스<br>fadeTime: 페이드 시간 | IEnumerator |
+| `AutoReturnRoutine(int, float)` | 지정 시간 후 사운드 자동 반환 | soundID: 사운드 ID<br>clipLength: 클립 길이 | IEnumerator |
+
+## 6. 주의사항 및 팁
 
 1. **사운드 ID 관리**: 
    - 루프 사운드를 재생하는 경우 반환되는 ID를 저장하여 나중에 해당 사운드를 정지할 수 있도록 합니다.
@@ -168,24 +231,24 @@ SoundManager.Instance.PlaySFX(explosionClip, 1.0f, "Explosion");
    - 게임의 효과음은 일반적으로 44.1kHz, 128kbps 정도로 설정하는 것이 좋습니다.
    - 배경 음악은 품질과 파일 크기의 균형을 고려하여 설정하세요.
 
-## 6. 확장 방법
+## 7. 확장 방법
 
-### 6.1. 새 믹서 그룹 추가
+### 7.1. 새 믹서 그룹 추가
 
 1. GameAudioMixer에서 필요한 새 그룹(예: "Ambient", "Voice" 등) 추가
 2. SoundManager 클래스에 해당 믹서 그룹 변수와 메서드 추가
 3. 기존 PlaySFX/PlayMusic 패턴을 따라 새 재생 메서드 구현
 
-### 6.2. 추가 사운드 효과
+### 7.2. 추가 사운드 효과
 
 페이드 인/아웃 외에도 다음과 같은 효과를 추가할 수 있습니다:
 - 피치 변조 (동일한 사운드에 약간의 무작위성 추가)
 - 3D 사운드에 대한 도플러 효과
 - 리버브, 에코 등의 실시간 오디오 효과
 
-## 7. 트러블슈팅
+## 8. 트러블슈팅
 
-### 7.1. 일반적인 문제
+### 8.1. 일반적인 문제
 
 - **사운드가 재생되지 않음**: 
   - AudioMixer 그룹이 올바르게 할당되었는지 확인
@@ -200,7 +263,7 @@ SoundManager.Instance.PlaySFX(explosionClip, 1.0f, "Explosion");
   - 너무 많은 오디오가 동시에 재생되는지 확인
   - 오디오 클립이 너무 크지 않은지 확인
 
-### 7.2. 플랫폼별 고려사항
+### 8.2. 플랫폼별 고려사항
 
 - **모바일**: 
   - 메모리와 배터리 사용량 최적화를 위해 오디오 품질과 동시 재생 수 제한
