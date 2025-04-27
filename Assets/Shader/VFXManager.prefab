@@ -197,6 +197,7 @@ MonoBehaviour:
   _voronoiMaterial: {fileID: 2100000, guid: dd3970573231f4f11b41af5a438af37a, type: 2}
   up: {fileID: 1675380297408033677}
   down: {fileID: 6483435778100210042}
+  bloodParticle: {fileID: 0}
 --- !u!114 &5375278044565449695
 MonoBehaviour:
   m_ObjectHideFlags: 0

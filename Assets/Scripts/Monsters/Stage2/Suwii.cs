@@ -10,6 +10,7 @@ public class Suwii : NormalMonster
         movement = new SinMovement(1f, 1f, moveSpeed);
         //polygonCollider = TriggerArea.GetComponent<PolygonCollider2D>();
         base.Start();
+        // VFXManager.Instance.Flicker();
     }
 
     protected override void Update()
