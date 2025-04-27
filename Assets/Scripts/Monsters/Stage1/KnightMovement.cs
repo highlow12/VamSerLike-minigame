@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class KnightMovement : NormalMonster
@@ -18,6 +17,8 @@ public class KnightMovement : NormalMonster
     {
         if (Vector2.Distance(transform.position, playerTransform.position) <= attackRange)
         {
+            // 공격 범위 안에 들어오면 공격 사운드 재생
+            PlayAttackSound();
             attackrange = true;
         }
         else
@@ -30,7 +31,9 @@ public class KnightMovement : NormalMonster
 class ChessStepMovementKnight : ChessStepMovement
 {
     KnightMovement KM;
-    public ChessStepMovementKnight(KnightMovement KM,float jumpPower, float delay, float speed) : base(jumpPower, delay, speed)
+    private bool isJumpSoundPlayed = false;
+    
+    public ChessStepMovementKnight(KnightMovement KM, float jumpPower, float delay, float speed) : base(jumpPower, delay, speed)
     {
         this.KM = KM;
     }
@@ -52,13 +55,24 @@ class ChessStepMovementKnight : ChessStepMovement
             targetPos = transform.position + (GameManager.Instance.player.transform.position - transform.position).normalized * speed;
             elapsedTime = 0;
             isJumping = true;
-            transform.GetComponent<KnightMovement>().animator.SetTrigger("Move");
+            KM.animator.SetTrigger("Move");
+            
+            // 점프 시작 시 이동 사운드 재생
+            KM.PlayMoveSound();
+            isJumpSoundPlayed = true;
         }
 
         if (isJumping)
         {
             if (elapsedTime >= 1)
             {
+                // 점프 종료 시 이동 사운드 중지
+                if (isJumpSoundPlayed)
+                {
+                    KM.StopMoveSound();
+                    isJumpSoundPlayed = false;
+                }
+                
                 isJumping = false;
                 return;
             }
@@ -69,7 +83,6 @@ class ChessStepMovementKnight : ChessStepMovement
             var newPosY = func(elapsedTime) * jumpPower + Mathf.Lerp(startPos.y, targetPos.y, elapsedTime);
 
             transform.position = new Vector2(newPosX, newPosY);
-
         }
     }
 }

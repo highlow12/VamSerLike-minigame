@@ -8,6 +8,19 @@ public abstract class Monster : MonoBehaviour
     [SerializeField] protected float damage = 1;
     [SerializeField] protected float attackRange = 0.1f;
 
+    [Header("사운드 설정")]
+    [SerializeField] protected List<AudioClip> moveSounds = new List<AudioClip>(); // 이동 사운드 리스트
+    [SerializeField] protected List<AudioClip> attackSounds = new List<AudioClip>(); // 공격 사운드 리스트
+    [SerializeField] protected List<AudioClip> hurtSounds = new List<AudioClip>(); // 피격 사운드 리스트
+    [SerializeField] protected List<AudioClip> deathSounds = new List<AudioClip>(); // 사망 사운드 리스트
+    [SerializeField] protected float soundVolume = 0.7f;
+    [SerializeField] protected float minSoundDistance = 1f;
+    [SerializeField] protected float maxSoundDistance = 15f;
+
+    // 사운드 ID 관련 변수들
+    protected int moveSoundID = -1;
+    protected bool isMoveSoundPlaying = false;
+
     protected bool isDead;
     protected Transform playerTransform;
 
@@ -22,6 +35,9 @@ public abstract class Monster : MonoBehaviour
         float actualDamage = Mathf.Max(damage, 1);
         currentHealth -= actualDamage;
 
+        // 피격 사운드 재생
+        PlayHurtSound();
+
         if (currentHealth <= 0)
         {
             Die();
@@ -34,10 +50,16 @@ public abstract class Monster : MonoBehaviour
         Debug.Log("Dead: " + gameObject.name);
 #endif
         isDead = true;
+        
+        // 죽음 사운드 재생
+        PlayDeathSound();
+        
+        // 이동 사운드가 재생중이면 정지
+        StopMoveSound();
+        
         DropLoot();
         MonsterPoolManager.Instance.ReturnMonsterToPool(gameObject,GetComponent<MonsterIdentify>().monsterName);
         // 사망 처리 로직
-        
     }
 
     protected virtual void DropLoot()
@@ -70,6 +92,147 @@ public abstract class Monster : MonoBehaviour
     {
         transform.position = Vector3.zero; // 기본 위치로 초기화 (필요에 따라 수정 가능)
     }
+    
+    #region 사운드 관련 메서드
+    
+    /// <summary>
+    /// 몬스터 이동 사운드를 재생합니다. 지정된 리스트에서 랜덤하게 선택됩니다.
+    /// </summary>
+    public virtual void PlayMoveSound()
+    {
+        if (moveSounds.Count == 0 || isMoveSoundPlaying) return;
+        
+        // 이동 사운드가 이미 재생 중이면 중지
+        StopMoveSound();
+        
+        // 리스트에서 랜덤한 사운드 선택
+        AudioClip selectedSound = GetRandomSound(moveSounds);
+        
+        if (selectedSound != null)
+        {
+            // 3D 위치 사운드로 재생 (루프로 설정)
+            moveSoundID = SoundManager.Instance.PlaySFXAtPosition(
+                selectedSound, 
+                transform.position, 
+                soundVolume, 
+                minSoundDistance, 
+                maxSoundDistance, 
+                "MonsterMove", 
+                false // 루프 설정
+            );
+            
+            isMoveSoundPlaying = true;
+        }
+    }
+    
+    /// <summary>
+    /// 몬스터 이동 사운드를 정지합니다.
+    /// </summary>
+    public virtual void StopMoveSound()
+    {
+        if (moveSoundID != -1)
+        {
+            SoundManager.Instance.StopSound(moveSoundID);
+            moveSoundID = -1;
+            isMoveSoundPlaying = false;
+        }
+    }
+    
+    /// <summary>
+    /// 몬스터 공격 사운드를 재생합니다. 지정된 리스트에서 랜덤하게 선택됩니다.
+    /// </summary>
+    public virtual void PlayAttackSound()
+    {
+        if (attackSounds.Count == 0) return;
+        
+        // 리스트에서 랜덤한 사운드 선택
+        AudioClip selectedSound = GetRandomSound(attackSounds);
+        
+        if (selectedSound != null)
+        {
+            SoundManager.Instance.PlaySFXAtPosition(
+                selectedSound, 
+                transform.position, 
+                soundVolume, 
+                minSoundDistance, 
+                maxSoundDistance, 
+                "MonsterAttack"
+            );
+        }
+    }
+    
+    /// <summary>
+    /// 몬스터 피격 사운드를 재생합니다. 지정된 리스트에서 랜덤하게 선택됩니다.
+    /// </summary>
+    public virtual void PlayHurtSound()
+    {
+        if (hurtSounds.Count == 0) return;
+        
+        // 리스트에서 랜덤한 사운드 선택
+        AudioClip selectedSound = GetRandomSound(hurtSounds);
+        
+        if (selectedSound != null)
+        {
+            SoundManager.Instance.PlaySFXAtPosition(
+                selectedSound, 
+                transform.position, 
+                soundVolume, 
+                minSoundDistance, 
+                maxSoundDistance, 
+                "MonsterHurt"
+            );
+        }
+    }
+    
+    /// <summary>
+    /// 몬스터 사망 사운드를 재생합니다. 지정된 리스트에서 랜덤하게 선택됩니다.
+    /// </summary>
+    public virtual void PlayDeathSound()
+    {
+        if (deathSounds.Count == 0) return;
+        
+        // 리스트에서 랜덤한 사운드 선택
+        AudioClip selectedSound = GetRandomSound(deathSounds);
+        
+        if (selectedSound != null)
+        {
+            SoundManager.Instance.PlaySFXAtPosition(
+                selectedSound, 
+                transform.position, 
+                soundVolume, 
+                minSoundDistance, 
+                maxSoundDistance, 
+                "MonsterDeath"
+            );
+        }
+    }
+    
+    /// <summary>
+    /// 이동 사운드의 위치를 업데이트합니다.
+    /// </summary>
+    protected virtual void UpdateMoveSoundPosition()
+    {
+        if (moveSoundID != -1 && isMoveSoundPlaying)
+        {
+            SoundManager.Instance.ModifySound(moveSoundID, null, transform.position);
+        }
+    }
+    
+    /// <summary>
+    /// 리스트에서 랜덤한 오디오 클립을 선택합니다.
+    /// </summary>
+    /// <param name="soundList">선택할 오디오 클립 리스트</param>
+    /// <returns>선택된 오디오 클립 또는 리스트가 비어있을 경우 null</returns>
+    protected AudioClip GetRandomSound(List<AudioClip> soundList)
+    {
+        if (soundList == null || soundList.Count == 0) return null;
+        
+        // 최근 재생한 사운드를 추적하는 변수를 추가하여 같은 사운드가 연속해서 재생되지 않게 할 수도 있음
+        int randomIndex = Random.Range(0, soundList.Count);
+        return soundList[randomIndex];
+    }
+    
+    #endregion
 }
 
 
@@ -99,13 +262,17 @@ public class NormalMonster : Monster
             if (Vector2.Distance(transform.position, playerTransform.position) < attackRange)
             {
                 CheckAttackRange();
+                // 공격 범위에서는 이동 사운드 중지
+                StopMoveSound();
             }
             else
             {
+                // 이동 중에는 이동 사운드 재생
+                PlayMoveSound();
+                // 이동 사운드 위치 업데이트
+                UpdateMoveSoundPosition();
                 Move();
             }
-
-            
 
         }
     }
@@ -144,6 +311,9 @@ public class NormalMonster : Monster
     /// </summary>
     protected override void Attack()
     {
+        // 공격 사운드 재생
+        PlayAttackSound();
+        
 #if UNITY_EDITOR
         ////throw new System.NotImplementedException();
 #endif
@@ -172,6 +342,9 @@ public abstract class BossMonster : Monster
     {
         monsterFSM.UpdateState();
         checkeState();
+        
+        // 이동 사운드 위치 업데이트
+        UpdateMoveSoundPosition();
     }
     // Boss Take Damage
     public override void TakeDamage(float damage)
@@ -187,6 +360,9 @@ public abstract class BossMonster : Monster
 
     protected override void Attack()
     {
+        // 공격 사운드 재생
+        PlayAttackSound();
+        
 #if UNITY_EDITOR
         //throw new System.NotImplementedException();
 #endif

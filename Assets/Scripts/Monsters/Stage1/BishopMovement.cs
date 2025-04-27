@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class BishopMovement : NormalMonster
@@ -14,12 +13,17 @@ public class BishopMovement : NormalMonster
     public void StartMovement()
     {
         isMoving = true;
+        // 비숍이 움직이기 시작할 때 사운드 재생
+        PlayMoveSound();
     }
     public void StopMovement()
     {
         isMoving = false;
+        // 비숍이 움직임을 멈출 때 사운드 중지
+        StopMoveSound();
     }
 }
+
 class ChessBishopMovement : IMovement
 {
     Vector2 targetDir;
@@ -28,8 +32,9 @@ class ChessBishopMovement : IMovement
     float d = 0.1f;
     float amplitude;
     float frequency;
+    private bool wasMoving = false;
 
-    public ChessBishopMovement(BishopMovement bishop, float speed, float frequency,float amplitude)
+    public ChessBishopMovement(BishopMovement bishop, float speed, float frequency, float amplitude)
     {
         this.bishop = bishop;
         this.speed = speed;
@@ -41,18 +46,28 @@ class ChessBishopMovement : IMovement
     {
         if (bishop.isMoving)
         {
+            // 이동 상태 전환 시 사운드 재생
+            if (!wasMoving)
+            {
+                bishop.PlayMoveSound();
+                wasMoving = true;
+            }
+            
             d = 0.1f;
             transform.position += (Vector3)targetDir * speed * Time.deltaTime;
         }
         else
         {
+            // 정지 상태 전환 시 사운드 중지
+            if (wasMoving)
+            {
+                bishop.StopMoveSound();
+                wasMoving = false;
+            }
+            
             d += Time.deltaTime * frequency;
             targetDir = (GameManager.Instance.player.transform.position - transform.position).normalized;
             transform.position += new Vector3(0, Mathf.Sin(d) * amplitude * Time.deltaTime, 0);
-
         }
     }
-
-
-
 }

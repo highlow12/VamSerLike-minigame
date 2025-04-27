@@ -131,6 +131,19 @@ MonoBehaviour:
   currentHealth: 1
   damage: 1
   attackRange: 0.1
+  moveSounds:
+  - {fileID: 8300000, guid: 32d14f072f3cf5a489296b1b11cf43b3, type: 3}
+  - {fileID: 8300000, guid: eade0fd9e8fc2614d909c888d59a2132, type: 3}
+  - {fileID: 8300000, guid: 7436822e1e5a1604f85f507d33211d65, type: 3}
+  - {fileID: 8300000, guid: 61621749865e4f043bf5d10686491cb9, type: 3}
+  - {fileID: 8300000, guid: 3d96de3fda12bb54c8fb096e72c98115, type: 3}
+  - {fileID: 8300000, guid: cfea56314dcbdb94e8d990238e21d2c4, type: 3}
+  attackSounds: []
+  hurtSounds: []
+  deathSounds: []
+  soundVolume: 0.7
+  minSoundDistance: 1
+  maxSoundDistance: 15
   moveSpeed: 5
   amplitude: 0.3
   frequency: 4

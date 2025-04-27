@@ -100,12 +100,16 @@ class QueenIdle : BaseState
         targetPos = Random.insideUnitCircle * idleRange + (Vector2)GameManager.Instance.player.transform.position;
 
         _monster.animator.SetTrigger("Dance");
+        
+        // 춤을 출 때도 부드럽게 이동하기 때문에 이동 사운드 재생
+        _monster.PlayMoveSound();
     }
 
     // 상태가 종료될 때 호출되는 메서드
     public override void OnStateExit()
     {
-        // 현재는 아무 동작도 하지 않음
+        // 상태 전환 시 이동 사운드 중지
+        _monster.StopMoveSound();
     }
 
     // 상태가 업데이트될 때 호출되는 메서드
@@ -127,6 +131,8 @@ class QueenChase : BaseState
 {
     QueenMovement _monster;
     private float moveSpeed;
+    private bool hasPlayedAttackSound = false;
+    
     public QueenChase(Monster _monster, float moveSpeed) : base(_monster)
     {
         this._monster = (QueenMovement)_monster;
@@ -138,11 +144,21 @@ class QueenChase : BaseState
         VFXManager.Instance.AnimateNoise();
         _monster.canTakeDamage = false;
         _monster.animator.SetTrigger("Move");
+        
+        // 퀸 추격 모드는 공격적인 움직임이므로 공격 사운드도 재생
+        _monster.PlayAttackSound();
+        hasPlayedAttackSound = true;
+        
+        // 이동 사운드도 재생
+        _monster.PlayMoveSound();
     }
 
     public override void OnStateExit()
     {
         VFXManager.Instance.Normalize();
+        
+        // 상태 전환 시 이동 사운드 중지
+        _monster.StopMoveSound();
     }
 
     public override void OnStateUpdate()
@@ -151,6 +167,12 @@ class QueenChase : BaseState
         dir = dir.normalized;
 
         _monster.transform.position += dir * moveSpeed * Time.deltaTime;
+        
+        // 일정 시간마다 공격 사운드 재생 (약 3초 간격)
+        if (hasPlayedAttackSound && Time.time % 3 < 0.1f)
+        {
+            _monster.PlayAttackSound();
+        }
 
         Debug.Log("Chase");
     }

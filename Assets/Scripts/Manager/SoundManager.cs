@@ -29,6 +29,8 @@ public class SoundManager : Singleton<SoundManager>
 
     [Header("사운드 제한 그룹")]
     [SerializeField] private List<SoundGroup> soundGroups = new List<SoundGroup>();
+    [Header("배경음악")]
+    public AudioClip bgmClip;
 
     // 유니티 내장 오브젝트 풀 사용
     private IObjectPool<AudioSource> audioSourcePool;
@@ -47,8 +49,9 @@ public class SoundManager : Singleton<SoundManager>
 
     private void Start()
     {
-        // 발걸음 소리를 위한 사운드 그룹 추가 (최대 2개 동시 발음, 최소 0.1초 간격)
-        AddSoundGroup("Footstep", 2, 0.1f);
+        // 발걸음 소리를 위한 사운드 그룹 추가 (최대 8개 동시 발음, 최소 0.1초 간격)
+        AddSoundGroup("Footstep", 8, 0.1f);
+        PlayMusic(bgmClip);
     }
 
     private void InitializePool()
