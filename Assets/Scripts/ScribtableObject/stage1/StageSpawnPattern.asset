@@ -71,70 +71,6 @@ MonoBehaviour:
     angle: 0
     monsterName: Pawn
   - patternType: 3
-    startTime: 30
-    duration: 5
-    monsterCount: 10
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Pawn
-  - patternType: 3
-    startTime: 35
-    duration: 5
-    monsterCount: 15
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Pawn
-  - patternType: 3
-    startTime: 40
-    duration: 5
-    monsterCount: 30
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Pawn
-  - patternType: 3
-    startTime: 90
-    duration: 5
-    monsterCount: 10
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Pawn
-  - patternType: 3
-    startTime: 150
-    duration: 5
-    monsterCount: 10
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Pawn
-  - patternType: 3
-    startTime: 210
-    duration: 5
-    monsterCount: 20
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Pawn
-  - patternType: 3
-    startTime: 240
-    duration: 5
-    monsterCount: 20
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Pawn
-  - patternType: 3
-    startTime: 360
-    duration: 5
-    monsterCount: 30
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Pawn
-  - patternType: 3
     startTime: 20
     duration: 8
     monsterCount: 1
@@ -152,6 +88,14 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 30
+    duration: 5
+    monsterCount: 10
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Pawn
+  - patternType: 3
+    startTime: 30
     duration: 8
     monsterCount: 7
     radius: 5
@@ -167,6 +111,22 @@ MonoBehaviour:
     angle: 0
     monsterName: Knight
   - patternType: 3
+    startTime: 35
+    duration: 5
+    monsterCount: 15
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Pawn
+  - patternType: 3
+    startTime: 40
+    duration: 5
+    monsterCount: 30
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Pawn
+  - patternType: 3
     startTime: 45
     duration: 8
     monsterCount: 20
@@ -174,6 +134,38 @@ MonoBehaviour:
     wiggle: 0
     angle: 0
     monsterName: Knight
+  - patternType: 3
+    startTime: 50
+    duration: 60
+    monsterCount: 1
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Queen
+  - patternType: 3
+    startTime: 90
+    duration: 12
+    monsterCount: 3
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Bishop
+  - patternType: 3
+    startTime: 90
+    duration: 5
+    monsterCount: 10
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Pawn
+  - patternType: 3
+    startTime: 120
+    duration: 12
+    monsterCount: 5
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Bishop
   - patternType: 3
     startTime: 120
     duration: 8
@@ -191,6 +183,30 @@ MonoBehaviour:
     angle: 0
     monsterName: Knight
   - patternType: 3
+    startTime: 150
+    duration: 12
+    monsterCount: 3
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Bishop
+  - patternType: 3
+    startTime: 150
+    duration: 5
+    monsterCount: 10
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Pawn
+  - patternType: 3
+    startTime: 180
+    duration: 12
+    monsterCount: 8
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Bishop
+  - patternType: 3
     startTime: 180
     duration: 8
     monsterCount: 8
@@ -199,6 +215,38 @@ MonoBehaviour:
     angle: 0
     monsterName: Knight
   - patternType: 3
+    startTime: 210
+    duration: 12
+    monsterCount: 5
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Bishop
+  - patternType: 3
+    startTime: 210
+    duration: 5
+    monsterCount: 20
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Pawn
+  - patternType: 3
+    startTime: 240
+    duration: 12
+    monsterCount: 5
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Bishop
+  - patternType: 3
+    startTime: 240
+    duration: 5
+    monsterCount: 20
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Pawn
+  - patternType: 3
     startTime: 240
     duration: 8
     monsterCount: 15
@@ -206,6 +254,14 @@ MonoBehaviour:
     wiggle: 0
     angle: 0
     monsterName: Knight
+  - patternType: 3
+    startTime: 300
+    duration: 12
+    monsterCount: 15
+    radius: 5
+    wiggle: 0
+    angle: 0
+    monsterName: Bishop
   - patternType: 3
     startTime: 300
     duration: 8
@@ -223,69 +279,13 @@ MonoBehaviour:
     angle: 0
     monsterName: Knight
   - patternType: 3
-    startTime: 420
-    duration: 8
-    monsterCount: 25
+    startTime: 360
+    duration: 5
+    monsterCount: 30
     radius: 5
     wiggle: 0
     angle: 0
-    monsterName: Knight
-  - patternType: 3
-    startTime: 90
-    duration: 12
-    monsterCount: 3
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Bishop
-  - patternType: 3
-    startTime: 120
-    duration: 12
-    monsterCount: 5
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Bishop
-  - patternType: 3
-    startTime: 150
-    duration: 12
-    monsterCount: 3
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Bishop
-  - patternType: 3
-    startTime: 180
-    duration: 12
-    monsterCount: 8
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Bishop
-  - patternType: 3
-    startTime: 210
-    duration: 12
-    monsterCount: 5
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Bishop
-  - patternType: 3
-    startTime: 240
-    duration: 12
-    monsterCount: 5
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Bishop
-  - patternType: 3
-    startTime: 300
-    duration: 12
-    monsterCount: 15
-    radius: 5
-    wiggle: 0
-    angle: 0
-    monsterName: Bishop
+    monsterName: Pawn
   - patternType: 3
     startTime: 360
     duration: 12
@@ -303,13 +303,13 @@ MonoBehaviour:
     angle: 0
     monsterName: Bishop
   - patternType: 3
-    startTime: 50
-    duration: 60
-    monsterCount: 1
+    startTime: 420
+    duration: 8
+    monsterCount: 25
     radius: 5
     wiggle: 0
     angle: 0
-    monsterName: Queen
+    monsterName: Knight
   - patternType: 3
     startTime: 480
     duration: 60

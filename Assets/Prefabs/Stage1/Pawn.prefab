@@ -145,7 +145,7 @@ MonoBehaviour:
   minSoundDistance: 1
   maxSoundDistance: 15
   moveSpeed: 1
-  jumpPower: 1
+  jumpPower: 0.5
   delay: 1
 --- !u!50 &6913308062763276732
 Rigidbody2D:

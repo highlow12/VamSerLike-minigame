@@ -109,7 +109,7 @@ public class StageLoadManager : Singleton<StageLoadManager>
                 OnLoadingProgressChanged?.Invoke(loadingProgress);
                 
                 // 잠시 대기 후 씬 활성화
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.1f);
                 asyncOperation.allowSceneActivation = true;
             }
             
