@@ -33,6 +33,9 @@ public class VFXManager : MonoBehaviour
     public GameObject up;
     public GameObject down;
 
+    public GameObject bloodParticle;
+    public GameObject handParticle;
+
     bool eyeBlink = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -194,5 +197,53 @@ public class VFXManager : MonoBehaviour
     public void BlackOut()
     {
         spriteRenderer.color = new Color(0, 0, 0);
+    }
+
+    IEnumerator PlayerHitStr()
+    {
+        spriteRenderer.material = invertMaterial;
+        invertMaterial.SetFloat("_T", 0f);
+
+        float elapsedTime = 0f;
+        float duration = 500f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime * 1000;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            invertMaterial.SetFloat("_T", Mathf.Lerp(0f, 1f, t));
+            yield return null;
+        }
+
+        elapsedTime = 0f;
+        
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime * 1000;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            invertMaterial.SetFloat("_T", Mathf.Lerp(1f, 0f, t));
+            yield return null;
+        }
+    }
+
+    public void AnimatePlayerHitStr()
+    {
+        StartCoroutine(PlayerHitStr());
+    }
+
+    public void BloodParticle()
+    {
+        if (bloodParticle != null) {
+            bloodParticle.SetActive(false);
+            bloodParticle.SetActive(true);
+        }
+    }
+
+    public void HandParticle()
+    {
+        if (handParticle != null) {
+            handParticle.SetActive(false);
+            handParticle.SetActive(true);
+        }
     }
 }
