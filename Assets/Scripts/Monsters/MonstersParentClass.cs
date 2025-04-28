@@ -46,6 +46,7 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual void Die()
     {
+        gameObject.SetActive(false);
 #if UNITY_EDITOR
         Debug.Log("Dead: " + gameObject.name);
 #endif
