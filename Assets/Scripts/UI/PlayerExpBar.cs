@@ -48,7 +48,7 @@ public class PlayerExpBar : MonoBehaviour
             // 레벨 텍스트 업데이트 추가
             if (levelText != null)
             {
-                levelText.text = "Lv. " + GameManager.Instance.playerLevel.ToString();
+                levelText.text = GameManager.Instance.playerLevel.ToString();
             }
         }
     }

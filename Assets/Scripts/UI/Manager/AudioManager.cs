@@ -13,7 +13,26 @@ public class AudioManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            
+            // 현재 캔버스의 자식으로 있다면 루트 레벨로 이동
+            if (transform.parent != null)
+            {
+                // 현재 transform 정보 저장
+                Transform originalParent = transform.parent;
+                
+                // 루트 레벨로 이동
+                transform.SetParent(null);
+                
+                // DontDestroyOnLoad 적용
+                DontDestroyOnLoad(gameObject);
+                
+                Debug.Log("AudioManager가 루트 레벨로 이동되었습니다.");
+            }
+            else
+            {
+                // 이미 루트 레벨에 있으므로 바로 DontDestroyOnLoad 적용
+                DontDestroyOnLoad(gameObject);
+            }
         }
         else
         {

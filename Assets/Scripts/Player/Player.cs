@@ -1,5 +1,6 @@
 using UnityEngine;
 using Item;
+using DG.Tweening.Core.Easing;
 
 public class Player : MonoBehaviour
 {
@@ -126,6 +127,7 @@ public class Player : MonoBehaviour
     public float maxHealth;
     public float health;
     private float normalizedHealth;
+    private bool isDead = false;
 
     void Awake()
     {
@@ -145,6 +147,12 @@ public class Player : MonoBehaviour
         maxHealth = GameManager.Instance.GetPlayerStatValue(BonusStat.MaxHealth, baseMaxHealth);
         normalizedHealth = Mathf.Clamp(health, 0f, maxHealth) / maxHealth;
         healthBar.size = new Vector2(normalizedHealth, healthBar.size.y);
+
+        if (health <= 0 && !isDead)
+        {
+            isDead = true;
+            FadeManager.Instance.FadeOutAndRestart();
+        }
     }
 
     public void Heal(float amount, HealType healType)

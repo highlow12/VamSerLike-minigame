@@ -1,0 +1,1 @@
+//이 파일은 사용되지 않습니다. Assets/Scripts/UI/EquipmentItem.cs 파일을 참조하세요.

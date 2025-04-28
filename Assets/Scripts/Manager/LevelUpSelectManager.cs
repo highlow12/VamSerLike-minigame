@@ -10,32 +10,26 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
 {
     enum SelectItemType
     {
-        MainWeapon,
+        // MainWeapon, // 메인 무기 타입 제외 (주석 처리)
         SubWeapon,
-        SupportItem,
+        SupportItem, // 아직 미구현이지만 확장성을 위해 유지
     }
 
     private const int MAX_RETRY_COUNT = 10;  // 최대 시도 횟수
     private const int MAX_TOTAL_RETRY_COUNT = 30;  // 전체 아이템 선택 최대 시도 횟수
+    private const int MAX_SUB_WEAPONS = 6;   // 최대 보조 무기 수
+    private const int DESIRED_OPTIONS_COUNT = 3; // 레벨업 시 표시할 옵션 개수
 
     [SerializeField] private LevelUpUI levelUpUI;
-    private List<LitJson.JsonData> mainWeaponOptions = new List<LitJson.JsonData>();
+    // private List<LitJson.JsonData> mainWeaponOptions = new List<LitJson.JsonData>(); // 더 이상 메인 무기 옵션을 사용하지 않음
     private List<WeaponStatProvider.SubWeaponStat> subWeaponOptions = new List<WeaponStatProvider.SubWeaponStat>();
+
+    // 캐싱용 딕셔너리 추가
+    private Dictionary<string, Sprite> weaponSpriteCache = new Dictionary<string, Sprite>();
 
     private void Start()
     {
-        // LevelUpUI 참조 가져오기
-        if (levelUpUI == null)
-        {
-            Debug.Log("[LevelUpSelectManager] LevelUpUI 참조를 찾는 중...");
-            levelUpUI = FindAnyObjectByType<LevelUpUI>();
-            if (levelUpUI == null)
-            {
-                Debug.LogError("[LevelUpSelectManager] LevelUpUI 컴포넌트를 씬에서 찾을 수 없습니다!");
-                return;
-            }
-            Debug.Log("[LevelUpSelectManager] LevelUpUI 참조 찾음");
-        }
+        InitializeLevelUpUI();
 
         // 레벨업 이벤트에 구독
         if (GameManager.Instance != null)
@@ -49,6 +43,22 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         }
     }
 
+    private void InitializeLevelUpUI()
+    {
+        // LevelUpUI 참조 가져오기
+        if (levelUpUI == null)
+        {
+            Debug.Log("[LevelUpSelectManager] LevelUpUI 참조를 찾는 중...");
+            levelUpUI = FindAnyObjectByType<LevelUpUI>();
+            if (levelUpUI == null)
+            {
+                Debug.LogError("[LevelUpSelectManager] LevelUpUI 컴포넌트를 씬에서 찾을 수 없습니다!");
+                return;
+            }
+            Debug.Log("[LevelUpSelectManager] LevelUpUI 참조 찾음");
+        }
+    }
+
     private void OnDestroy()
     {
         // 이벤트 구독 해제
@@ -56,6 +66,9 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         {
             GameManager.Instance.onPlayerLevelChanged -= OnPlayerLevelUp;
         }
+
+        // 캐시 클리어
+        weaponSpriteCache.Clear();
     }
 
     // 레벨업 이벤트 처리
@@ -80,41 +93,41 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         CreateItemList();
     }
 
-    private LitJson.JsonData GetNonDuplicateMainWeapon(LitJson.JsonData userMainWeaponData, Weapon.MainWeapon currentMainWeapon, List<LitJson.JsonData> listedWeapons)
-    {
-        int tryCount = 0;
-        while (tryCount < MAX_RETRY_COUNT)
-        {
-            int mainWeaponIndex = UnityEngine.Random.Range(0, userMainWeaponData.Count);
-            LitJson.JsonData userData = userMainWeaponData[mainWeaponIndex];
-
-            if (userData == null || userData.Count == 0)
-            {
-                tryCount++;
-                continue;
-            }
-
-            Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(typeof(Weapon.MainWeapon.WeaponType), userData["weaponType"].ToString());
-            if (listedWeapons.Any(x => x["weaponType"].ToString() == weaponType.ToString()))
-            {
-                tryCount++;
-                continue;
-            }
-            // 현재 장착된 무기와 다른 타입인 경우에만 반환
-            if (currentMainWeapon == null || weaponType != currentMainWeapon.weaponType)
-            {
-                return userData;
-            }
-
-            tryCount++;
-        }
-
-        return null;  // 유효한 무기를 찾지 못한 경우
-    }
-
     private WeaponStatProvider.SubWeaponStat GetSubWeaponOption(List<WeaponStatProvider.SubWeaponStat> subWeaponStats, List<Weapon.SubWeapon> currentSubWeapons, List<WeaponStatProvider.SubWeaponStat> listedWeapons)
     {
-        // 현재 장착된 SubWeapon들 중 랜덤 선택 시도
+        // 최대 보조 무기 수에 도달했는지 검사
+        if (currentSubWeapons.Count >= MAX_SUB_WEAPONS)
+        {
+            // 이미 최대 개수에 도달한 경우, 기존 무기 업그레이드만 제공
+            int tryCount = 0;
+            while (tryCount < MAX_RETRY_COUNT)
+            {
+                int weaponIndex = UnityEngine.Random.Range(0, currentSubWeapons.Count);
+                Weapon.SubWeapon currentWeapon = currentSubWeapons[weaponIndex];
+                if (currentWeapon == null)
+                {
+                    tryCount++;
+                    continue;
+                }
+                if (listedWeapons.Any(x => x.weaponType == currentWeapon.weaponType))
+                {
+                    tryCount++;
+                    continue;
+                }
+                // 최대 레벨이 아닌 경우에만 선택
+                if (currentWeapon.weaponGrade < currentWeapon.maxWeaponGrade)
+                {
+                    return subWeaponStats.Find(x =>
+                        x.weaponType == currentWeapon.weaponType &&
+                        x.weaponGrade == currentWeapon.weaponGrade + 1
+                    );
+                }
+                tryCount++;
+            }
+            return default; // 모든 무기가 최대 레벨이거나 이미 나열되었다면 기본값 반환
+        }
+
+        // 현재 장착된 SubWeapon들 중 랜덤 선택 시도 (업그레이드)
         if (currentSubWeapons.Count > 0)
         {
             int tryCount = 0;
@@ -160,6 +173,159 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         return default;
     }
 
+    // 서브 무기 아이콘 로드 메서드 (캐싱 적용) - 개선된 버전
+    public Sprite LoadSubWeaponSprite(WeaponStatProvider.SubWeaponStat subWeaponStat)
+    {
+        if (string.IsNullOrEmpty(subWeaponStat.displayName))
+        {
+            Debug.LogWarning("[LevelUpSelectManager] 서브 무기 데이터가 유효하지 않습니다.");
+            return null;
+        }
+
+        string cacheKey = $"SubWeapon_{subWeaponStat.weaponType}_{subWeaponStat.weaponGrade}";
+
+        // 캐시에 있으면 반환
+        if (weaponSpriteCache.TryGetValue(cacheKey, out Sprite cachedSprite))
+        {
+            return cachedSprite;
+        }
+
+        Debug.Log($"[LevelUpSelectManager] 서브 무기 아이콘 로드 시도: {subWeaponStat.weaponType}, 등급: {subWeaponStat.weaponGrade}");
+
+        // 1. SubWeapon 클래스와 동일한 경로 시도 (weaponType 기준)
+        try
+        {
+            string path = $"ScriptableObjects/SubWeapon/{subWeaponStat.weaponType}/{subWeaponStat.weaponType}_{subWeaponStat.weaponGrade}";
+            SubWeaponSO subWeaponSO = Resources.Load<SubWeaponSO>(path);
+            if (subWeaponSO != null && subWeaponSO.weaponSprite != null)
+            {
+                // 캐시에 추가
+                weaponSpriteCache[cacheKey] = subWeaponSO.weaponSprite;
+                Debug.Log($"[LevelUpSelectManager] 서브 무기 아이콘 로드 성공 (weaponType 경로): {path}");
+                return subWeaponSO.weaponSprite;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[LevelUpSelectManager] weaponType 경로 로드 중 오류: {e.Message}");
+        }
+
+        // 2. displayName 기준 경로 시도
+        try
+        {
+            string path = $"ScriptableObjects/SubWeapon/{subWeaponStat.displayName}/{subWeaponStat.displayName}_{subWeaponStat.weaponGrade}";
+            SubWeaponSO subWeaponSO = Resources.Load<SubWeaponSO>(path);
+            if (subWeaponSO != null && subWeaponSO.weaponSprite != null)
+            {
+                // 캐시에 추가
+                weaponSpriteCache[cacheKey] = subWeaponSO.weaponSprite;
+                Debug.Log($"[LevelUpSelectManager] 서브 무기 아이콘 로드 성공 (displayName 경로): {path}");
+                return subWeaponSO.weaponSprite;
+            }
+        }
+        catch (Exception) { }
+
+        // 3. 상위 폴더에서 이름 검색
+        try
+        {
+            // SubWeaponLoaderTest.cs와 유사한 방식으로 모든 SO 로드
+            SubWeaponSO[] allSubWeapons = Resources.LoadAll<SubWeaponSO>("ScriptableObjects/SubWeapon");
+            foreach (var weapon in allSubWeapons)
+            {
+                // weaponType과 weaponGrade가 일치하는 항목 찾기
+                if (weapon.weaponType == subWeaponStat.weaponType && weapon.weaponGrade == subWeaponStat.weaponGrade && weapon.weaponSprite != null)
+                {
+                    weaponSpriteCache[cacheKey] = weapon.weaponSprite;
+                    Debug.Log($"[LevelUpSelectManager] 서브 무기 아이콘 로드 성공 (LoadAll 검색): {weapon.name}");
+                    return weapon.weaponSprite;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[LevelUpSelectManager] LoadAll 검색 중 오류: {e.Message}");
+        }
+
+        // 4. 다양한 폴더 구조 시도
+        string[] possiblePaths = new string[] {
+        $"ScriptableObjects/SubWeapons/{subWeaponStat.weaponType}/{subWeaponStat.weaponType}_{subWeaponStat.weaponGrade}",
+        $"ScriptableObjects/Weapons/SubWeapon/{subWeaponStat.weaponType}/{subWeaponStat.weaponType}_{subWeaponStat.weaponGrade}",
+        $"SubWeapon/{subWeaponStat.weaponType}/{subWeaponStat.weaponType}_{subWeaponStat.weaponGrade}",
+        $"Weapons/SubWeapon/{subWeaponStat.weaponType}/{subWeaponStat.weaponType}_{subWeaponStat.weaponGrade}"
+    };
+
+        foreach (string path in possiblePaths)
+        {
+            try
+            {
+                SubWeaponSO subWeaponSO = Resources.Load<SubWeaponSO>(path);
+                if (subWeaponSO != null && subWeaponSO.weaponSprite != null)
+                {
+                    weaponSpriteCache[cacheKey] = subWeaponSO.weaponSprite;
+                    Debug.Log($"[LevelUpSelectManager] 서브 무기 아이콘 로드 성공 (대체 경로): {path}");
+                    return subWeaponSO.weaponSprite;
+                }
+            }
+            catch (Exception) { }
+        }
+
+        // 5. 마지막 시도: 프리팹에서 아이콘 추출
+        try
+        {
+            string prefabPath = $"Prefabs/Player/Weapon/SubWeapon/{subWeaponStat.weaponType}";
+            GameObject weaponPrefab = Resources.Load<GameObject>(prefabPath);
+            if (weaponPrefab != null)
+            {
+                // SpriteRenderer 또는 Image 컴포넌트에서 스프라이트 추출 시도
+                SpriteRenderer spriteRenderer = weaponPrefab.GetComponentInChildren<SpriteRenderer>();
+                if (spriteRenderer != null && spriteRenderer.sprite != null)
+                {
+                    weaponSpriteCache[cacheKey] = spriteRenderer.sprite;
+                    Debug.Log($"[LevelUpSelectManager] 서브 무기 아이콘 로드 성공 (프리팹 SR): {prefabPath}");
+                    return spriteRenderer.sprite;
+                }
+
+                // UI Image 컴포넌트 확인
+                UnityEngine.UI.Image image = weaponPrefab.GetComponentInChildren<UnityEngine.UI.Image>();
+                if (image != null && image.sprite != null)
+                {
+                    weaponSpriteCache[cacheKey] = image.sprite;
+                    Debug.Log($"[LevelUpSelectManager] 서브 무기 아이콘 로드 성공 (프리팹 Image): {prefabPath}");
+                    return image.sprite;
+                }
+            }
+        }
+        catch (Exception) { }
+
+        // 6. 기본 아이콘 사용
+        try
+        {
+            // 여러 가능한 기본 아이콘 경로 시도
+            string[] defaultPaths = new string[] {
+            "DefaultWeaponIcon",
+            "Icons/DefaultWeaponIcon",
+            "UI/DefaultWeaponIcon",
+            "Sprites/DefaultWeaponIcon"
+        };
+
+            foreach (string path in defaultPaths)
+            {
+                Sprite defaultSprite = Resources.Load<Sprite>(path);
+                if (defaultSprite != null)
+                {
+                    Debug.LogWarning($"[LevelUpSelectManager] 기본 아이콘 사용: {path}");
+                    return defaultSprite;
+                }
+            }
+        }
+        catch (Exception) { }
+
+        Debug.LogError($"[LevelUpSelectManager] 서브 무기 아이콘 로드 실패: {subWeaponStat.weaponType}, 등급: {subWeaponStat.weaponGrade}");
+
+        // 아무 이미지도 찾지 못한 경우 null 반환 (UI에서 아이콘 없이 표시됨)
+        return null;
+    }
+
     public void CreateItemList()
     {
         Debug.Log("[LevelUpSelectManager] CreateItemList started");
@@ -177,12 +343,10 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             return;
         }
 
-        // 중요: 여기서 PlayerAttack null 체크 전에 레벨업 패널을 먼저 표시
+        // LevelUpUI 확인 및 초기화
         if (levelUpUI == null)
         {
-            Debug.LogError("[LevelUpSelectManager] levelUpUI is null!");
-            // UI 찾기 시도
-            levelUpUI = FindAnyObjectByType<LevelUpUI>();
+            InitializeLevelUpUI();
             if (levelUpUI == null)
             {
                 Debug.LogError("[LevelUpSelectManager] Could not find LevelUpUI in scene!");
@@ -191,12 +355,8 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         }
 
         // 레벨업 패널 표시 명령 직접 호출
-        if (levelUpUI != null)
-        {
-            Debug.Log("[LevelUpSelectManager] 레벨업 UI 표시 명령 실행");
-            // 레벨업 패널 표시 메서드를 직접 호출
-            levelUpUI.ShowLevelUpPanel();
-        }
+        Debug.Log("[LevelUpSelectManager] 레벨업 UI 표시 명령 실행");
+        levelUpUI.ShowLevelUpPanel();
 
         // PlayerAttack은 아이템 생성에만 필요하므로 여기서 null 체크
         PlayerAttack playerAttack = GameManager.Instance.playerAttack;
@@ -213,115 +373,50 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             return;
         }
 
-        // 백엔드에서 메인 무기 데이터 가져오기
-        LitJson.JsonData userMainWeaponData = BackendDataManager.Instance.GetUserMainWeaponData();
-
-        // 데이터 확인용 상세 디버그 로그 추가
-        Debug.Log($"[LevelUpSelectManager] MainWeapon Data Count: {userMainWeaponData?.Count ?? 0}");
-
-        // 데이터 내용 상세 출력
-        if (userMainWeaponData != null)
-        {
-            for (int i = 0; i < userMainWeaponData.Count; i++)
-            {
-                Debug.Log($"[LevelUpSelectManager] MainWeapon Data [{i}]: {userMainWeaponData[i].ToJson()}");
-            }
-        }
-        else
-        {
-            Debug.LogError("[LevelUpSelectManager] userMainWeaponData is null!");
-            return;
-        }
-
         List<WeaponStatProvider.SubWeaponStat> subWeaponStats = WeaponStatProvider.Instance.subWeaponStats;
-
-        Weapon.MainWeapon currentMainWeapon = playerAttack.mainWeapon;
         List<Weapon.SubWeapon> currentSubWeapons = playerAttack.subWeapons;
-
-        List<LitJson.JsonData> listedMainWeapons = new List<LitJson.JsonData>();
         List<WeaponStatProvider.SubWeaponStat> listedSubWeapons = new List<WeaponStatProvider.SubWeaponStat>();
-        // 지원품 구현 후 listedDrops 추가 필요
 
         // 이전 옵션 목록 초기화
-        mainWeaponOptions.Clear();
         subWeaponOptions.Clear();
 
         int totalTryCount = 0;
         int successCount = 0;  // 성공적으로 생성된 아이템 카운트
 
-        while (successCount < 3 && totalTryCount < MAX_TOTAL_RETRY_COUNT)
+        // 서브 무기만 표시하도록 수정
+        while (successCount < DESIRED_OPTIONS_COUNT && totalTryCount < MAX_TOTAL_RETRY_COUNT)
         {
-            int itemIndex = UnityEngine.Random.Range(0, 3);
-            SelectItemType selectItemType = (SelectItemType)itemIndex;
+            // 항상 서브 무기만 선택 (메인 무기 타입은 제외)
+            SelectItemType selectItemType = SelectItemType.SubWeapon;
             bool succeeded = false;
 
             switch (selectItemType)
             {
-                case SelectItemType.MainWeapon:
-                    LitJson.JsonData userData = GetNonDuplicateMainWeapon(userMainWeaponData, currentMainWeapon, listedMainWeapons);
-
-                    Debug.Log($"[LevelUpSelectManager] 선택된 MainWeapon Data: {userData?.ToJson() ?? "null"}");
-
-                    if (userData != null)
-                    {
-                        // UI 버튼에 메인 무기 정보 설정
-                        mainWeaponOptions.Add(userData);
-
-                        // 메인 무기 정보 디버그
-                        Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(
-                            typeof(Weapon.MainWeapon.WeaponType),
-                            userData["weaponType"].ToString()
-                        );
-
-                        // 메인 무기 표시명 가져오기
-                        string displayName = WeaponStatProvider.Instance.weaponStats.Find(x => x.weaponType == weaponType).displayName;
-                        Debug.Log($"[LevelUpSelectManager] 선택된 무기 타입: {weaponType}, 표시명: {displayName}");
-
-                        // 메인 무기 아이콘 가져오기
-                        Sprite weaponIcon = null;
-                        GameObject weaponPrefab = Resources.Load<GameObject>($"Prefabs/Player/Weapon/MainWeapon/{weaponType}");
-                        if (weaponPrefab != null && weaponPrefab.GetComponent<SpriteRenderer>() != null)
-                        {
-                            weaponIcon = weaponPrefab.GetComponent<SpriteRenderer>().sprite;
-                            Debug.Log($"[LevelUpSelectManager] 메인 무기 아이콘 로드 성공: {weaponType}");
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"[LevelUpSelectManager] 메인 무기 아이콘 로드 실패: {weaponType}");
-                        }
-
-                        levelUpUI.SetMainWeaponItem(userData, successCount, displayName, weaponIcon);
-                        listedMainWeapons.Add(userData);
-                        succeeded = true;
-                    }
-                    break;
-
                 case SelectItemType.SubWeapon:
-                    // SubWeapon이 6개 이상인 경우에는 선택하지 않음
-                    if (playerAttack.subWeapons.Count >= 6)
+                    // SubWeapon이 MAX_SUB_WEAPONS개 이상이고 모두 최대 레벨인 경우 처리
+                    if (playerAttack.subWeapons.Count >= MAX_SUB_WEAPONS &&
+                        playerAttack.subWeapons.All(sw => sw.weaponGrade >= sw.maxWeaponGrade))
                     {
+                        // 모든 서브 무기가 최대 개수에 도달하고 최대 레벨인 경우 처리
+                        // 주석 처리: 요청에 따라 이 케이스는 일단 주석 처리
+                        /*
+                        Debug.LogWarning("[LevelUpSelectManager] 모든 서브 무기가 최대 개수와 최대 레벨에 도달했습니다.");
                         totalTryCount++;
                         continue;
+                        */
                     }
+
                     WeaponStatProvider.SubWeaponStat subWeaponStat = GetSubWeaponOption(subWeaponStats, currentSubWeapons, listedSubWeapons);
-                    if (!Equals(subWeaponStat, default))
+
+                    // 유효한 서브 무기 옵션을 찾은 경우
+                    if (!string.IsNullOrEmpty(subWeaponStat.displayName))
                     {
                         // 서브 무기 표시명 가져오기
                         string displayName = subWeaponStat.displayName;
                         Debug.Log($"[LevelUpSelectManager] 선택된 서브 무기: {subWeaponStat.weaponType}, 표시명: {displayName}, 등급: {subWeaponStat.weaponGrade}");
 
                         // 서브 무기 아이콘 가져오기
-                        Sprite weaponIcon = null;
-                        SubWeaponSO subWeaponSO = Resources.Load<SubWeaponSO>($"ScriptableObjects/SubWeapon/{displayName}/{displayName}_{subWeaponStat.weaponGrade}");
-                        if (subWeaponSO != null)
-                        {
-                            weaponIcon = subWeaponSO.weaponSprite;
-                            Debug.Log($"[LevelUpSelectManager] 서브 무기 아이콘 로드 성공: {displayName}_{subWeaponStat.weaponGrade}");
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"[LevelUpSelectManager] 서브 무기 아이콘 로드 실패: {displayName}_{subWeaponStat.weaponGrade}");
-                        }
+                        Sprite weaponIcon = LoadSubWeaponSprite(subWeaponStat);
 
                         // UI 버튼에 서브 무기 정보 설정
                         subWeaponOptions.Add(subWeaponStat);
@@ -347,54 +442,48 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
 
         Debug.Log($"[LevelUpSelectManager] Total try count: {totalTryCount}, Success count: {successCount}");
 
-        // 만약 3개의 선택지를 채우지 못했다면 로그 출력
-        if (successCount < 3)
+        // 만약 원하는 개수의 선택지를 채우지 못했다면 로그 출력
+        if (successCount < DESIRED_OPTIONS_COUNT)
         {
-            Debug.LogError($"[LevelUpSelectManager] Failed to create full item list. Only {successCount} items created.");
+            Debug.LogWarning($"[LevelUpSelectManager] Failed to create full item list. Only {successCount} items created.");
+
+            // 빈 슬롯은 비활성화 (LevelUpUI에서 처리하도록 설정)
+            for (int i = successCount; i < DESIRED_OPTIONS_COUNT; i++)
+            {
+                if (i < levelUpUI.optionButtons.Count)
+                {
+                    levelUpUI.optionButtons[i].gameObject.SetActive(false);
+                }
+            }
         }
     }
 
-    public void CreateMainWeaponItem(LitJson.JsonData userData)
-    {
-        PlayerAttack playerAttack = GameManager.Instance.playerAttack;
-
-        try
-        {
-            Destroy(playerAttack.mainWeapon.attackObject);
-            Destroy(playerAttack.mainWeapon);
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning($"[LevelUpSelectManager] Failed to destroy main weapon: {e.Message}");
-        }
-        playerAttack.mainWeapon = null;
-        Weapon.MainWeapon.WeaponType weaponType = (Weapon.MainWeapon.WeaponType)Enum.Parse(typeof(Weapon.MainWeapon.WeaponType), userData["weaponType"].ToString());
-        string weaponTypeString = weaponType.ToString();
-        Weapon.WeaponRare weaponRare = (Weapon.WeaponRare)Enum.Parse(typeof(Weapon.WeaponRare), userData["weaponRare"].ToString());
-        Type type = Type.GetType(weaponTypeString);
-        if (type == null)
-        {
-            Debug.LogWarning($"[LevelUpSelectManager] Failed to create main weapon: {weaponTypeString}");
-            return;
-        }
-        Weapon.MainWeapon newMainWeapon = (Weapon.MainWeapon)playerAttack.gameObject.AddComponent(type);
-        newMainWeapon.weaponRare = weaponRare;
-        playerAttack.mainWeapon = newMainWeapon;
-        Debug.Log($"[LevelUpSelectManager] Main weapon changed to {newMainWeapon.weaponType}");
-    }
-
+    // 서브 무기 아이템 생성 메서드 (LevelUpUI에서 호출됨)
     public void CreateSubWeaponItem(WeaponStatProvider.SubWeaponStat subWeaponStat)
     {
         PlayerAttack playerAttack = GameManager.Instance.playerAttack;
-        if (subWeaponStat.weaponGrade == 0)
+        if (playerAttack == null)
         {
-            playerAttack.AddSubWeapon(subWeaponStat.weaponType);
-            Debug.Log($"[LevelUpSelectManager] Sub weapon added: {subWeaponStat.weaponType}");
+            Debug.LogError("[LevelUpSelectManager] PlayerAttack is null!");
+            return;
         }
-        else
+
+        try
         {
-            playerAttack.ModifySubWeaponGrade(subWeaponStat.weaponType, subWeaponStat.weaponGrade);
-            Debug.Log($"[LevelUpSelectManager] Sub weapon upgraded: {subWeaponStat.weaponType} to grade {subWeaponStat.weaponGrade}");
+            if (subWeaponStat.weaponGrade == 0)
+            {
+                playerAttack.AddSubWeapon(subWeaponStat.weaponType);
+                Debug.Log($"[LevelUpSelectManager] Sub weapon added: {subWeaponStat.weaponType}");
+            }
+            else
+            {
+                playerAttack.ModifySubWeaponGrade(subWeaponStat.weaponType, subWeaponStat.weaponGrade);
+                Debug.Log($"[LevelUpSelectManager] Sub weapon upgraded: {subWeaponStat.weaponType} to grade {subWeaponStat.weaponGrade}");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[LevelUpSelectManager] Error creating/upgrading sub weapon: {e.Message}");
         }
     }
 
