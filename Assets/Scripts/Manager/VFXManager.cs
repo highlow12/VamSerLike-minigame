@@ -199,6 +199,53 @@ public class VFXManager : MonoBehaviour
         spriteRenderer.color = new Color(0, 0, 0);
     }
 
+    IEnumerator Shake(float a, float b, float duration)
+    {
+        cameraMove cam = Camera.main.GetComponent<cameraMove>();
+        float elapsedTime = a;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime * 1000;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            cam.shakeIntensity = Mathf.Lerp(a, b, t);
+            yield return null;
+        }
+    }
+
+    IEnumerator ShakeBack(float a, float b, float duration)
+    {
+        cameraMove cam = Camera.main.GetComponent<cameraMove>();
+        cam.shakeIntensity = a;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration / 2)
+        {
+            elapsedTime += Time.deltaTime * 1000;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            cam.shakeIntensity = Mathf.Lerp(a, b, t);
+            yield return null;
+        }
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime * 1000;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            cam.shakeIntensity = Mathf.Lerp(b, a, t);
+            yield return null;
+        }
+    }
+
+    public void AnimateShake(float a, float b, float duration)
+    {
+        StartCoroutine(Shake(a, b, duration));
+    }
+
+    public void AnimateShakeBack(float a, float b, float duration)
+    {
+        StartCoroutine(ShakeBack(a, b, duration));
+    }
+
     IEnumerator PlayerHitStr()
     {
         spriteRenderer.material = invertMaterial;

@@ -191,6 +191,8 @@ public class Player : MonoBehaviour
             return;
         }
         health -= damage;
+
+        if (damage / maxHealth >= 0.3f) VFXManager.Instance.AnimatePlayerHitStr();
     }
 
     public void ApplySpecialEffect(PlayerSpecialEffect specialEffect, float duration = 5f)
