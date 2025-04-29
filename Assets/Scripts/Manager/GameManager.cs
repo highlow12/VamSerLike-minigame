@@ -23,6 +23,7 @@ public class GameManager : Singleton<GameManager>
 
     public Player playerScript;
     public Light2D playerLight;
+    public Light2D globalLight;
     public PlayerMove player;
     public PlayerAttack playerAttack;
     public GameState gameState
@@ -68,6 +69,9 @@ public class GameManager : Singleton<GameManager>
     }
     private bool _isGamePaused = false;
 
+    // 지원 아이템 레벨 관리용 Dictionary
+    public Dictionary<SupportItemSO, int> supportItemLevels = new Dictionary<SupportItemSO, int>();
+
     public override void Awake()
     {
         base.Awake();
@@ -79,6 +83,8 @@ public class GameManager : Singleton<GameManager>
         SetGameState(GameState.InGame);
         playerAssetData = BackendDataManager.Instance.GetUserAssetData();
 
+        InitializeSupportItems(); // 지원 아이템 초기화 (테스트용)
+
 #if UNITY_EDITOR
         // Check if DebugGUI_GameManager exists on this object and add it if not
         //if (gameObject.GetComponent<DebugGUI_GameManager>() == null)
@@ -87,6 +93,112 @@ public class GameManager : Singleton<GameManager>
         //    Debug.Log("DebugGUI_GameManager was automatically added to GameManager object");
         //}
 #endif
+    }
+
+    // 테스트용 지원 아이템 초기화 함수
+    private void InitializeSupportItems()
+    {
+        // 예시: 모든 SupportItemSO를 로드하여 레벨 1로 초기화
+        var allSupportItems = Resources.LoadAll<SupportItemSO>("ScriptableObjects/SupportItems");
+        foreach (var item in allSupportItems)
+        {
+            if (!supportItemLevels.ContainsKey(item))
+            {
+                supportItemLevels.Add(item, 0); // 초기 레벨 0 또는 1로 설정
+            }
+        }
+        Debug.Log($"Initialized {supportItemLevels.Count} support items.");
+    }
+
+    // 지원 아이템 레벨업 함수 (UI 버튼 클릭 시 호출될 함수)
+    public bool LevelUpSupportItem(SupportItemSO itemToLevelUp)
+    {
+        if (itemToLevelUp == null) return false;
+
+        if (!supportItemLevels.ContainsKey(itemToLevelUp))
+        {
+            // 아직 획득하지 않은 아이템이라면 레벨 1로 추가 (또는 다른 로직)
+            supportItemLevels.Add(itemToLevelUp, 1);
+            Debug.Log($"{itemToLevelUp.itemName} 획득! (Level 1)");
+            ApplySupportItemEffect(itemToLevelUp, 1); // 효과 즉시 적용
+            return true;
+        }
+        else
+        {
+            int currentLevel = supportItemLevels[itemToLevelUp];
+            if (currentLevel < itemToLevelUp.maxLevel)
+            {
+                int newLevel = currentLevel + 1;
+                supportItemLevels[itemToLevelUp] = newLevel;
+                Debug.Log($"{itemToLevelUp.itemName} 레벨 업! (Level {newLevel})");
+                ApplySupportItemEffect(itemToLevelUp, newLevel); // 효과 즉시 적용
+                // TODO: 레벨업 시 필요한 추가 로직 (예: UI 업데이트 알림)
+                return true;
+            }
+            else
+            {
+                Debug.Log($"{itemToLevelUp.itemName}은(는) 이미 최대 레벨입니다.");
+                return false;
+            }
+        }
+    }
+
+    // 지원 아이템 효과 적용 함수 (레벨업 시 호출)
+    private void ApplySupportItemEffect(SupportItemSO item, int newLevel)
+    {
+        if (item == null)
+        {
+            Debug.LogError("ApplySupportItemEffect: 아이템이 null입니다!");
+            return;
+        }
+
+        Debug.Log($"[GameManager] {item.itemName} 효과 적용 시작 - 레벨: {newLevel}, 효과 타입: {item.effectType}");
+
+        // 시야/밝기 아이템 효과 즉시 적용 (이름 기반 판단 대신 effectType 사용)
+        if (item.effectType == SupportItemEffectType.VisionChange)
+        {
+            float visionValue = item.GetVisionEffectValue(newLevel);
+            Debug.Log($"[GameManager] 비전 효과 값: {visionValue}");
+
+            // 아이템 이름으로 구분하는 대신 특정 플래그를 사용하거나 아이템 설정을 통해 결정할 수 있습니다.
+            if (item.itemName.Contains("손전등") || item.itemName.Contains("flashlight") || item.itemName.Contains("Flashlight"))
+            {
+                if (playerLight != null)
+                {
+                    Debug.Log($"[GameManager] playerLight 적용 전: {playerLight.pointLightOuterRadius} -> 적용 후: {visionValue}");
+                    playerLight.pointLightOuterRadius = visionValue;
+                }
+                else
+                {
+                    Debug.LogError("[GameManager] playerLight가 null입니다! Inspector에서 할당해주세요.");
+                }
+            }
+            else if (item.itemName.Contains("야간투시") || item.itemName.Contains("night") || item.itemName.Contains("Night"))
+            {
+                if (globalLight != null)
+                {
+                    Debug.Log($"[GameManager] globalLight 적용 전: {globalLight.intensity} -> 적용 후: {visionValue}");
+                    globalLight.intensity = visionValue;
+                    globalLight.gameObject.SetActive(true); // 확실하게 활성화
+                }
+                else
+                {
+                    Debug.LogError("[GameManager] globalLight가 null입니다! Inspector에서 할당해주세요.");
+                }
+            }
+        }
+
+        // 스탯 관련 효과는 GetPlayerStatValue에서 계산되므로 여기서는 별도 적용 불필요
+    }
+
+    // 특정 지원 아이템의 현재 레벨 가져오기
+    public int GetSupportItemLevel(SupportItemSO item)
+    {
+        if (supportItemLevels.TryGetValue(item, out int level))
+        {
+            return level;
+        }
+        return 0; // 획득하지 않았으면 0 반환
     }
 
     // Set game state
@@ -181,9 +293,12 @@ public class GameManager : Singleton<GameManager>
         playerBuffEffects.Add(bonusStat.playerBuffEffect);
     }
 
-    public float GetPlayerStatValue(Player.BonusStat statEnum, float value)
+    // 스탯 계산 시 지원 아이템 레벨 반영
+    public float GetPlayerStatValue(Player.BonusStat statEnum, float baseValue)
     {
-        float result = value;
+        float result = baseValue;
+
+        // 1. 기간제 버프/디버프 적용 (기존 playerBonusStats)
         foreach (Player.PlayerBonusStat bonusStat in playerBonusStats)
         {
             if (bonusStat.bonusStat == statEnum)
@@ -194,11 +309,32 @@ public class GameManager : Singleton<GameManager>
                         result += bonusStat.value;
                         break;
                     case Player.BonusStatType.Percentage:
-                        result *= bonusStat.value;
+                        result *= bonusStat.value; // 곱연산 주의
                         break;
                 }
             }
         }
+
+        // 2. 지원 아이템 레벨 기반 영구 스탯 적용
+        foreach (var kvp in supportItemLevels)
+        {
+            SupportItemSO item = kvp.Key;
+            int level = kvp.Value;
+
+            if (level > 0)
+            {
+                 // 고정값 효과 누적 적용
+                 float fixedBonus = item.GetCumulativeStatValue(statEnum, Player.BonusStatType.Fixed, level);
+                 result += fixedBonus;
+
+                 // 비율값 효과 누적 적용 (곱연산)
+                 float percentageBonus = item.GetCumulativeStatValue(statEnum, Player.BonusStatType.Percentage, level);
+                 result *= percentageBonus;
+            }
+        }
+
+        // 최종 값 반환 (필요시 최소/최대값 제한 추가)
+        // 예: if (statEnum == Player.BonusStat.AttackSpeed) result = Mathf.Max(result, 0.1f);
         return result;
     }
 
@@ -313,7 +449,7 @@ public class GameManager : Singleton<GameManager>
                 experienceToLevelUp += 1000;
                 break;
         }
+        // TODO: 레벨업 시 LevelUpSelectManager를 통해 선택 UI 표시 로직 호출
+        // LevelUpSelectManager.Instance.ShowLevelUpOptions();
     }
-
-
 }
