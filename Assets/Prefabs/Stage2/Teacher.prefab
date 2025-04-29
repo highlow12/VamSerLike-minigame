@@ -115,9 +115,9 @@ Transform:
   m_GameObject: {fileID: 2334559147887398395}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.465, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 0.465, z: -0.25}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2224379733218394339}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -165,7 +165,7 @@ SpriteRenderer:
   m_SortingLayerID: -284238199
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1725279297019079670, guid: 99c9e5a8c4957854080e8cff088f1d44, type: 3}
+  m_Sprite: {fileID: -5112456522399299503, guid: e234953cfff38994c88bb16213e3744d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
@@ -342,8 +342,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.6, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5013425721938438635}
   - {fileID: 1565339399132118147}
@@ -443,6 +443,13 @@ MonoBehaviour:
   currentHealth: 1
   damage: 1
   attackRange: 1
+  moveSounds: []
+  attackSounds: []
+  hurtSounds: []
+  deathSounds: []
+  soundVolume: 0.7
+  minSoundDistance: 1
+  maxSoundDistance: 15
   phaseChangeHealthThreshold: 1
   berserkHealthThreshold: 1
   Head: {fileID: 7174692205659913907}

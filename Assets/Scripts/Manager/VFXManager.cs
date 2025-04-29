@@ -20,21 +20,23 @@ public class VFXManager : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
 
-    public Material defaultMaterial;
-    public Material _invertMaterial;
+    [SerializeField] Material defaultMaterial;
+    [SerializeField] Material _invertMaterial;
     Material invertMaterial;
-    public Material _noiseMaterial;
+    [SerializeField] Material _noiseMaterial;
     Material noiseMaterial;
-    public Material _eyeMaterial;
+    [SerializeField] Material _eyeMaterial;
     Material eyeMaterial;
-    public Material _voronoiMaterial;
+    [SerializeField] Material _voronoiMaterial;
     Material voronoiMaterial;
 
-    public GameObject up;
-    public GameObject down;
+    [SerializeField] GameObject up;
+    [SerializeField] GameObject down;
 
     public GameObject bloodParticle;
     public GameObject handParticle;
+
+    public GameObject journal;
 
     bool eyeBlink = false;
 
@@ -292,5 +294,10 @@ public class VFXManager : MonoBehaviour
             handParticle.SetActive(false);
             handParticle.SetActive(true);
         }
+    }
+
+    public void Journal(bool enable)
+    {
+        if (journal != null) journal.SetActive(enable);
     }
 }

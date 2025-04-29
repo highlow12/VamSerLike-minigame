@@ -211,7 +211,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -305031567
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: -7380532140577222888, guid: c55715f991ffd4087949d9a40baf733c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -258,6 +258,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ac9cef5ef9c3461d9014a7bf2f351e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDamage: 0
+  tweeningDuration: 1
+  attackDamage: 1
+  attackRange: 0
   attackIntervalInTicks: 0
   colliderObject: {fileID: 1825204874148398406}
+  subWeaponSO: {fileID: 0}

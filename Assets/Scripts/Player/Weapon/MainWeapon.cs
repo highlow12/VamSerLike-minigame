@@ -13,7 +13,8 @@ namespace Weapon
             Cross,
             Machete,
             Shotgun,
-            HolyWater
+            HolyWater,
+            Glass
         }
         [Serializable]
         public struct MonsterHit

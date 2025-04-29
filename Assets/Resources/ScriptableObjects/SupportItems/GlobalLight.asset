@@ -12,12 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9740f8013de36f84b823d1a09c10467c, type: 3}
   m_Name: GlobalLight
   m_EditorClassIdentifier: 
-  itemName: "\uC0C8 \uC9C0\uC6D0 \uC544\uC774\uD15C"
-  description: "\uC544\uC774\uD15C \uC124\uBA85"
+  itemName: "\uC57C\uAC04\uD22C\uC2DC\uACBD"
+  description: "\uAE00\uB85C\uBC8C \uB77C\uC774\uD2B8"
   icon: {fileID: 0}
   maxLevel: 5
-  effectType: 0
+  effectType: 1
   targetStat: 6
   fixedBonusPerLevel: []
   percentageBonusPerLevel: []
-  visionValuePerLevel: []
+  visionValuePerLevel:
+  - 0.1
+  - 0.2
+  - 0.3
+  - 0.4
+  - 0.5
