@@ -12,12 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9740f8013de36f84b823d1a09c10467c, type: 3}
   m_Name: Projectile
   m_EditorClassIdentifier: 
-  itemName: "\uC0C8 \uC9C0\uC6D0 \uC544\uC774\uD15C"
-  description: "\uC544\uC774\uD15C \uC124\uBA85"
+  itemName: "\uB2E4\uC911 \uBC1C\uC0AC \uBAA8\uB4C8"
+  description: "\uD22C\uC0AC\uCCB4 \uAC1C\uC218"
   icon: {fileID: 0}
   maxLevel: 5
   effectType: 0
-  targetStat: 6
-  fixedBonusPerLevel: []
+  targetStat: 4
+  fixedBonusPerLevel:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
   percentageBonusPerLevel: []
   visionValuePerLevel: []

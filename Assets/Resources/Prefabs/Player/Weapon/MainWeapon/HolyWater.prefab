@@ -103,7 +103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d77ae7a11d511437a8746bb6e10f139c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDamage: 0
+  tweeningDuration: 1
+  attackDamage: 1
   attackRange: 0
   attackIntervalInTicks: 0
   colliderObject: {fileID: 6814831322662165562}

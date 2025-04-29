@@ -75,7 +75,7 @@ public class LevelUpUI : MonoBehaviour
     private void Start()
     {
         // WeaponsInventoryUI 참조 찾기
-        weaponsInventoryUI = FindObjectOfType<WeaponsInventoryUI>();
+        weaponsInventoryUI = FindFirstObjectByType<WeaponsInventoryUI>();
         if (weaponsInventoryUI == null)
         {
             Debug.LogWarning("[LevelUpUI] WeaponsInventoryUI를 찾을 수 없습니다!");
