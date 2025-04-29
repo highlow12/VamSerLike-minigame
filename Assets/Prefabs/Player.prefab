@@ -77,8 +77,8 @@ SpriteRenderer:
   m_SortingLayerID: -1668457115
   m_SortingLayer: 7
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7482667652216324306, guid: 9df729426e2ad44f6ac8f3c469c6be6c, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 6381743190144999022, guid: 4c35542fb6e43924d81c688bb7fbb50e, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2
@@ -290,6 +290,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
+  baseMoveSpeed: 1
   moveSpeed: 0
   speed: 2
   speedDebuffReduce: 0.8
@@ -310,6 +311,8 @@ MonoBehaviour:
   playerAttack: {fileID: 7969197253108457264}
   healthBar: {fileID: 4415956564164406851}
   _currentPlayerSkin: 0
+  playerSpecialEffect: 0
+  baseMaxHealth: 100
   maxHealth: 100
   health: 100
 --- !u!61 &3901380010685635139
@@ -686,7 +689,7 @@ SpriteRenderer:
   m_SortingLayerID: -1668457115
   m_SortingLayer: 7
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 9df729426e2ad44f6ac8f3c469c6be6c, type: 3}
+  m_Sprite: {fileID: -527614206286347668, guid: c82867f02edc6bd478bc28874d2d66c8, type: 3}
   m_Color: {r: 0.5, g: 0.48349056, b: 0.48349056, a: 1}
   m_FlipX: 0
   m_FlipY: 0
