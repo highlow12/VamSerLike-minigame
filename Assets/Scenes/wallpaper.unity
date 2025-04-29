@@ -7542,6 +7542,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5e001bfa8443714eb93577aba853c6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  homeScreen: {fileID: 0}
+  stageSelectScreen: {fileID: 0}
+  enterButton: {fileID: 0}
+  stageSelectButton: {fileID: 0}
+  selectStageButton: {fileID: 0}
+  leftArrowButton: {fileID: 0}
+  rightArrowButton: {fileID: 0}
+  portalImages: []
+  stageTitle: {fileID: 0}
+  stageDescription: {fileID: 0}
+  stageDifficulty: {fileID: 0}
 --- !u!1 &1398420640
 GameObject:
   m_ObjectHideFlags: 0
