@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponType: 0
   weaponGrade: 0
-  weaponSprite: {fileID: 1417698863042041040, guid: e006991b9be044406b9c0010a3523aac, type: 3}
-  attackAnimation: {fileID: 0}
-  hitAnimation: {fileID: 0}
+  weaponSprite: {fileID: 4051853549349518899, guid: bfbaf48aafc2f10408fcc741cce1d117, type: 3}
+  weaponAnimator: {fileID: 0}

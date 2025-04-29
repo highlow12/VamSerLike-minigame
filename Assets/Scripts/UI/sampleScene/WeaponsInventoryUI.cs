@@ -38,7 +38,7 @@ public class WeaponsInventoryUI : MonoBehaviour
     {
         // LevelUpUI 이벤트 구독
         if (levelUpUI == null)
-            levelUpUI = FindObjectOfType<LevelUpUI>();
+            levelUpUI = FindFirstObjectByType<LevelUpUI>();
         if (levelUpUI != null)
             levelUpUI.onPanelClosed += UpdateWeaponsDisplay;
         else

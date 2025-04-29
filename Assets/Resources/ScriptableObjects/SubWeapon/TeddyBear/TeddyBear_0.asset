@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9471625420b1496283e3c00e3a4d2dc, type: 3}
   m_Name: TeddyBear_0
   m_EditorClassIdentifier: 
-  weaponType: 1
+  weaponType: 0
   weaponGrade: 0
-  weaponSprite: {fileID: 5049987860154763569, guid: e8ec0e1de30f74b809e2ef29de826563, type: 3}
-  attackAnimation: {fileID: 0}
-  hitAnimation: {fileID: 0}
+  weaponSprite: {fileID: -7864066417245536962, guid: 67d45ab6cb80ba84a9bc737dab123d68, type: 3}
+  weaponAnimator: {fileID: 0}
