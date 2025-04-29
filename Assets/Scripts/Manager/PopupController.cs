@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using System.Linq;
 
 public class PopupController : MonoBehaviour
 {
@@ -10,8 +11,8 @@ public class PopupController : MonoBehaviour
     {
         public string popupName;
         public GameObject popupPanel;
-        public bool showOnStart = false; // ½ÃÀÛ ½Ã Ç¥½Ã ¿©ºÎ
-        public bool neverClose = false;  // Æ¯Á¤ ÆË¾÷ÀÌ ´İÈ÷Áö ¾Êµµ·Ï º¸È£
+        public bool showOnStart = false; // ì‹œì‘ ì‹œ ì—´ì§€ ì—¬ë¶€
+        public bool neverClose = false;  // íŠ¹ì • íŒì—…ì´ ë‹«íˆì§€ ì•Šë„ë¡ ë³´í˜¸
     }
 
     public List<PopupData> popupPanels = new List<PopupData>();
@@ -19,69 +20,158 @@ public class PopupController : MonoBehaviour
     private EventSystem eventSystem;
     private Dictionary<string, bool> popupStates = new Dictionary<string, bool>();
 
-    // StartPanel ÂüÁ¶¸¦ ¸í½ÃÀûÀ¸·Î Ãß°¡
+    // StartPanel ì°¸ì¡°ë¥¼ ëª…ì‹œì ìœ¼ë¡œ ì¶”ê°€
     [SerializeField] private GameObject startPanel;
 
-    // µğ¹ö±ëÀ» À§ÇÑ ·Î±× ¿É¼Ç
+    // ë””ë²„ê·¸ë¥¼ ìœ„í•œ ë¡œê·¸ ì˜µì…˜
     [SerializeField] private bool showDebugLogs = true;
+
+    // ë‹¤ë¥¸ íŒì—…ì„ ì—´ ë•Œ í˜„ì¬ ì—´ë¦° íŒì—…ì„ ìë™ìœ¼ë¡œ ë‹«ì„ì§€ ì—¬ë¶€
+    [SerializeField] private bool closeOthersWhenOpening = false;
+
+    // ë¶€ëª¨ Canvas ì°¸ì¡° ì¶”ê°€
+    private Canvas parentCanvas;
 
     private void Awake()
     {
-        // Awake¿¡¼­ ±âº» ÄÄÆ÷³ÍÆ® ÃÊ±âÈ­
+        // Awakeì—ì„œ ê¸°ë³¸ ì»´í¬ë„ŒíŠ¸ ì´ˆê¸°í™”
         raycaster = GetComponent<GraphicRaycaster>();
         eventSystem = EventSystem.current;
 
-        // StartPanel ÂüÁ¶°¡ ¾ø´Ù¸é ÀÚµ¿À¸·Î Ã£±â
+        // ë¶€ëª¨ Canvas ì°¾ê¸°
+        parentCanvas = GetComponentInParent<Canvas>();
+        if (parentCanvas == null)
+        {
+            Debug.LogWarning("PopupControllerì— ë¶€ëª¨ Canvasê°€ ì—†ìŠµë‹ˆë‹¤!");
+        }
+
+        // StartPanel ì°¸ì¡°ê°€ ì—†ë‹¤ë©´ ìë™ìœ¼ë¡œ ì°¾ê¸°
         if (startPanel == null)
         {
-            // ¸ÕÀú ÆË¾÷ ¸ñ·Ï¿¡¼­ StartPanel ÀÌ¸§À¸·Î µÈ Ç×¸ñ Ã£±â
+            // ë¨¼ì € íŒì—… ëª©ë¡ì—ì„œ StartPanel ì´ë¦„ìœ¼ë¡œ ëœ í•­ëª© ì°¾ê¸°
             var startPanelData = popupPanels.Find(x => x.popupName == "StartPanel");
             if (startPanelData != null && startPanelData.popupPanel != null)
             {
                 startPanel = startPanelData.popupPanel;
-                // StartPanelÀº ´İÈ÷Áö ¾Êµµ·Ï ¼³Á¤
+                // StartPanelì€ ë‹«íˆì§€ ì•Šë„ë¡ ì„¤ì •
                 startPanelData.neverClose = true;
-                if (showDebugLogs) Debug.Log("StartPanelÀ» ÆË¾÷ ¸ñ·Ï¿¡¼­ Ã£¾Æ ¼³Á¤Çß½À´Ï´Ù.");
+                if (showDebugLogs) Debug.Log("StartPanelì„ íŒì—… ëª©ë¡ì—ì„œ ì°¾ì•„ ì„¤ì •í–ˆìŠµë‹ˆë‹¤.");
             }
             else
             {
-                // ¾À¿¡¼­ ¹Ù·Î Ã£±â
+                // ì”¬ì—ì„œ ë°”ë¡œ ì°¾ê¸°
                 startPanel = GameObject.Find("StartPanel");
                 if (startPanel != null && showDebugLogs)
-                    Debug.Log("StartPanelÀ» ¾À¿¡¼­ Ã£¾Æ ¼³Á¤Çß½À´Ï´Ù.");
+                    Debug.Log("StartPanelì„ ì”¬ì—ì„œ ì°¾ì•„ ì„¤ì •í–ˆìŠµë‹ˆë‹¤.");
             }
         }
     }
 
     private void Start()
     {
-        // ¸ğµç ÆË¾÷ ÃÊ±âÈ­ - StartPanel Á¦¿Ü
+        // ëª¨ë“  íŒì—… ì´ˆê¸°í™” - StartPanel ì œì™¸
         foreach (var popup in popupPanels)
         {
             if (popup != null && popup.popupPanel != null && !string.IsNullOrEmpty(popup.popupName))
             {
-                // StartPanelÀº Ç×»ó È°¼ºÈ­, ´Ù¸¥ ÆË¾÷Àº ºñÈ°¼ºÈ­
+                // StartPanelì€ í•­ìƒ í™œì„±í™”, ë‹¤ë¥¸ íŒì—…ì€ ë¹„í™œì„±í™”
                 bool isStartPanel = (popup.popupName == "StartPanel" || popup.popupPanel == startPanel);
 
                 if (!isStartPanel)
                 {
-                    popup.popupPanel.SetActive(false);
-                    popupStates[popup.popupName] = false;
+                    popup.popupPanel.SetActive(popup.showOnStart); // showOnStart í”Œë˜ê·¸ì— ë”°ë¼ í™œì„±í™”
+                    popupStates[popup.popupName] = popup.showOnStart;
+
+                    if (popup.showOnStart && showDebugLogs)
+                        Debug.Log($"íŒì—… '{popup.popupName}'ì´ showOnStart ì„¤ì •ìœ¼ë¡œ ì¸í•´ ì‹œì‘ ì‹œ í™œì„±í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
                 }
                 else
                 {
-                    // StartPanelÀº Æ¯º° Ã³¸®
+                    // StartPanelì€ íŠ¹ë³„ ì²˜ë¦¬
                     popup.popupPanel.SetActive(true);
                     popupStates[popup.popupName] = true;
-                    //popup.neverClose = true; // StartPanelÀº ´İÈ÷Áö ¾Êµµ·Ï ¼³Á¤
 
-                    if (showDebugLogs) Debug.Log("StartPanelÀÌ È°¼ºÈ­µÇ¾ú½À´Ï´Ù.");
+                    if (showDebugLogs) Debug.Log("StartPanelì´ í™œì„±í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
                 }
             }
             else if (popup != null)
             {
-                Debug.LogWarning("À¯È¿ÇÏÁö ¾ÊÀº ÆË¾÷ ¼³Á¤: " + (popup.popupName ?? "ÀÌ¸§ ¾øÀ½"));
+                Debug.LogWarning("ìœ íš¨í•˜ì§€ ì•Šì€ íŒì—… ì„¤ì •: " + (popup.popupName ?? "ì´ë¦„ ì—†ìŒ"));
             }
+        }
+
+        // ì´ˆê¸°í™” ì™„ë£Œ í›„ ëª¨ë“  íŒì—… ìƒíƒœ ë¡œê¹…
+        if (showDebugLogs) LogAllPopupStates();
+    }
+
+    // ëª¨ë“  íŒì—…ì˜ ìƒíƒœë¥¼ ë¡œê·¸ë¡œ ì¶œë ¥í•˜ëŠ” ë””ë²„ê·¸ í•¨ìˆ˜
+    private void LogAllPopupStates()
+    {
+        Debug.Log("===== ëª¨ë“  íŒì—… ìƒíƒœ =====");
+        foreach (var popup in popupPanels)
+        {
+            if (popup != null && popup.popupPanel != null)
+            {
+                string positionInfo = "";
+                string sizeInfo = "";
+
+                RectTransform rt = popup.popupPanel.GetComponent<RectTransform>();
+                if (rt != null)
+                {
+                    positionInfo = rt.anchoredPosition.ToString();
+                    sizeInfo = rt.sizeDelta.ToString();
+                }
+
+                Debug.Log($"íŒì—…: {popup.popupName}, í™œì„±í™”: {popup.popupPanel.activeSelf}, " +
+                          $"neverClose: {popup.neverClose}, showOnStart: {popup.showOnStart}, " +
+                          $"ìœ„ì¹˜: {positionInfo}, í¬ê¸°: {sizeInfo}");
+
+                // Canvas ì»´í¬ë„ŒíŠ¸ê°€ ìˆëŠ”ì§€ í™•ì¸
+                Canvas panelCanvas = popup.popupPanel.GetComponent<Canvas>();
+                if (panelCanvas != null)
+                {
+                    Debug.Log($"  - Canvas ì •ë³´: RenderMode={panelCanvas.renderMode}, SortOrder={panelCanvas.sortingOrder}");
+                }
+            }
+        }
+        Debug.Log("=========================");
+    }
+
+    // UI ê³„ì¸µ êµ¬ì¡°ë¥¼ í™•ì¸í•˜ëŠ” ë””ë²„ê·¸ í•¨ìˆ˜
+    private void CheckUIHierarchy(GameObject panel, string prefix = "")
+    {
+        if (!showDebugLogs) return;
+
+        Debug.Log($"{prefix}Panel: {panel.name}, í™œì„±í™”: {panel.activeSelf}");
+
+        // Canvas ì»´í¬ë„ŒíŠ¸ í™•ì¸
+        Canvas canvas = panel.GetComponent<Canvas>();
+        if (canvas != null)
+        {
+            Debug.Log($"{prefix}- Canvas: RenderMode={canvas.renderMode}, SortOrder={canvas.sortingOrder}");
+        }
+
+        // CanvasGroup ì»´í¬ë„ŒíŠ¸ í™•ì¸
+        CanvasGroup canvasGroup = panel.GetComponent<CanvasGroup>();
+        if (canvasGroup != null)
+        {
+            Debug.Log($"{prefix}- CanvasGroup: Alpha={canvasGroup.alpha}, Interactable={canvasGroup.interactable}, BlocksRaycasts={canvasGroup.blocksRaycasts}");
+        }
+
+        foreach (Transform child in panel.transform)
+        {
+            string positionInfo = "";
+            RectTransform rt = child.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                positionInfo = rt.anchoredPosition.ToString();
+            }
+
+            Debug.Log($"{prefix}- Child: {child.name}, í™œì„±í™”: {child.gameObject.activeSelf}, ìœ„ì¹˜: {positionInfo}");
+
+            // ì¬ê·€ì ìœ¼ë¡œ ìì‹ë“¤ë„ í™•ì¸
+            if (child.childCount > 0)
+                CheckUIHierarchy(child.gameObject, prefix + "  ");
         }
     }
 
@@ -90,25 +180,78 @@ public class PopupController : MonoBehaviour
         PopupData popup = popupPanels.Find(x => x.popupName == popupName);
         if (popup != null && popup.popupPanel != null)
         {
-            // ÀÌ¹Ì È°¼ºÈ­µÈ °æ¿ì ¹«½Ã
+            // ì´ë¯¸ í™œì„±í™”ëœ ê²½ìš° ë¬´ì‹œ
             if (popupStates.ContainsKey(popupName) && popupStates[popupName])
-                return;
-
-            // StartPanel¸¸ Æ¯º° Ã³¸®ÇÏ°í, ´Ù¸¥ ÆË¾÷ÀÌ ¿­¸± ¶§ StartPanelÀ» ´İÁö ¾Ê½À´Ï´Ù
-            if (popupName != "StartPanel")
             {
-                // StartPanelÀ» Á¦¿ÜÇÑ ´Ù¸¥ ÆË¾÷¸¸ ´İ±â
-                CloseAllPopupsExcept("StartPanel");
+                if (showDebugLogs) Debug.Log($"íŒì—… '{popupName}'ì€ ì´ë¯¸ í™œì„±í™” ìƒíƒœì…ë‹ˆë‹¤.");
+                return;
             }
 
+            // ë‹¤ë¥¸ íŒì—…ì„ ë‹«ì„ì§€ ì—¬ë¶€ ì²´í¬
+            if (closeOthersWhenOpening)
+            {
+                // StartPanelë§Œ íŠ¹ë³„ ì²˜ë¦¬í•˜ê³ , ë‹¤ë¥¸ íŒì—…ì´ ì—´ë¦´ ë•Œ StartPanelì„ ë‹«ì§€ ì•ŠìŠµë‹ˆë‹¤
+                if (popupName != "StartPanel")
+                {
+                    // StartPanelì„ ì œì™¸í•œ ë‹¤ë¥¸ íŒì—…ë§Œ ë‹«ê¸°
+                    CloseAllPopupsExcept("StartPanel");
+                }
+            }
+
+            // ì¤‘ìš”: ë¶€ëª¨ Canvasê°€ ë¹„í™œì„±í™”ë˜ì–´ ìˆë‹¤ë©´ í™œì„±í™”
+            if (parentCanvas != null && !parentCanvas.gameObject.activeSelf)
+            {
+                parentCanvas.gameObject.SetActive(true);
+                Debug.Log("ë¶€ëª¨ Canvasê°€ ë¹„í™œì„±í™” ìƒíƒœì—¬ì„œ í™œì„±í™”í–ˆìŠµë‹ˆë‹¤.");
+            }
+
+            // íŒì—… í™œì„±í™” ì „ Canvas í™•ì¸
+            Canvas popupCanvas = popup.popupPanel.GetComponent<Canvas>();
+            if (popupCanvas != null)
+            {
+                if (showDebugLogs) Debug.Log($"íŒì—… '{popupName}'ì— Canvas ì»´í¬ë„ŒíŠ¸ê°€ ìˆìŠµë‹ˆë‹¤. RenderMode: {popupCanvas.renderMode}, SortOrder: {popupCanvas.sortingOrder}");
+
+                // Canvasê°€ ìˆë‹¤ë©´ í™•ì¸: StagePanelì´ í™œì„±í™”ë˜ì–´ë„ Canvasê°€ êº¼ì§€ì§€ ì•Šë„ë¡
+                popupCanvas.enabled = true;
+            }
+
+            // íŒì—… ë‚´ë¶€ì— ë‹¤ë¥¸ Canvasê°€ ìˆëŠ”ì§€ í™•ì¸
+            Canvas[] childCanvases = popup.popupPanel.GetComponentsInChildren<Canvas>(true);
+            foreach (Canvas childCanvas in childCanvases)
+            {
+                if (childCanvas != popupCanvas)
+                {
+                    childCanvas.enabled = true;
+                    if (showDebugLogs) Debug.Log($"íŒì—… '{popupName}'ì˜ ìì‹ Canvasë¥¼ í™œì„±í™”: {childCanvas.gameObject.name}");
+                }
+            }
+
+            // íŒì—… í™œì„±í™”
             popup.popupPanel.SetActive(true);
             popupStates[popupName] = true;
 
-            if (showDebugLogs) Debug.Log($"ÆË¾÷ ¿­¸²: {popupName}");
+            // íŒì—… í™œì„±í™” í›„ ë‹¤ì‹œ Canvas ìƒíƒœ í™•ì¸
+            if (popupCanvas != null && !popupCanvas.enabled)
+            {
+                popupCanvas.enabled = true;
+                Debug.Log($"íŒì—… '{popupName}'ì˜ Canvasê°€ ë¹„í™œì„±í™”ë˜ì–´ ë‹¤ì‹œ í™œì„±í™”í–ˆìŠµë‹ˆë‹¤.");
+            }
+
+            // ë””ë²„ê·¸ ì •ë³´ ì¶”ê°€ - íŒì—… í™œì„±í™” ì‹œ ê³„ì¸µ êµ¬ì¡° ì²´í¬
+            if (showDebugLogs)
+            {
+                Debug.Log($"íŒì—… ì—´ë¦¼: {popupName} - Panel: {popup.popupPanel.name}, í™œì„±í™” ìƒíƒœ: {popup.popupPanel.activeSelf}");
+                CheckUIHierarchy(popup.popupPanel);
+            }
         }
         else
         {
-            if (showDebugLogs) Debug.LogWarning($"Ã£À» ¼ö ¾ø´Â ÆË¾÷: {popupName}");
+            // ë“±ë¡ëœ ëª¨ë“  íŒì—… ì´ë¦„ ì¶œë ¥í•˜ì—¬ ë””ë²„ê¹… ë•ê¸°
+            if (showDebugLogs)
+            {
+                string registeredPopups = string.Join(", ", popupPanels.Select(p => p.popupName).ToArray());
+                Debug.LogWarning($"ì°¾ì„ ìˆ˜ ì—†ëŠ” íŒì—…: {popupName} - ë“±ë¡ëœ íŒì—… ëª©ë¡: {registeredPopups}");
+            }
         }
     }
 
@@ -117,18 +260,18 @@ public class PopupController : MonoBehaviour
         PopupData popup = popupPanels.Find(x => x.popupName == popupName);
         if (popup != null && popup.popupPanel != null)
         {
-            // neverClose ÇÃ·¡±×°¡ trueÀÎ ÆË¾÷Àº ´İÈ÷Áö ¾Êµµ·Ï º¸È£
+            // neverClose í”Œë˜ê·¸ê°€ trueì¸ íŒì—…ì€ ë‹«íˆì§€ ì•Šë„ë¡ ë³´í˜¸
             if (popup.neverClose)
             {
-                if (showDebugLogs) Debug.Log($"{popupName}Àº(´Â) neverClose ¼³Á¤À¸·Î ÀÎÇØ ´İÈ÷Áö ¾Ê½À´Ï´Ù.");
+                if (showDebugLogs) Debug.Log($"{popupName}ì€(ëŠ”) neverClose ì„¤ì •ìœ¼ë¡œ ì¸í•´ ë‹«íˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
                 return;
             }
 
-            // »óÅÂ È®ÀÎ
+            // ìƒíƒœ í™•ì¸
             if (!popupStates.ContainsKey(popupName) || !popupStates[popupName])
                 return;
 
-            // ÇöÀç ¸¶¿ì½º Æ÷ÀÎÅÍ ¾Æ·¡¿¡ ÀÖ´Â UI ¿ä¼Ò È®ÀÎ
+            // í˜„ì¬ ë§ˆìš°ìŠ¤ í¬ì¸í„° ì•„ë˜ì— ìˆëŠ” UI ìš”ì†Œ í™•ì¸
             PointerEventData pointerEventData = new PointerEventData(eventSystem);
             pointerEventData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
@@ -150,7 +293,7 @@ public class PopupController : MonoBehaviour
                 popup.popupPanel.SetActive(false);
                 popupStates[popupName] = false;
 
-                if (showDebugLogs) Debug.Log($"ÆË¾÷ ´İÈû: {popupName}");
+                if (showDebugLogs) Debug.Log($"íŒì—… ë‹«í˜: {popupName}");
             }
         }
     }
@@ -160,17 +303,17 @@ public class PopupController : MonoBehaviour
         PopupData popup = popupPanels.Find(x => x.popupName == popupName);
         if (popup != null && popup.popupPanel != null)
         {
-            // neverClose ÇÃ·¡±×°¡ trueÀÎ ÆË¾÷Àº °­Á¦·Îµµ ´İÈ÷Áö ¾Êµµ·Ï º¸È£
+            // neverClose í”Œë˜ê·¸ê°€ trueì¸ íŒì—…ì€ ê°•ì œë¡œë„ ë‹«íˆì§€ ì•Šë„ë¡ ë³´í˜¸
             if (popup.neverClose)
             {
-                if (showDebugLogs) Debug.Log($"{popupName}Àº(´Â) neverClose ¼³Á¤À¸·Î ÀÎÇØ °­Á¦·Îµµ ´İÈ÷Áö ¾Ê½À´Ï´Ù.");
+                if (showDebugLogs) Debug.Log($"{popupName}ì€(ëŠ”) neverClose ì„¤ì •ìœ¼ë¡œ ì¸í•´ ê°•ì œë¡œë„ ë‹«íˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
                 return;
             }
 
             popup.popupPanel.SetActive(false);
             popupStates[popupName] = false;
 
-            if (showDebugLogs) Debug.Log($"ÆË¾÷ °­Á¦ ´İÈû: {popupName}");
+            if (showDebugLogs) Debug.Log($"íŒì—… ê°•ì œ ë‹«í˜: {popupName}");
         }
     }
 
@@ -178,14 +321,14 @@ public class PopupController : MonoBehaviour
     {
         foreach (var popup in popupPanels)
         {
-            if (popup.popupPanel != null && !popup.neverClose)  // neverClose ÆË¾÷Àº ´İÁö ¾ÊÀ½
+            if (popup.popupPanel != null && !popup.neverClose)  // neverClose íŒì—…ì€ ë‹«ì§€ ì•ŠìŒ
             {
                 popup.popupPanel.SetActive(false);
                 popupStates[popup.popupName] = false;
             }
         }
 
-        if (showDebugLogs) Debug.Log("¸ğµç ÆË¾÷ÀÌ ´İÇû½À´Ï´Ù (neverClose ÆË¾÷ Á¦¿Ü)");
+        if (showDebugLogs) Debug.Log("ëª¨ë“  íŒì—…ì´ ë‹«í˜”ìŠµë‹ˆë‹¤ (neverClose íŒì—… ì œì™¸)");
     }
 
     public void CloseAllPopupsExcept(string exceptPopupName)
@@ -199,25 +342,25 @@ public class PopupController : MonoBehaviour
             }
         }
 
-        if (showDebugLogs) Debug.Log($"¸ğµç ÆË¾÷ÀÌ ´İÇû½À´Ï´Ù ({exceptPopupName} ¹× neverClose ÆË¾÷ Á¦¿Ü)");
+        if (showDebugLogs) Debug.Log($"ëª¨ë“  íŒì—…ì´ ë‹«í˜”ìŠµë‹ˆë‹¤ ({exceptPopupName} ë° neverClose íŒì—… ì œì™¸)");
     }
 
-    // Æ¯Á¤ ÆË¾÷ÀÌ ¿­·ÁÀÖ´ÂÁö È®ÀÎ
+    // íŠ¹ì • íŒì—…ì´ ì—´ë ¤ìˆëŠ”ì§€ í™•ì¸
     public bool IsPopupOpen(string popupName)
     {
         return popupStates.ContainsKey(popupName) && popupStates[popupName];
     }
 
-    // ·±Å¸ÀÓ¿¡ ÆË¾÷ Ãß°¡
+    // ëŸ°íƒ€ì„ì— íŒì—… ì¶”ê°€
     public void AddPopup(string popupName, GameObject popupPanel, bool neverClose = false)
     {
         if (string.IsNullOrEmpty(popupName) || popupPanel == null)
             return;
 
-        // ÀÌ¹Ì Á¸ÀçÇÏ´Â ÆË¾÷ È®ÀÎ
+        // ì´ë¯¸ ì¡´ì¬í•˜ëŠ” íŒì—… í™•ì¸
         if (popupPanels.Exists(x => x.popupName == popupName))
         {
-            if (showDebugLogs) Debug.LogWarning($"ÀÌ¹Ì Á¸ÀçÇÏ´Â ÆË¾÷ ÀÌ¸§: {popupName}");
+            if (showDebugLogs) Debug.LogWarning($"ì´ë¯¸ ì¡´ì¬í•˜ëŠ” íŒì—… ì´ë¦„: {popupName}");
             return;
         }
 
@@ -231,6 +374,6 @@ public class PopupController : MonoBehaviour
         popupPanels.Add(newPopup);
         popupStates[popupName] = popupPanel.activeSelf;
 
-        if (showDebugLogs) Debug.Log($"·±Å¸ÀÓ¿¡ ÆË¾÷ Ãß°¡µÊ: {popupName}");
+        if (showDebugLogs) Debug.Log($"ëŸ°íƒ€ì„ì— íŒì—… ì¶”ê°€ë¨: {popupName}");
     }
 }
