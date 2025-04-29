@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Data;
+using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -11,7 +12,8 @@ public class PlayerAttack : MonoBehaviour
     public List<Weapon.SubWeapon> subWeapons = new();
     [SerializeField] private GameObject attackDirectionObject;
     private PlayerMove playerMove;
-    private Vector2 attackDirection = new(0, 1);
+    public Vector2 attackDirection { get; private set; } = Vector2.right;
+    
 
     void Start()
     {
@@ -149,7 +151,7 @@ public class PlayerAttack : MonoBehaviour
         }
         return (Weapon.WeaponRare)Enum.Parse(typeof(Weapon.WeaponRare), data[dataIndex]["weaponRare"].ToString());
     }
-
+    Vector2 Aimdirection = Vector2.zero;
     private Vector2 CalculateAttackDirection(Weapon.WeaponAttackDirectionType weaponAttackDirectionType)
     {
         switch (weaponAttackDirectionType)
@@ -163,11 +165,12 @@ public class PlayerAttack : MonoBehaviour
                 GameObject nearestMonster = mosnters.OrderBy(x => Math.Abs(Vector2.Distance(x.transform.position, transform.position))).FirstOrDefault();
                 return nearestMonster.transform.position - transform.position;
             case Weapon.WeaponAttackDirectionType.Aim:
-                if ((Vector2)playerMove.inputVec == Vector2.zero)
+                if (Aimdirection == Vector2.zero)
                 {
                     return attackDirection;
                 }
-                return playerMove.inputVec;
+                //return playerMove.inputVec;
+                return Aimdirection;
             default:
                 return Vector2.zero;
         }
@@ -177,6 +180,19 @@ public class PlayerAttack : MonoBehaviour
     {
         float angle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg - 90;
         return Quaternion.Euler(new Vector3(0, 0, angle));
+    }
+
+    public void OnAim(InputValue value)
+    {
+        var mousePos = value.Get<Vector2>();
+        Vector2 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+        Vector2 playerPos = transform.position;
+        Vector2 direction = worldPos - playerPos;
+        
+        if (direction.magnitude > 0.1f)
+        {
+            Aimdirection = direction.normalized;
+        }
     }
 
 }

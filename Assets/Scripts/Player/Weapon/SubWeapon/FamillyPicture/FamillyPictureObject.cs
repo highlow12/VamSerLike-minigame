@@ -11,6 +11,7 @@ public class FamillyPictureObject : AttackObject
     {
         base.Init(attackDamage, attackRange, attackIntervalInTicks, attackTarget);
         gameObject.SetActive(true);
+        transform.localScale = new Vector3(attackRange, attackRange, 1);
         picture.transform.localScale = new Vector3(attackRange, attackRange, 1);
         SubWeaponInit();
         barrierHealth = attackDamage;
@@ -18,7 +19,6 @@ public class FamillyPictureObject : AttackObject
 
     protected override void Awake()
     {
-        animation = GetComponent<Animation>();
     }
 
     void OnEnable()

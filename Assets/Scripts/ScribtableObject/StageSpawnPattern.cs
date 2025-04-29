@@ -31,6 +31,7 @@ public class StageSpawnPattern : ScriptableObject
     public List<SpawnPatternData> patterns = new List<SpawnPatternData>();
 
     // 패턴을 시작 시간 순으로 정렬하는 메서드
+    [ContextMenu("패턴 시간순 정렬")]
     public void SortPatternsByStartTime()
     {
         patterns.Sort((a, b) => a.startTime.CompareTo(b.startTime));

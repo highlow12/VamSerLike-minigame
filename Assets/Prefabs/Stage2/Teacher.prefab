@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5013425721938438635}
   - component: {fileID: 8188605481976849569}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7174692205659913907}
   - component: {fileID: 5998887684924805974}
-  m_Layer: 0
+  - component: {fileID: 3234250672202063871}
+  - component: {fileID: 8361261471725422074}
+  m_Layer: 8
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,6 +176,55 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!70 &3234250672202063871
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2334559147887398395}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.5996094, y: 0.3671875}
+  m_Direction: 1
+--- !u!114 &8361261471725422074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2334559147887398395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7458369e8f6f1874abbbe261c3b78b7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4408937409886817050
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,7 +235,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1565339399132118147}
   - component: {fileID: 1645996886607948905}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 9-Sliced
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -273,9 +324,10 @@ GameObject:
   - component: {fileID: 994135848103105668}
   - component: {fileID: 1023046890322793988}
   - component: {fileID: 2653007400124911302}
-  m_Layer: 0
+  - component: {fileID: 4798868890110357587}
+  m_Layer: 8
   m_Name: Teacher
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -390,8 +442,6 @@ MonoBehaviour:
   maxHealth: 1
   currentHealth: 1
   damage: 1
-  defense: 1
-  detectionRange: 1
   attackRange: 1
   phaseChangeHealthThreshold: 1
   berserkHealthThreshold: 1
@@ -401,3 +451,40 @@ MonoBehaviour:
   NeckMinimumLenght: 30
   NeckMaximumLenght: 50
   HeadRotateTime: 0.25
+--- !u!70 &4798868890110357587
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5001692169701588040}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.3798828, y: 0.8466797}
+  m_Direction: 0

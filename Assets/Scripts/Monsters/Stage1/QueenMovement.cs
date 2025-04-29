@@ -5,9 +5,10 @@ using System.Collections.Generic;
 public class QueenMovement : BossMonster
 {
     public Animator animator { get; private set; }
-    float stateTimer;
+    float StateTimer;
     [SerializeField] public float moveSpeed = 1;
     [SerializeField] public float idleRange = 5;
+    // Removed duplicate attackRange field - we'll use the one inherited from the parent class
     public bool canTakeDamage = false;
     public float[] chaseTimeRange = new float[2];
     public float[] idleTimerRange = new float[2];
@@ -16,30 +17,39 @@ public class QueenMovement : BossMonster
         Idle = 0,
         Chase = 1
     }
+    
+    // Initialize the StateTimer in the Start or Awake method
+    protected override void Start()
+    {
+        base.Start();
+        // Initialize with a reasonable default value
+        StateTimer = 0;
+    }
+    
     protected override void checkeState()
     {
-        // stateTimer를 지난 프레임 이후 경과한 시간만큼 감소시킨다
-        stateTimer -= Time.deltaTime;
+        // StateTimer를 지난 프레임 이후 경과한 시간만큼 감소시킨다
+        StateTimer -= Time.deltaTime;
 
         // if를 사용한 이유: switch의 case문은 컴파일 시에 값이 정해져 있어야 한다
         if (monsterFSM.currentState == states[(int)QueenAction.Idle])
         {
-            // stateTimer가 0보다 크면 함수를 종료한다
-            if (stateTimer > 0) return;
+            // StateTimer가 0보다 크면 함수를 종료한다
+            if (StateTimer > 0) return;
 
-            // stateTimer를 chaseTimeRange 범위 내의 랜덤 값으로 설정한다
-            stateTimer = Random.Range(chaseTimeRange.Min(), chaseTimeRange.Max());
+            // StateTimer를 chaseTimeRange 범위 내의 랜덤 값으로 설정한다
+            StateTimer = Random.Range(chaseTimeRange.Min(), chaseTimeRange.Max());
 
             // 몬스터의 상태를 Chase로 변경한다
             monsterFSM.ChangeState(states[(int)QueenAction.Chase]);
         }
         else if (monsterFSM.currentState == states[(int)QueenAction.Chase])
         {
-            // stateTimer가 0보다 크면 함수를 종료한다
-            if (stateTimer > 0) return;
+            // StateTimer가 0보다 크면 함수를 종료한다
+            if (StateTimer > 0) return;
 
-            // stateTimer를 idleTimerRange 범위 내의 랜덤 값으로 설정한다
-            stateTimer = Random.Range(idleTimerRange.Min(), idleTimerRange.Max());
+            // StateTimer를 idleTimerRange 범위 내의 랜덤 값으로 설정한다
+            StateTimer = Random.Range(idleTimerRange.Min(), idleTimerRange.Max());
 
             // 몬스터의 상태를 Idle로 변경한다
             monsterFSM.ChangeState(states[(int)QueenAction.Idle]);
@@ -90,12 +100,16 @@ class QueenIdle : BaseState
         targetPos = Random.insideUnitCircle * idleRange + (Vector2)GameManager.Instance.player.transform.position;
 
         _monster.animator.SetTrigger("Dance");
+        
+        // 춤을 출 때도 부드럽게 이동하기 때문에 이동 사운드 재생
+        _monster.PlayMoveSound();
     }
 
     // 상태가 종료될 때 호출되는 메서드
     public override void OnStateExit()
     {
-        // 현재는 아무 동작도 하지 않음
+        // 상태 전환 시 이동 사운드 중지
+        _monster.StopMoveSound();
     }
 
     // 상태가 업데이트될 때 호출되는 메서드
@@ -117,6 +131,8 @@ class QueenChase : BaseState
 {
     QueenMovement _monster;
     private float moveSpeed;
+    private bool hasPlayedAttackSound = false;
+    
     public QueenChase(Monster _monster, float moveSpeed) : base(_monster)
     {
         this._monster = (QueenMovement)_monster;
@@ -125,13 +141,24 @@ class QueenChase : BaseState
 
     public override void OnStateEnter()
     {
+        VFXManager.Instance.AnimateNoise();
         _monster.canTakeDamage = false;
         _monster.animator.SetTrigger("Move");
+        
+        // 퀸 추격 모드는 공격적인 움직임이므로 공격 사운드도 재생
+        _monster.PlayAttackSound();
+        hasPlayedAttackSound = true;
+        
+        // 이동 사운드도 재생
+        _monster.PlayMoveSound();
     }
 
     public override void OnStateExit()
     {
-
+        VFXManager.Instance.Normalize();
+        
+        // 상태 전환 시 이동 사운드 중지
+        _monster.StopMoveSound();
     }
 
     public override void OnStateUpdate()
@@ -140,6 +167,12 @@ class QueenChase : BaseState
         dir = dir.normalized;
 
         _monster.transform.position += dir * moveSpeed * Time.deltaTime;
+        
+        // 일정 시간마다 공격 사운드 재생 (약 3초 간격)
+        if (hasPlayedAttackSound && Time.time % 3 < 0.1f)
+        {
+            _monster.PlayAttackSound();
+        }
 
         Debug.Log("Chase");
     }

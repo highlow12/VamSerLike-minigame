@@ -8,6 +8,5 @@ public class SubWeaponSO : ScriptableObject
     public int weaponGrade;
     [Header("AttackObject")]
     public Sprite weaponSprite;
-    public AnimationClip attackAnimation;
-    public AnimationClip hitAnimation;
+    public AnimatorOverrideController weaponAnimator;
 }

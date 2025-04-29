@@ -100,14 +100,21 @@ namespace Item
         public virtual void UseItem()
         {
 #if UNITY_EDITOR
-            string processedDescription = ReplaceVariables(dropItemDescription);
-            DebugConsole.Line itemLog = new()
+            try
             {
-                text = $"[{GameManager.Instance.gameTimer} - {dropItemName}:{dropItemSO?.name}({DerivedClassName})] {processedDescription}",
-                messageType = DebugConsole.MessageType.Local,
-                tick = GameManager.Instance.gameTimer
-            };
-            DebugConsole.Instance.MergeLine(itemLog, "#00FF00");
+                string processedDescription = ReplaceVariables(dropItemDescription);
+                DebugConsole.Line itemLog = new()
+                {
+                    text = $"[{GameManager.Instance.gameTimer} - {dropItemName}:{dropItemSO?.name}({DerivedClassName})] {processedDescription}",
+                    messageType = DebugConsole.MessageType.Local,
+                    tick = GameManager.Instance.gameTimer
+                };
+                DebugConsole.Instance.MergeLine(itemLog, "#00FF00");
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Error in UseItem DebugConsole: {ex.Message}");
+            }
 #endif
         }
 
@@ -144,11 +151,22 @@ namespace Item
                 return;
             }
             dropItemSO = loadedSO;
+            //PauseGame();
         }
 
         void Update()
         {
             DragItem(GetPlayerPosition());
         }
+
+        void PauseGame()
+        {
+#if UNITY_EDITOR
+            // 옵션 1: Debug.Break() - 코드가 실행될 때 호출하면 일시정지됩니다.
+            Debug.Break();
+             // 옵션 2: EditorApplication.isPaused로 직접 제어 (true로 설정하면 일시정지)
+            // EditorApplication.isPaused = true;
+#endif
+    }
     }
 }

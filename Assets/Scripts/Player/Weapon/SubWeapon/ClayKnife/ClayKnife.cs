@@ -11,6 +11,7 @@ public class ClayKnife : Weapon.SubWeapon
         weaponType = WeaponType.ClayKnife;
         InitPool("ClayKnife");
     }
+
     public override IEnumerator Attack(Vector2 attackDirection)
     {
         isAttackCooldown = true;

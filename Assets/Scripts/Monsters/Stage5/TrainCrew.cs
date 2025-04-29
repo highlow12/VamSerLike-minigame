@@ -13,7 +13,7 @@ public class TrainCrew : BossMonster
     public Animator animator { get; private set; }
     public float walkSpeed = 2f;
     public float fastWalkSpeed = 4f;
-
+    public float detectionRange = 10f;
     protected override void Start()
     {
         base.Start();

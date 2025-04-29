@@ -10,24 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad55ba1d155b5d2458e60592940c7d2b, type: 3}
-  m_Name: Pawn
+  m_Name: pawn
   m_EditorClassIdentifier: 
   monsters:
   - monsterName: Pawn
-    monsterPrefab: {fileID: 1290380380481947063, guid: e156d7e2668b39e4682c3e9c810c658f, type: 3}
+    monsterPrefab: {fileID: 1537616469489956966, guid: c2bcb325a820dc746b83451657f20cad, type: 3}
     spawnRate: 1
   - monsterName: Bishop
-    monsterPrefab: {fileID: 5172718507834586352, guid: 96aa07af3ddcb20468cb3ad527aec4fe, type: 3}
+    monsterPrefab: {fileID: 9074466838960170247, guid: 36c4e3ed0c5cf874a820b452c104ed7c, type: 3}
     spawnRate: 1
   - monsterName: King
     monsterPrefab: {fileID: 4673368339130091960, guid: 0fa8ca4cb877e0743a20d9d0b7066298, type: 3}
     spawnRate: 1
   - monsterName: Knight
-    monsterPrefab: {fileID: 6312306229977942469, guid: 9f6aa6f8491d6dc41adb33b4a080a123, type: 3}
+    monsterPrefab: {fileID: 7888038071617070464, guid: 58bfd627ca0d782438d82be6401d4c90, type: 3}
     spawnRate: 1
   - monsterName: Queen
     monsterPrefab: {fileID: 8907515802758107829, guid: b0de641703784cf45814f41d9dfdbb95, type: 3}
-    spawnRate: 1
-  - monsterName: Bishop
-    monsterPrefab: {fileID: 5172718507834586352, guid: 96aa07af3ddcb20468cb3ad527aec4fe, type: 3}
     spawnRate: 1

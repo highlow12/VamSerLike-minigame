@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,10 +19,35 @@ public class TestUi : MonoBehaviour
     void Start()
     {
         SkinSelectTestUi skinSelectTestUi = gameObject.AddComponent<SkinSelectTestUi>();
+        MonsterPatternTestUi monsterPatternTestUi = gameObject.AddComponent<MonsterPatternTestUi>();
+        MonsterSpawnTestUi monsterSpawnTestUi = gameObject.AddComponent<MonsterSpawnTestUi>();
+        PlayerSpecialEffectTestUi playerSpecialEffectTestUi = gameObject.AddComponent<PlayerSpecialEffectTestUi>();
+
         testUIs.Add(new TestUI
         {
             name = "Skin Select",
             guiAction = skinSelectTestUi.SkinSelectGUI,
+            show = false
+        });
+
+        testUIs.Add(new TestUI
+        {
+            name = "Monster Pattern",
+            guiAction = monsterPatternTestUi.MonsterPatternGUI,
+            show = false
+        });
+
+        testUIs.Add(new TestUI
+        {
+            name = "Monster Spawn",
+            guiAction = monsterSpawnTestUi.MonsterSpawnGUI,
+            show = false
+        });
+
+        testUIs.Add(new TestUI
+        {
+            name = "Special Effects",
+            guiAction = playerSpecialEffectTestUi.PlayerSpecialEffectGUI,
             show = false
         });
     }
@@ -33,22 +59,24 @@ public class TestUi : MonoBehaviour
             fontSize = 10,
             alignment = TextAnchor.MiddleCenter
         };
-
-        foreach (var testUI in testUIs)
+        GUILayout.BeginHorizontal();
+        for (int i = 0; i < testUIs.Count(); i++)
         {
-            if (GUILayout.Button($"Toggle {testUI.name}", buttonStyle, GUILayout.Width(120), GUILayout.Height(30)))
+            GUILayout.BeginVertical();
+            if (GUILayout.Button($"Toggle {testUIs[i].name}", buttonStyle, GUILayout.Width(120), GUILayout.Height(30)))
             {
-                TestUI temp = testUI;
+                TestUI temp = testUIs[i];
                 temp.show = !temp.show;
-                int index = testUIs.IndexOf(testUI);
-                testUIs[index] = temp;
+                testUIs[i] = temp;
             }
 
-            if (testUI.show)
+            if (testUIs[i].show)
             {
-                testUI.guiAction?.Invoke();
+                testUIs[i].guiAction?.Invoke();
             }
+            GUILayout.EndVertical();
         }
+        GUILayout.EndHorizontal();
     }
 }
 #endif

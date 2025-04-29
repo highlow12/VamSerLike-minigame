@@ -9,6 +9,8 @@ public class cameraMove : MonoBehaviour
     Vector2 offset = Vector2.zero;
     [SerializeField] float offsetMult = 1;
 
+    public float shakeIntensity = 0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +22,7 @@ public class cameraMove : MonoBehaviour
     {
         pos = GameManager.Instance.player.transform.position;
         offset = GameManager.Instance.player.inputVec.normalized * offsetMult;
+        offset.x += Random.Range(-shakeIntensity, shakeIntensity);
         transform.position = new(pos.x + offset.x, pos.y + offset.y, transform.position.z);
     }
 }

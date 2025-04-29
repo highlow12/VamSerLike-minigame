@@ -7,15 +7,21 @@ public class Suwii : NormalMonster
 
     protected override void Start()
     {
-        movement = new FloatMovement(0, 0);
-        polygonCollider = TriggerArea.GetComponent<PolygonCollider2D>();
+        movement = new SinMovement(1f, 1f, moveSpeed);
+        //polygonCollider = TriggerArea.GetComponent<PolygonCollider2D>();
         base.Start();
+        // VFXManager.Instance.Flicker();
     }
 
     protected override void Update()
     {
         Vector2 playerPosition = GameManager.Instance.player.transform.position;
-        GameManager.Instance.player.SpeedDebuff = polygonCollider.OverlapPoint(playerPosition);
+        //GameManager.Instance.player.SpeedDebuff = polygonCollider.OverlapPoint(playerPosition);
         base.Update();
+    }
+    protected override void Die()
+    {
+        GameManager.Instance.player.SpeedDebuff = false;
+        base.Die();
     }
 }

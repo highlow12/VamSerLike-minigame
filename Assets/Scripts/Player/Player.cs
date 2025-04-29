@@ -38,6 +38,20 @@ public class Player : MonoBehaviour
         Fixed,
         Percentage
     }
+
+    public enum PlayerSpecialEffect
+    {
+        None = 0,
+        Invincible = 1 << 0,
+        Stun = 1 << 1,
+        Slow = 1 << 2,
+        Knockback = 1 << 3,
+        KnockbackImmune = 1 << 4,
+        StunImmune = 1 << 5,
+        SlowImmune = 1 << 6,
+
+    }
+
     [System.Serializable]
     public struct PlayerBuffEffect
     {
@@ -61,6 +75,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private PlayerSkin _currentPlayerSkin = PlayerSkin.Normal;
     private PlayerSkin _lastSkin;
+    public PlayerSpecialEffect playerSpecialEffect;
 
     public PlayerSkin currentPlayerSkin
     {
@@ -157,6 +172,15 @@ public class Player : MonoBehaviour
 
     public void Heal(float amount, HealType healType)
     {
+        // 입력 검증: 음수 값이 입력되면 0으로 처리
+        if (amount < 0)
+        {
+#if UNITY_EDITOR
+            Debug.LogWarning($"Heal 함수에 음수 값({amount})이 전달되었습니다. 0으로 처리됩니다.");
+#endif
+            amount = 0;
+        }
+
         float newAmount = healType switch
         {
             HealType.Fixed => amount,
@@ -167,11 +191,47 @@ public class Player : MonoBehaviour
         health = Mathf.Clamp(health + newAmount, 0f, maxHealth);
     }
 
+    public void TakeDamage(float damage)
+    {
+        damage = Mathf.Max(damage, 1f); // Ensure damage is at least 1
+        if (playerSpecialEffect.HasFlag(PlayerSpecialEffect.Invincible))
+        {
+            return;
+        }
+        health -= damage;
+
+        if (damage / maxHealth >= 0.3f) VFXManager.Instance.AnimatePlayerHitStr();
+    }
+
+    public void ApplySpecialEffect(PlayerSpecialEffect specialEffect, float duration = 5f)
+    {
+        GameManager.Instance.ChangeValueForDuration(
+            (value) => playerSpecialEffect = (PlayerSpecialEffect)value,
+            () => playerSpecialEffect,
+            specialEffect,
+            duration
+        );
+    }
+
     void OnTriggerEnter2D(Collider2D col)
     {
         if (col.CompareTag("DropItem") && col.TryGetComponent<DropItem>(out var dropItem))
         {
             dropItem.UseItem();
+        }
+        if (col.CompareTag("Monster"))
+        {
+            if (playerSpecialEffect.HasFlag(PlayerSpecialEffect.Invincible))
+            {
+                return;
+            }
+            Monster monster = col.GetComponent<Monster>();
+            if (monster != null)
+            {
+                // 몬스터 대미지 로직
+                //TODO: Delete DemoAttack
+                health -= monster.DemoAttack();
+            }
         }
     }
 }

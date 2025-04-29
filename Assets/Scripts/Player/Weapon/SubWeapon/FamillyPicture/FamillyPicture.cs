@@ -12,10 +12,16 @@ public class FamillyPicture : Weapon.SubWeapon
         base.Awake();
     }
 
+    protected override void InitStat()
+    {
+        base.InitStat();
+        weaponScript.subWeaponSO = weaponData;
+        weaponScript.SubWeaponInit();
+    }
+
     public override IEnumerator Attack(Vector2 attackDirection)
     {
         isAttackCooldown = true;
-        weaponScript.subWeaponSO = weaponData;
         weaponScript.Init(attackDamage, attackRange, 0, attackTarget);
         // Cooldown
         yield return new WaitForSeconds(attackSpeed);

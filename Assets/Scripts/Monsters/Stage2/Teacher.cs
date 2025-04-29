@@ -25,7 +25,21 @@ public class Teacher : BossMonster
         };
         monsterFSM = new MonsterFSM(states[1]);
     }
+
+    // HeadTriggerHandler가 호출할 메서드
+    public void OnHeadDetectedPlayer()
+    {
+        GameManager.Instance.player.GetComponent<Player>().TakeDamage(damage);
+        VFXManager.Instance.BloodParticle();
+    }
+
+    // HeadTriggerHandler가 호출할 메서드 (선택 사항)
+    public void OnHeadLostPlayer()
+    {
+        
+    }
 }
+
 class MoveHeadState : BaseState
 {
     new Teacher monster;

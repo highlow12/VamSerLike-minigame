@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 8816173347008387624}
   - component: {fileID: 8366891387074390231}
   - component: {fileID: 4036916282091290122}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Principal
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -126,7 +126,5 @@ MonoBehaviour:
   maxHealth: 1
   currentHealth: 1
   damage: 1
-  defense: 1
-  detectionRange: 1
   attackRange: 1
   moveSpeed: 1

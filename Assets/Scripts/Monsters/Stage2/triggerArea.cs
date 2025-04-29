@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class triggerArea : MonoBehaviour
@@ -10,6 +9,7 @@ public class triggerArea : MonoBehaviour
         if(col.TryGetComponent<PlayerMove>(out var p))
         {
             triggered = true;
+            GameManager.Instance.player.SpeedDebuff = true;
         }
     }
 
@@ -18,6 +18,7 @@ public class triggerArea : MonoBehaviour
         if(col.TryGetComponent<PlayerMove>(out var p))
         {
             triggered = false;
+            GameManager.Instance.player.SpeedDebuff = false;
         }
     }
 

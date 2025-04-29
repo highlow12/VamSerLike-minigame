@@ -47,7 +47,7 @@ public class PlayerMove : MonoBehaviour
     {
         float returnvar = 1;
         returnvar *= SpeedDebuff ? speedDebuffReduce : 1;
-        SpeedDebuff = false; // reset check var
+        //SpeedDebuff = false; // reset check var
         return returnvar;
     }
 

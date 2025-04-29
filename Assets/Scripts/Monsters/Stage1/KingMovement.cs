@@ -59,11 +59,14 @@ public class KingMove : BaseState
     public override void OnStateEnter()
     {
         _monster.animator.SetTrigger("Move");
+        // 이동 사운드 재생
+        _monster.PlayMoveSound();
     }
 
     public override void OnStateExit()
     {
-
+        // 이동 상태 종료시 사운드 중지
+        _monster.StopMoveSound();
     }
 
     public override void OnStateUpdate()
@@ -78,23 +81,35 @@ public class KingMove : BaseState
 public class KingAttack : BaseState
 {
     KingMovement _monster;
+    private bool hasPlayedAttackSound = false;
+    
     public KingAttack(BossMonster bossMonster) : base(bossMonster)
     {
         _monster = (KingMovement)bossMonster;
-
     }
+    
     public override void OnStateEnter()
     {
         _monster.animator.SetTrigger("Attack");
+        VFXManager.Instance.AnimateShakeBack(0f, 1f, 300f);
+        hasPlayedAttackSound = false;
     }
 
     public override void OnStateExit()
     {
-
+        // 상태 전환 시 변수 초기화
+        hasPlayedAttackSound = false;
     }
 
     public override void OnStateUpdate()
     {
+        // 애니메이션 시작 부분에 한 번만 사운드 재생
+        if (!hasPlayedAttackSound)
+        {
+            _monster.PlayAttackSound();
+            hasPlayedAttackSound = true;
+        }
+        
         Debug.Log("Attack");
     }
 }
