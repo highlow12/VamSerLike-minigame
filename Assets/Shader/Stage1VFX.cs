@@ -4,9 +4,11 @@ using UnityEngine;
 public class Stage1VFX : MonoBehaviour
 {
     // float time = 0f;
+    [SerializeField] GameObject journal;
 
     void Start()
     {
+        VFXManager.Instance.journal = journal;
         StartCoroutine(VFX());
     }
 
@@ -33,7 +35,8 @@ public class Stage1VFX : MonoBehaviour
         VFXManager.Instance.AnimateNoise();
         yield return new WaitForSeconds(2f);
         VFXManager.Instance.Normalize();
-        // 그림 일기 소환
+        VFXManager.Instance.Journal(true);
         yield return new WaitForSeconds(1f);
+        VFXManager.Instance.Journal(false);
     }
 }

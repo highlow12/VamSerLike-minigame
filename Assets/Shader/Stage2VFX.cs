@@ -3,15 +3,17 @@ using UnityEngine;
 
 public class Stage2VFX : MonoBehaviour
 {
-    public GameObject handParticle;
-    public GameObject bloodParticle;
+    [SerializeField] GameObject journal;
+    [SerializeField] GameObject handParticle;
+    [SerializeField] GameObject bloodParticle;
 
     void Start()
     {
-        StartCoroutine(VFX());
-
+        VFXManager.Instance.journal = journal;
         VFXManager.Instance.handParticle = handParticle;
         VFXManager.Instance.bloodParticle = bloodParticle;
+
+        StartCoroutine(VFX());
     }
 
     void Update()
@@ -33,8 +35,8 @@ public class Stage2VFX : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
         VFXManager.Instance.Normalize();
-        // 그림 일기 소환
+        VFXManager.Instance.Journal(true);
         yield return new WaitForSeconds(5f);
-
+        VFXManager.Instance.Journal(false);
     }
 }
