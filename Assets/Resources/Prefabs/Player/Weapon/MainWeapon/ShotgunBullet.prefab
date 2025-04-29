@@ -115,7 +115,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1994bf10434b44d45863f1f6e7efa27b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDamage: 0
+  tweeningDuration: 1
+  attackDamage: 1
   attackRange: 0
   attackIntervalInTicks: 0
   colliderObject: {fileID: 6311800377638777129}
