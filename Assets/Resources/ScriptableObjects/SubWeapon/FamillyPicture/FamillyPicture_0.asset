@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9471625420b1496283e3c00e3a4d2dc, type: 3}
   m_Name: FamillyPicture_0
   m_EditorClassIdentifier: 
-  weaponType: 2
+  weaponType: 0
   weaponGrade: 0
-  weaponSprite: {fileID: -2678208475403994976, guid: 0e1c56e9ab71b43b4b3ed1ee24f2d371, type: 3}
-  attackAnimation: {fileID: 0}
-  hitAnimation: {fileID: 0}
+  weaponSprite: {fileID: 6481353646159383482, guid: 491cfe5796d20eb4dae696ae4ad82bfb, type: 3}
+  weaponAnimator: {fileID: 0}
