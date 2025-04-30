@@ -22,8 +22,7 @@ public class ExampleNoamlMonster : NormalMonster
         Debug.Log("Attack");
         //playerTransform.gameObject.GetComponent<>
     }
-    
-    public override void Die()
+    protected override void Die()
     {
         base.Die();
         Debug.Log("Die " + gameObject.name);

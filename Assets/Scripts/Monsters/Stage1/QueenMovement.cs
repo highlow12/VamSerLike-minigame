@@ -75,7 +75,7 @@ public class QueenMovement : BossMonster
         base.TakeDamage(damage);
     }
 
-    public override void Die()
+    protected override void Die()
     {
         VFXManager.Instance.Normalize();
         base.Die();
