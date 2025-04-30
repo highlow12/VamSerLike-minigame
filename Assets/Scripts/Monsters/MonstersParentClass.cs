@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public abstract class Monster : MonoBehaviour
@@ -24,6 +25,15 @@ public abstract class Monster : MonoBehaviour
     protected bool isDead;
     protected Transform playerTransform;
 
+    protected Animator anim;
+    protected SpriteRenderer sr;
+
+    protected virtual void Awake()
+    {
+        sr = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
+    }
+
     protected virtual void Start()
     {
         currentHealth = maxHealth;
@@ -46,12 +56,11 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual void Die()
     {
-        gameObject.SetActive(false);
-#if UNITY_EDITOR
         Debug.Log("Dead: " + gameObject.name);
-#endif
         isDead = true;
         
+        anim.Play("Dead");
+
         // 죽음 사운드 재생
         PlayDeathSound();
         
@@ -59,8 +68,13 @@ public abstract class Monster : MonoBehaviour
         StopMoveSound();
         
         DropLoot();
-        MonsterPoolManager.Instance.ReturnMonsterToPool(gameObject,GetComponent<MonsterIdentify>().monsterName);
+    }
+
+    public void DieAnimFinished()
+    {
+        Debug.Log("Deaddddd");
         // 사망 처리 로직
+        MonsterPoolManager.Instance.ReturnMonsterToPool(gameObject, GetComponent<MonsterIdentify>().monsterName);
     }
 
     protected virtual void DropLoot()
@@ -82,6 +96,7 @@ public abstract class Monster : MonoBehaviour
     /// </summary>
     public void ResetHealth()
     {
+        sr.color = new Color(1, 1, 1, 1);
         currentHealth = maxHealth;
         isDead = false;
     }

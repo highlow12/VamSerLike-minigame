@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9471625420b1496283e3c00e3a4d2dc, type: 3}
   m_Name: ClayKnife_0
   m_EditorClassIdentifier: 
-  weaponType: 3
+  weaponType: 0
   weaponGrade: 0
-  weaponSprite: {fileID: 21300000, guid: cce17fc65a2a2571895d599ce5873cea, type: 3}
-  idleAnimation: {fileID: 0}
-  attackAnimation: {fileID: 7400000, guid: 9beb8b9270af741ee89c2353f5657ce1, type: 2}
-  hitAnimation: {fileID: 0}
+  weaponSprite: {fileID: -7297812266498129303, guid: aec45b41444b94f45bc8d19158602190, type: 3}
+  weaponAnimator: {fileID: 0}
