@@ -74,6 +74,12 @@ public class QueenMovement : BossMonster
         if (!canTakeDamage) return;
         base.TakeDamage(damage);
     }
+
+    public override void Die()
+    {
+        VFXManager.Instance.Normalize();
+        base.Die();
+    }
 }
 
 class QueenIdle : BaseState

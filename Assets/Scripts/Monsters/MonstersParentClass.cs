@@ -54,7 +54,7 @@ public abstract class Monster : MonoBehaviour
         }
     }
 
-    protected virtual void Die()
+    public virtual void Die()
     {
         Debug.Log("Dead: " + gameObject.name);
         isDead = true;
