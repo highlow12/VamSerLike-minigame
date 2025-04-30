@@ -38,7 +38,7 @@ public class FadeManager : MonoBehaviour
         }
         fadeCanvasGroup.alpha = 1f;
 
-        // ÇÊ¿ä¿¡ µû¶ó ¾À ¸®·Îµå ¶Ç´Â ´Ù¸¥ Çàµ¿
+        // í•„ìš”ì— ë”°ë¼ ì”¬ ë¦¬ë¡œë“œ ë˜ëŠ” ë‹¤ë¥¸ í–‰ë™
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
