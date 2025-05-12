@@ -5,6 +5,7 @@ using System.Linq;
 using System;
 using System.Data;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class PlayerAttack : MonoBehaviour
     void Start()
     {
         playerMove = GetComponent<PlayerMove>();
-        Weapon.MainWeapon initWeapon = gameObject.AddComponent<Glass>();
+        Weapon.MainWeapon initWeapon = gameObject.AddComponent<Shotgun>();
         initWeapon.weaponRare = GetWeaponRare(initWeapon.weaponType);
         mainWeapon = initWeapon;
     }

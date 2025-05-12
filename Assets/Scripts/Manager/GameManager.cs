@@ -92,6 +92,7 @@ public class GameManager : Singleton<GameManager>
         //    gameObject.AddComponent<DebugGUI_GameManager>().enabled = true;
         //    Debug.Log("DebugGUI_GameManager was automatically added to GameManager object");
         //}
+        SetStage(SceneManager.GetActiveScene().buildIndex); // 현재 씬의 빌드 인덱스를 사용하여 스테이지 설정
 #endif
     }
 

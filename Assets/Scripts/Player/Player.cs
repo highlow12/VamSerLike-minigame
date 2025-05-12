@@ -140,7 +140,7 @@ public class Player : MonoBehaviour
 
     public float baseMaxHealth = 100f;
     public float maxHealth;
-    public float health;
+    private float health;
     private float normalizedHealth;
     private bool isDead = false;
 
@@ -190,9 +190,16 @@ public class Player : MonoBehaviour
         };
         health = Mathf.Clamp(health + newAmount, 0f, maxHealth);
     }
-
+public int damagecap = 10;
+int damageinFixedfarame = 0;
+    void FixedUpdate()
+    {
+        damageinFixedfarame/=2;
+    }
     public void TakeDamage(float damage)
     {
+        damageinFixedfarame++;
+        if (damageinFixedfarame > damagecap) return;
         damage = Mathf.Max(damage, 1f); // Ensure damage is at least 1
         if (playerSpecialEffect.HasFlag(PlayerSpecialEffect.Invincible))
         {
@@ -215,6 +222,8 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
+        damageinFixedfarame++;
+        if (damageinFixedfarame > damagecap) return;
         if (col.CompareTag("DropItem") && col.TryGetComponent<DropItem>(out var dropItem))
         {
             dropItem.UseItem();

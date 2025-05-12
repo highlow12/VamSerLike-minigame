@@ -220,6 +220,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
             var monster = MonsterPoolManager.Instance.GetMonsterFromPool(monsterName);
             if (monster != null)
             {
+                monster.SetActive(false);
                 monster.transform.position = position;
                 OnMonsterSpawned?.Invoke(monsterName, monster);
             }
@@ -227,6 +228,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
             {
                 Debug.LogWarning($"Monster not found in pool: {monsterName}");
             }
+            monster.SetActive(true);
             return monster;
         }
         catch (Exception ex)

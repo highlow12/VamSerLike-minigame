@@ -23,7 +23,7 @@ public class ChckrachMovement : NormalMonster
 
         // 방향 벡터로부터 각도를 계산 (라디안 -> 도)
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Debug.Log(angle);
+        //Debug.Log(angle);
         // Z축 회전을 반환
         return angle;
     }

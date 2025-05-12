@@ -39,6 +39,7 @@ public class DropItemManager : Singleton<DropItemManager>
     public override void Awake()
     {
         base.Awake();
+        Debug.Log(GetDropItems());
     }
 
     // <summary>
@@ -73,7 +74,7 @@ public class DropItemManager : Singleton<DropItemManager>
                 {
                     DropExperience(position);
 #if UNITY_EDITOR
-                    Debug.Log($"[DropItem] Dropped Experience at {position}. Random: {random:F3}, AccumulatedProbability: {accumulatedProbability:F3}");
+                    //Debug.Log($"[DropItem] Dropped Experience at {position}. Random: {random:F3}, AccumulatedProbability: {accumulatedProbability:F3}");
 #endif
                 }
                 else
@@ -81,7 +82,7 @@ public class DropItemManager : Singleton<DropItemManager>
                     GameObject dropItem = ObjectPoolManager.Instance.GetGo(itemName);
                     dropItem.transform.position = position;
 #if UNITY_EDITOR
-                    Debug.Log($"[DropItem] Dropped item {itemName} at {position}. Random: {random:F3}, AccumulatedProbability: {accumulatedProbability:F3}");
+                    //Debug.Log($"[DropItem] Dropped item {itemName} at {position}. Random: {random:F3}, AccumulatedProbability: {accumulatedProbability:F3}");
 #endif
                     // 아이템일 경우에는 경험치도 추가 생성
                     DropExperience(position);

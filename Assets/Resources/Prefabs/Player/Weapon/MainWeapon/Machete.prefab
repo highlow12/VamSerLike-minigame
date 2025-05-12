@@ -261,6 +261,6 @@ MonoBehaviour:
   tweeningDuration: 1
   attackDamage: 1
   attackRange: 0
-  attackIntervalInTicks: 0
+  attackIntervalInTicks: 1
   colliderObject: {fileID: 1825204874148398406}
   subWeaponSO: {fileID: 0}

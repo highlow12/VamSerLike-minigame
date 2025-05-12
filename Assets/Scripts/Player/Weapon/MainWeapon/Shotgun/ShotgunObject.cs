@@ -37,7 +37,7 @@ public class ShotgunObject : AttackObject
 
     public override void Attack()
     {
-        Debug.Log($"[ShotgunFire] baseAngle: {baseAngle}, spreadDegree: {spreadDegree}, projectileCount: {projectileCount}, projectileSpeed: {projectileSpeed}, attackSpeed: {attackSpeed}, attackDamage: {attackDamage}, attackRange: {attackRange}");
+        //Debug.Log($"[ShotgunFire] baseAngle: {baseAngle}, spreadDegree: {spreadDegree}, projectileCount: {projectileCount}, projectileSpeed: {projectileSpeed}, attackSpeed: {attackSpeed}, attackDamage: {attackDamage}, attackRange: {attackRange}");
         animator.SetFloat("AttackSpeed", attackSpeed);
         for (int i = 0; i < projectileCount; i++)
         {

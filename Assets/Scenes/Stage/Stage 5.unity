@@ -1668,6 +1668,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offsetMult: 0
+  shakeIntensity: 0
 --- !u!114 &519420034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1714,7 +1715,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &587289368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1871,6 +1872,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7605bb03e51c34e448d46c903c5f2ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugMode: 0
+  defaultIntensity: 0.3
 --- !u!1 &637488041
 GameObject:
   m_ObjectHideFlags: 0
@@ -2019,6 +2022,7 @@ MonoBehaviour:
   - {fileID: 864229144}
   - {fileID: 1065010501}
   obstarcles_Optional: []
+  changeAngle: 0
 --- !u!61 &644798230
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2283,6 +2287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerScript: {fileID: 201440466}
   playerLight: {fileID: 1983434721}
+  globalLight: {fileID: 0}
   player: {fileID: 201440458}
   playerAttack: {fileID: 201440468}
   playerBuffEffects: []
@@ -3429,6 +3434,7 @@ MonoBehaviour:
   - {fileID: 1066450770}
   - {fileID: 945022118}
   obstarcles_Optional: []
+  changeAngle: 0
 --- !u!61 &1321869439
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4019,6 +4025,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 231ea5d3e3bcf4410addc1efa5286ca6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelUpUI: {fileID: 0}
 --- !u!4 &1568059966
 Transform:
   m_ObjectHideFlags: 0
@@ -4095,6 +4102,7 @@ MonoBehaviour:
   - {fileID: 24227986}
   - {fileID: 375539073}
   obstarcles_Optional: []
+  changeAngle: 0
 --- !u!61 &1605871705
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4539,6 +4547,7 @@ MonoBehaviour:
   - {fileID: 1040660598}
   - {fileID: 353883675}
   obstarcles_Optional: []
+  changeAngle: 0
 --- !u!61 &1850023921
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4900,7 +4909,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 779992371635936048, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -350
       objectReference: {fileID: 0}
     - target: {fileID: 779992371635936048, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -4908,15 +4917,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1905296710253865376, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1905296710253865376, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1905296710253865376, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 2190500138540559309, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_hasFontAssetChanged
@@ -4932,7 +4941,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4794891243261640204, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5823869065688735372, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -4940,11 +4949,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6375771143486222441, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6375771143486222441, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6375771143486222441, guid: 75d3e33a38a89464486061b1a5f78571, type: 3}
       propertyPath: m_AnchorMin.y
@@ -5224,6 +5233,10 @@ PrefabInstance:
     - target: {fileID: 5515686378437701171, guid: 1e591596c3318b641a146371c437f620, type: 3}
       propertyPath: m_Name
       value: MonsterSpawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 5515686378437701171, guid: 1e591596c3318b641a146371c437f620, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
