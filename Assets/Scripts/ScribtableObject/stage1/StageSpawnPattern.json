@@ -2,7 +2,7 @@
   {
     "patternType": 0,
     "startTime": 0.0,
-    "duration": 5.0,
+    "duration": 0.0,
     "monsterCount": 3,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -12,7 +12,7 @@
   {
     "patternType": 3,
     "startTime": 5.0,
-    "duration": 5.0,
+    "duration": 0.0,
     "monsterCount": 6,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -22,7 +22,7 @@
   {
     "patternType": 3,
     "startTime": 10.0,
-    "duration": 5.0,
+    "duration": 0.0,
     "monsterCount": 10,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -32,7 +32,7 @@
   {
     "patternType": 3,
     "startTime": 15.0,
-    "duration": 5.0,
+    "duration": 0.0,
     "monsterCount": 20,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -42,7 +42,7 @@
   {
     "patternType": 3,
     "startTime": 20.0,
-    "duration": 5.0,
+    "duration": 0.0,
     "monsterCount": 3,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -52,7 +52,7 @@
   {
     "patternType": 3,
     "startTime": 20.0,
-    "duration": 5.0,
+    "duration": 0.0,
     "monsterCount": 3,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -62,7 +62,7 @@
   {
     "patternType": 3,
     "startTime": 20.0,
-    "duration": 5.0,
+    "duration": 0.0,
     "monsterCount": 3,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -71,88 +71,8 @@
   },
   {
     "patternType": 3,
-    "startTime": 30.0,
-    "duration": 5.0,
-    "monsterCount": 10,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Pawn"
-  },
-  {
-    "patternType": 3,
-    "startTime": 35.0,
-    "duration": 5.0,
-    "monsterCount": 15,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Pawn"
-  },
-  {
-    "patternType": 3,
-    "startTime": 40.0,
-    "duration": 5.0,
-    "monsterCount": 30,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Pawn"
-  },
-  {
-    "patternType": 3,
-    "startTime": 90.0,
-    "duration": 5.0,
-    "monsterCount": 10,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Pawn"
-  },
-  {
-    "patternType": 3,
-    "startTime": 150.0,
-    "duration": 5.0,
-    "monsterCount": 10,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Pawn"
-  },
-  {
-    "patternType": 3,
-    "startTime": 210.0,
-    "duration": 5.0,
-    "monsterCount": 20,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Pawn"
-  },
-  {
-    "patternType": 3,
-    "startTime": 240.0,
-    "duration": 5.0,
-    "monsterCount": 20,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Pawn"
-  },
-  {
-    "patternType": 3,
-    "startTime": 360.0,
-    "duration": 5.0,
-    "monsterCount": 30,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Pawn"
-  },
-  {
-    "patternType": 3,
     "startTime": 20.0,
-    "duration": 8.0,
+    "duration": 0.0,
     "monsterCount": 1,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -162,7 +82,7 @@
   {
     "patternType": 3,
     "startTime": 25.0,
-    "duration": 8.0,
+    "duration": 0.0,
     "monsterCount": 3,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -172,7 +92,17 @@
   {
     "patternType": 3,
     "startTime": 30.0,
-    "duration": 8.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Pawn"
+  },
+  {
+    "patternType": 3,
+    "startTime": 30.0,
+    "duration": 0.0,
     "monsterCount": 7,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -182,7 +112,7 @@
   {
     "patternType": 3,
     "startTime": 35.0,
-    "duration": 8.0,
+    "duration": 0.0,
     "monsterCount": 13,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -191,58 +121,28 @@
   },
   {
     "patternType": 3,
-    "startTime": 45.0,
-    "duration": 8.0,
-    "monsterCount": 20,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Knight"
-  },
-  {
-    "patternType": 3,
-    "startTime": 120.0,
-    "duration": 8.0,
-    "monsterCount": 5,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Knight"
-  },
-  {
-    "patternType": 3,
-    "startTime": 150.0,
-    "duration": 8.0,
-    "monsterCount": 3,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Knight"
-  },
-  {
-    "patternType": 3,
-    "startTime": 180.0,
-    "duration": 8.0,
-    "monsterCount": 8,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Knight"
-  },
-  {
-    "patternType": 3,
-    "startTime": 240.0,
-    "duration": 8.0,
+    "startTime": 35.0,
+    "duration": 0.0,
     "monsterCount": 15,
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Pawn"
   },
   {
     "patternType": 3,
-    "startTime": 300.0,
-    "duration": 8.0,
+    "startTime": 40.0,
+    "duration": 0.0,
+    "monsterCount": 30,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Pawn"
+  },
+  {
+    "patternType": 3,
+    "startTime": 45.0,
+    "duration": 0.0,
     "monsterCount": 20,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -251,28 +151,18 @@
   },
   {
     "patternType": 3,
-    "startTime": 360.0,
-    "duration": 8.0,
-    "monsterCount": 20,
+    "startTime": 50.0,
+    "duration": 0.0,
+    "monsterCount": 1,
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
-  },
-  {
-    "patternType": 3,
-    "startTime": 420.0,
-    "duration": 8.0,
-    "monsterCount": 25,
-    "radius": 5.0,
-    "wiggle": 0.0,
-    "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Queen"
   },
   {
     "patternType": 3,
     "startTime": 90.0,
-    "duration": 12.0,
+    "duration": 0.0,
     "monsterCount": 3,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -281,8 +171,18 @@
   },
   {
     "patternType": 3,
+    "startTime": 90.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Pawn"
+  },
+  {
+    "patternType": 3,
     "startTime": 120.0,
-    "duration": 12.0,
+    "duration": 0.0,
     "monsterCount": 5,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -291,8 +191,28 @@
   },
   {
     "patternType": 3,
+    "startTime": 120.0,
+    "duration": 0.0,
+    "monsterCount": 5,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Knight"
+  },
+  {
+    "patternType": 3,
     "startTime": 150.0,
-    "duration": 12.0,
+    "duration": 0.0,
+    "monsterCount": 3,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Knight"
+  },
+  {
+    "patternType": 3,
+    "startTime": 150.0,
+    "duration": 0.0,
     "monsterCount": 3,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -301,9 +221,39 @@
   },
   {
     "patternType": 3,
+    "startTime": 150.0,
+    "duration": 0.0,
+    "monsterCount": 10,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Pawn"
+  },
+  {
+    "patternType": 3,
     "startTime": 180.0,
-    "duration": 12.0,
+    "duration": 0.0,
     "monsterCount": 8,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Bishop"
+  },
+  {
+    "patternType": 3,
+    "startTime": 180.0,
+    "duration": 0.0,
+    "monsterCount": 8,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Knight"
+  },
+  {
+    "patternType": 3,
+    "startTime": 210.0,
+    "duration": 0.0,
+    "monsterCount": 5,
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
@@ -312,7 +262,17 @@
   {
     "patternType": 3,
     "startTime": 210.0,
-    "duration": 12.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Pawn"
+  },
+  {
+    "patternType": 3,
+    "startTime": 240.0,
+    "duration": 0.0,
     "monsterCount": 5,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -322,17 +282,27 @@
   {
     "patternType": 3,
     "startTime": 240.0,
-    "duration": 12.0,
-    "monsterCount": 5,
+    "duration": 0.0,
+    "monsterCount": 20,
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Bishop"
+    "monsterName": "Pawn"
+  },
+  {
+    "patternType": 3,
+    "startTime": 240.0,
+    "duration": 0.0,
+    "monsterCount": 15,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Knight"
   },
   {
     "patternType": 3,
     "startTime": 300.0,
-    "duration": 12.0,
+    "duration": 0.0,
     "monsterCount": 15,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -341,8 +311,38 @@
   },
   {
     "patternType": 3,
+    "startTime": 300.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Knight"
+  },
+  {
+    "patternType": 3,
     "startTime": 360.0,
-    "duration": 12.0,
+    "duration": 0.0,
+    "monsterCount": 20,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Knight"
+  },
+  {
+    "patternType": 3,
+    "startTime": 360.0,
+    "duration": 0.0,
+    "monsterCount": 30,
+    "radius": 5.0,
+    "wiggle": 0.0,
+    "angle": 0.0,
+    "monsterName": "Pawn"
+  },
+  {
+    "patternType": 3,
+    "startTime": 360.0,
+    "duration": 0.0,
     "monsterCount": 10,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -352,7 +352,7 @@
   {
     "patternType": 3,
     "startTime": 420.0,
-    "duration": 12.0,
+    "duration": 0.0,
     "monsterCount": 20,
     "radius": 5.0,
     "wiggle": 0.0,
@@ -361,18 +361,18 @@
   },
   {
     "patternType": 3,
-    "startTime": 50.0,
-    "duration": 60.0,
-    "monsterCount": 1,
+    "startTime": 420.0,
+    "duration": 0.0,
+    "monsterCount": 25,
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Queen"
+    "monsterName": "Knight"
   },
   {
     "patternType": 3,
     "startTime": 480.0,
-    "duration": 60.0,
+    "duration": 0.0,
     "monsterCount": 1,
     "radius": 5.0,
     "wiggle": 0.0,

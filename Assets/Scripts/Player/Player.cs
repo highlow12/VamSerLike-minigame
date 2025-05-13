@@ -173,13 +173,7 @@ public class Player : MonoBehaviour
     public void Heal(float amount, HealType healType)
     {
         // 입력 검증: 음수 값이 입력되면 0으로 처리
-        if (amount < 0)
-        {
-#if UNITY_EDITOR
-            Debug.LogWarning($"Heal 함수에 음수 값({amount})이 전달되었습니다. 0으로 처리됩니다.");
-#endif
-            amount = 0;
-        }
+        if (amount <= 0) return;
 
         float newAmount = healType switch
         {
@@ -190,11 +184,11 @@ public class Player : MonoBehaviour
         };
         health = Mathf.Clamp(health + newAmount, 0f, maxHealth);
     }
-public int damagecap = 10;
+public int damagecap = 1;
 int damageinFixedfarame = 0;
     void FixedUpdate()
     {
-        damageinFixedfarame/=2;
+        damageinFixedfarame = 0; // 한 FixedUpdate마다 데미지 카운터를 리셋
     }
     public void TakeDamage(float damage)
     {
@@ -222,8 +216,6 @@ int damageinFixedfarame = 0;
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        damageinFixedfarame++;
-        if (damageinFixedfarame > damagecap) return;
         if (col.CompareTag("DropItem") && col.TryGetComponent<DropItem>(out var dropItem))
         {
             dropItem.UseItem();
@@ -234,12 +226,10 @@ int damageinFixedfarame = 0;
             {
                 return;
             }
-            Monster monster = col.GetComponent<Monster>();
-            if (monster != null)
+            if (col.TryGetComponent<Monster>(out var monster))
             {
                 // 몬스터 대미지 로직
-                //TODO: Delete DemoAttack
-                health -= monster.DemoAttack();
+                TakeDamage(monster.DemoAttack()); // 데미지 처리를 TakeDamage로 일원화
             }
         }
     }
