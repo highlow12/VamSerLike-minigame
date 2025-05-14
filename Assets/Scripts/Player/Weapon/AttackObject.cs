@@ -27,6 +27,10 @@ public abstract class AttackObject : MonoBehaviour
     protected float weaponPositionXOffset;
     protected SpriteRenderer spriteRenderer;
 
+    protected bool showAttackRangeGizmo = false;
+    protected float gizmoTimer = 0f;
+    protected const float gizmoDuration = 0.2f;
+
     public virtual void Setup(float baseAngle, float spreadDegree, int projectileCount, float projectileSpeed, float attackSpeed)
     {
 
@@ -101,10 +105,16 @@ public abstract class AttackObject : MonoBehaviour
         monstersHit.Clear();
         hits.Clear();
     }
-
+    
+    //이건 애니메이션에 의존하는거라 애니메이션에 이벤트 넣어야함
     public virtual void Attack()
     {
         Start();
+
+        // Show attack range gizmo for 0.2 seconds
+        showAttackRangeGizmo = true;
+        gizmoTimer = gizmoDuration;
+        StartCoroutine(HideGizmoAfterDelay());
 
         Physics2D.OverlapCollider(attackCollider, contactFilter, hits);
         hits = hits.OrderBy(x => Vector2.Distance(x.transform.position, transform.position)).ToList();
@@ -129,6 +139,23 @@ public abstract class AttackObject : MonoBehaviour
             hitCount++;
         }
     }
+
+    private IEnumerator HideGizmoAfterDelay()
+    {
+        yield return new WaitForSeconds(gizmoDuration);
+        showAttackRangeGizmo = false;
+    }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (showAttackRangeGizmo)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, attackRange);
+        }
+    }
+#endif
 
     public virtual void Throw(Vector3 endPos, float duration)
     {
