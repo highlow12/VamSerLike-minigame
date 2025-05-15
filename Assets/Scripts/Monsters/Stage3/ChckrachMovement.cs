@@ -8,6 +8,7 @@ public class ChckrachMovement : NormalMonster
     {
         movement = new StraightMovement(moveSpeed);
         base.Start();
+        if (Worm.Instance != null) Worm.Instance.test();
     }
 
     protected override void Update()

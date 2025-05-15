@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -40,9 +41,18 @@ public class VFXManager : MonoBehaviour
 
     bool eyeBlink = false;
 
+    public delegate void CustomBloodVFX (bool enable);
+    public delegate void CustomHandVFX (bool enable);
+
+    public CustomBloodVFX customBloodVFX;
+    public CustomHandVFX customHandVFX;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        customBloodVFX = null;
+        customHandVFX = null;
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.material = defaultMaterial;
         spriteRenderer.color = new Color(1, 1, 1);
@@ -280,19 +290,29 @@ public class VFXManager : MonoBehaviour
         StartCoroutine(PlayerHitStr());
     }
 
-    public void BloodParticle()
+    public void BloodParticle(bool enable = true)
     {
+        if (customBloodVFX != null) {
+            customBloodVFX(enable);
+            return;
+        }
+
         if (bloodParticle != null) {
             bloodParticle.SetActive(false);
-            bloodParticle.SetActive(true);
+            bloodParticle.SetActive(enable);
         }
     }
 
-    public void HandParticle()
+    public void HandParticle(bool enable = true)
     {
+        if (customHandVFX != null) {
+            customHandVFX(enable);
+            return;
+        }
+
         if (handParticle != null) {
             handParticle.SetActive(false);
-            handParticle.SetActive(true);
+            handParticle.SetActive(enable);
         }
     }
 
