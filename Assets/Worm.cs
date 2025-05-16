@@ -11,6 +11,8 @@ public class Worm : MonoBehaviour
     [SerializeField] private GameObject worm;
     List<GameObject> worms = new List<GameObject>();
 
+    public static Worm Instance { get; private set; }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -19,6 +21,7 @@ public class Worm : MonoBehaviour
 
     void Awake()
     {
+        if (Instance == null) Instance = this;
         WormReset();
     }
 
