@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: "\uCCB4\uB825 \uC99D\uAC00 \uCEA1\uC290"
   description: "\uCD94\uAC00 \uCCB4\uB825"
-  icon: {fileID: 0}
+  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   maxLevel: 5
   effectType: 0
   targetStat: 6

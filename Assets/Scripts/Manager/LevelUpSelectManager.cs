@@ -6,6 +6,16 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
+public enum LevelUpOptionType { SubWeapon, SupportItem }
+
+public class LevelUpOption
+{
+    public LevelUpOptionType optionType;
+    public WeaponStatProvider.SubWeaponStat subWeaponStat;
+    public SupportItemSO supportItemSO;
+    public int supportItemLevel;
+}
+
 public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
 {
     enum SelectItemType
@@ -26,6 +36,7 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
 
     // 캐싱용 딕셔너리 추가
     private Dictionary<string, Sprite> weaponSpriteCache = new Dictionary<string, Sprite>();
+    const string SupportItemLocation = "ScriptableObjects/SupportItems";
 
     private void Start()
     {
@@ -330,7 +341,6 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
     {
         Debug.Log("[LevelUpSelectManager] CreateItemList started");
 
-        // 모든 필수 인스턴스 null 체크
         if (BackendDataManager.Instance == null)
         {
             Debug.LogError("[LevelUpSelectManager] BackendDataManager.Instance is null!");
@@ -343,7 +353,6 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             return;
         }
 
-        // LevelUpUI 확인 및 초기화
         if (levelUpUI == null)
         {
             InitializeLevelUpUI();
@@ -354,16 +363,12 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             }
         }
 
-        // 레벨업 패널 표시 명령 직접 호출
-        Debug.Log("[LevelUpSelectManager] 레벨업 UI 표시 명령 실행");
         levelUpUI.ShowLevelUpPanel();
 
-        // PlayerAttack은 아이템 생성에만 필요하므로 여기서 null 체크
         PlayerAttack playerAttack = GameManager.Instance.playerAttack;
         if (playerAttack == null)
         {
             Debug.LogError("[LevelUpSelectManager] PlayerAttack is null!");
-            // PlayerAttack이 null이면 아이템 생성은 건너뛰지만, 패널은 이미 표시됨
             return;
         }
 
@@ -373,88 +378,95 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
             return;
         }
 
-        List<WeaponStatProvider.SubWeaponStat> subWeaponStats = WeaponStatProvider.Instance.subWeaponStats;
-        List<Weapon.SubWeapon> currentSubWeapons = playerAttack.subWeapons;
-        List<WeaponStatProvider.SubWeaponStat> listedSubWeapons = new List<WeaponStatProvider.SubWeaponStat>();
+        List<LevelUpOption> candidates = new List<LevelUpOption>();
 
-        // 이전 옵션 목록 초기화
-        subWeaponOptions.Clear();
-
-        int totalTryCount = 0;
-        int successCount = 0;  // 성공적으로 생성된 아이템 카운트
-
-        // 서브 무기만 표시하도록 수정
-        while (successCount < DESIRED_OPTIONS_COUNT && totalTryCount < MAX_TOTAL_RETRY_COUNT)
+        // 1. 서브웨폰 후보 추가
+        var subWeaponStats = WeaponStatProvider.Instance.subWeaponStats;
+        var currentSubWeapons = playerAttack.subWeapons;
+        foreach (var stat in subWeaponStats)
         {
-            // 항상 서브 무기만 선택 (메인 무기 타입은 제외)
-            SelectItemType selectItemType = SelectItemType.SubWeapon;
-            bool succeeded = false;
-
-            switch (selectItemType)
+            // 신규 무기
+            if (stat.weaponGrade == 0 && !currentSubWeapons.Any(c => c.weaponType == stat.weaponType))
             {
-                case SelectItemType.SubWeapon:
-                    // SubWeapon이 MAX_SUB_WEAPONS개 이상이고 모두 최대 레벨인 경우 처리
-                    if (playerAttack.subWeapons.Count >= MAX_SUB_WEAPONS &&
-                        playerAttack.subWeapons.All(sw => sw.weaponGrade >= sw.maxWeaponGrade))
-                    {
-                        // 모든 서브 무기가 최대 개수에 도달하고 최대 레벨인 경우 처리
-                        // 주석 처리: 요청에 따라 이 케이스는 일단 주석 처리
-                        /*
-                        Debug.LogWarning("[LevelUpSelectManager] 모든 서브 무기가 최대 개수와 최대 레벨에 도달했습니다.");
-                        totalTryCount++;
-                        continue;
-                        */
-                    }
-
-                    WeaponStatProvider.SubWeaponStat subWeaponStat = GetSubWeaponOption(subWeaponStats, currentSubWeapons, listedSubWeapons);
-
-                    // 유효한 서브 무기 옵션을 찾은 경우
-                    if (!string.IsNullOrEmpty(subWeaponStat.displayName))
-                    {
-                        // 서브 무기 표시명 가져오기
-                        string displayName = subWeaponStat.displayName;
-                        Debug.Log($"[LevelUpSelectManager] 선택된 서브 무기: {subWeaponStat.weaponType}, 표시명: {displayName}, 등급: {subWeaponStat.weaponGrade}");
-
-                        // 서브 무기 아이콘 가져오기
-                        Sprite weaponIcon = LoadSubWeaponSprite(subWeaponStat);
-
-                        // UI 버튼에 서브 무기 정보 설정
-                        subWeaponOptions.Add(subWeaponStat);
-                        levelUpUI.SetSubWeaponItem(subWeaponStat, successCount, displayName, weaponIcon);
-                        listedSubWeapons.Add(subWeaponStat);
-                        succeeded = true;
-                    }
-                    break;
-
-                case SelectItemType.SupportItem:
-                    // 현재 지원품 미구현으로 인해 건너뜀
-                    totalTryCount++;
-                    continue;
+                candidates.Add(new LevelUpOption
+                {
+                    optionType = LevelUpOptionType.SubWeapon,
+                    subWeaponStat = stat
+                });
             }
-
-            if (succeeded)
+            // 업그레이드 후보
+            var owned = currentSubWeapons.FirstOrDefault(sw => sw.weaponType == stat.weaponType);
+            if (owned != null && owned.weaponGrade < owned.maxWeaponGrade && stat.weaponGrade == owned.weaponGrade + 1)
             {
-                successCount++;
+                candidates.Add(new LevelUpOption
+                {
+                    optionType = LevelUpOptionType.SubWeapon,
+                    subWeaponStat = stat
+                });
             }
-
-            totalTryCount++;
         }
 
-        Debug.Log($"[LevelUpSelectManager] Total try count: {totalTryCount}, Success count: {successCount}");
-
-        // 만약 원하는 개수의 선택지를 채우지 못했다면 로그 출력
-        if (successCount < DESIRED_OPTIONS_COUNT)
+        // 2. 서포트아이템 후보 추가
+        SupportItemSO[] allSupportItems = Resources.LoadAll<SupportItemSO>(SupportItemLocation);
+        if (allSupportItems == null || allSupportItems.Length == 0)
         {
-            Debug.LogWarning($"[LevelUpSelectManager] Failed to create full item list. Only {successCount} items created.");
-
-            // 빈 슬롯은 비활성화 (LevelUpUI에서 처리하도록 설정)
-            for (int i = successCount; i < DESIRED_OPTIONS_COUNT; i++)
+            Debug.LogError($"[LevelUpSelectManager] 지원아이템을 찾을 수 없습니다! 경로: {SupportItemLocation}");
+        }
+        Debug.Log($"[LevelUpSelectManager] SupportItemSO LoadAll 경로 '{SupportItemLocation}'에서 {allSupportItems.Length}개 발견.");
+        foreach (var supportItem in allSupportItems)
+        {
+            int currentLevel = 0;
+            if (GameManager.Instance != null)
             {
-                if (i < levelUpUI.optionButtons.Count)
-                {
-                    levelUpUI.optionButtons[i].gameObject.SetActive(false);
-                }
+                currentLevel = GameManager.Instance.GetSupportItemLevel(supportItem);
+                Debug.Log($"[LevelUpSelectManager] 지원아이템: {supportItem.name}, 현재레벨: {currentLevel}, 최대레벨: {supportItem.maxLevel}");
             }
+            else
+            {
+                Debug.LogWarning("[LevelUpSelectManager] GameManager.Instance가 null입니다! 지원아이템 레벨을 0으로 처리.");
+            }
+
+            if (currentLevel < supportItem.maxLevel)
+            {
+                Debug.Log($"[LevelUpSelectManager] 지원아이템 '{supportItem.name}' 후보에 추가 (현재레벨: {currentLevel}, 최대레벨: {supportItem.maxLevel})");
+                candidates.Add(new LevelUpOption
+                {
+                    optionType = LevelUpOptionType.SupportItem,
+                    supportItemSO = supportItem,
+                    supportItemLevel = currentLevel
+                });
+            }
+            else
+            {
+                Debug.Log($"[LevelUpSelectManager] 지원아이템 '{supportItem.name}' 후보에서 제외 (현재레벨: {currentLevel}, 최대레벨: {supportItem.maxLevel})");
+            }
+        }
+
+        // 3. 랜덤 섞기
+        System.Random rnd = new System.Random();
+        candidates = candidates.OrderBy(x => rnd.Next()).ToList();
+
+        // 4. UI에 표시
+        int count = Mathf.Min(DESIRED_OPTIONS_COUNT, candidates.Count);
+        for (int i = 0; i < count; i++)
+        {
+            var option = candidates[i];
+            if (option.optionType == LevelUpOptionType.SubWeapon)
+            {
+                var icon = LoadSubWeaponSprite(option.subWeaponStat);
+                levelUpUI.SetSubWeaponItem(option.subWeaponStat, i, option.subWeaponStat.displayName, icon);
+            }
+            else if (option.optionType == LevelUpOptionType.SupportItem)
+            {
+                levelUpUI.SetSupportItem(option.supportItemSO, i, option.supportItemSO.itemName, option.supportItemSO.icon, option.supportItemLevel);
+            }
+        }
+
+        // 나머지 버튼 비활성화
+        for (int i = count; i < DESIRED_OPTIONS_COUNT; i++)
+        {
+            if (i < levelUpUI.optionButtons.Count)
+                levelUpUI.optionButtons[i].gameObject.SetActive(false);
         }
     }
 
@@ -484,6 +496,19 @@ public class LevelUpSelectManager : Singleton<LevelUpSelectManager>
         catch (Exception e)
         {
             Debug.LogError($"[LevelUpSelectManager] Error creating/upgrading sub weapon: {e.Message}");
+        }
+    }
+
+    public void CreateSupportItem(SupportItemSO supportItem)
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.LevelUpSupportItem(supportItem);
+            Debug.Log($"[LevelUpSelectManager] Support item added/upgraded: {supportItem.itemName}");
+        }
+        else
+        {
+            Debug.LogError("[LevelUpSelectManager] GameManager.Instance is null! Support item not added.");
         }
     }
 

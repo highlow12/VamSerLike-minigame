@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -46,7 +46,7 @@ public class LevelUpUI : MonoBehaviour
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
-            Debug.Log("[LevelUpUI] AudioSource ÄÄÆ÷³ÍÆ® Ãß°¡µÊ");
+            Debug.Log("[LevelUpUI] AudioSource ì»´í¬ë„ŒíŠ¸ ì¶”ê°€ë¨");
         }
     }
 
@@ -55,7 +55,7 @@ public class LevelUpUI : MonoBehaviour
         weaponsInventoryUI = FindFirstObjectByType<WeaponsInventoryUI>();
         if (weaponsInventoryUI == null)
         {
-            Debug.LogWarning("[LevelUpUI] WeaponsInventoryUI¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!");
+            Debug.LogWarning("[LevelUpUI] WeaponsInventoryUIë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
         }
     }
 
@@ -65,7 +65,7 @@ public class LevelUpUI : MonoBehaviour
     }
 
     /// <summary>
-    /// ¹öÆ° Å¬¸¯ ÀÌº¥Æ® ÃÊ±â ¼³Á¤
+    /// ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ ì´ˆê¸° ì„¤ì •
     /// </summary>
     private void SetupButtonEvents()
     {
@@ -85,17 +85,17 @@ public class LevelUpUI : MonoBehaviour
 
     public void ShowLevelUpPanel()
     {
-        Debug.Log("[LevelUpUI] ShowLevelUpPanel ¸Ş¼­µå È£ÃâµÊ");
+        Debug.Log("[LevelUpUI] ShowLevelUpPanel ë©”ì„œë“œ í˜¸ì¶œë¨");
 
         if (levelUpPanel != null && levelUpPanel.activeSelf)
         {
-            Debug.Log("[LevelUpUI] ÆĞ³ÎÀÌ ÀÌ¹Ì È°¼ºÈ­µÇ¾î ÀÖ½À´Ï´Ù. Áßº¹ È£Ãâ ¹«½Ã.");
+            Debug.Log("[LevelUpUI] íŒ¨ë„ì´ ì´ë¯¸ í™œì„±í™”ë˜ì–´ ìˆìŠµë‹ˆë‹¤. ì¤‘ë³µ í˜¸ì¶œ ë¬´ì‹œ.");
             return;
         }
 
         if (levelUpPanel == null)
         {
-            Debug.LogError("[LevelUpUI] levelUpPanelÀÌ nullÀÔ´Ï´Ù!");
+            Debug.LogError("[LevelUpUI] levelUpPanelì´ nullì…ë‹ˆë‹¤!");
             return;
         }
 
@@ -104,7 +104,7 @@ public class LevelUpUI : MonoBehaviour
         if (levelText != null && GameManager.Instance != null)
         {
             levelText.text = $"Level {GameManager.Instance.playerLevel}";
-            Debug.Log($"[LevelUpUI] ·¹º§ ÅØ½ºÆ® ¾÷µ¥ÀÌÆ®: {levelText.text}");
+            Debug.Log($"[LevelUpUI] ë ˆë²¨ í…ìŠ¤íŠ¸ ì—…ë°ì´íŠ¸: {levelText.text}");
         }
 
         if (audioSource != null && levelUpSound != null)
@@ -115,7 +115,7 @@ public class LevelUpUI : MonoBehaviour
         ClearOptionButtons();
 
         levelUpPanel.SetActive(true);
-        Debug.Log("[LevelUpUI] ·¹º§¾÷ ÆĞ³Î È°¼ºÈ­µÊ");
+        Debug.Log("[LevelUpUI] ë ˆë²¨ì—… íŒ¨ë„ í™œì„±í™”ë¨");
     }
 
     private void ClearOptionButtons()
@@ -158,7 +158,7 @@ public class LevelUpUI : MonoBehaviour
             if (string.IsNullOrEmpty(displayName))
             {
                 displayName = subWeaponStat.weaponType.ToString();
-                Debug.LogWarning($"[LevelUpUI] ¼­ºê ¹«±â displayNameÀÌ ºñ¾î ÀÖÀ½: {subWeaponStat.weaponType}");
+                Debug.LogWarning($"[LevelUpUI] ì„œë¸Œ ë¬´ê¸° displayNameì´ ë¹„ì–´ ìˆìŒ: {subWeaponStat.weaponType}");
             }
         }
 
@@ -176,7 +176,7 @@ public class LevelUpUI : MonoBehaviour
                 if (LevelUpSelectManager.Instance != null)
                 {
                     lastSelectedWeapon = subWeaponStat;
-                    Debug.Log($"[LevelUpUI] ¹«±â ¼±ÅÃµÊ: {subWeaponStat.weaponType} (µî±Ş {subWeaponStat.weaponGrade})");
+                    Debug.Log($"[LevelUpUI] ë¬´ê¸° ì„ íƒë¨: {subWeaponStat.weaponType} (ë“±ê¸‰ {subWeaponStat.weaponGrade})");
                     LevelUpSelectManager.Instance.CreateSubWeaponItem(subWeaponStat);
                     ClosePanel();
                 }
@@ -201,6 +201,37 @@ public class LevelUpUI : MonoBehaviour
         }
     }
 
+    public void SetSupportItem(SupportItemSO supportItem, int buttonIndex, string displayName, Sprite icon, int currentLevel)
+    {
+        if (buttonIndex >= optionButtons.Count || supportItem == null)
+            return;
+
+        if (optionButtons[buttonIndex] != null)
+        {
+            optionButtons[buttonIndex].gameObject.SetActive(true);
+            optionButtons[buttonIndex].onClick.RemoveAllListeners();
+            optionButtons[buttonIndex].onClick.AddListener(() => {
+                if (LevelUpSelectManager.Instance != null)
+                {
+                    LevelUpSelectManager.Instance.CreateSupportItem(supportItem);
+                    ClosePanel();
+                }
+            });
+        }
+
+        if (buttonIndex < optionIcons.Count && optionIcons[buttonIndex] != null)
+        {
+            optionIcons[buttonIndex].sprite = icon;
+            optionIcons[buttonIndex].gameObject.SetActive(icon != null);
+        }
+
+        if (buttonIndex < optionTexts.Count && optionTexts[buttonIndex] != null)
+        {
+            optionTexts[buttonIndex].text = $"{displayName} (Lv.{currentLevel + 1})";
+            optionTexts[buttonIndex].gameObject.SetActive(true);
+        }
+    }
+
     private void OnOptionButtonClicked(int buttonIndex)
     {
         Debug.Log($"[LevelUpUI] Option button {buttonIndex} clicked");
@@ -208,19 +239,19 @@ public class LevelUpUI : MonoBehaviour
 
     public void ClosePanel()
     {
-        Debug.Log("[LevelUpUI] ClosePanel È£ÃâµÊ");
+        Debug.Log("[LevelUpUI] ClosePanel í˜¸ì¶œë¨");
 
         if (lastSelectedWeapon.weaponType != 0 && weaponsInventoryUI != null)
         {
             string weaponId = $"Sub_{lastSelectedWeapon.weaponType}";
-            Debug.Log($"[LevelUpUI] ¼±ÅÃµÈ ¹«±â: {lastSelectedWeapon.weaponType}, ID: {weaponId}, µî±Ş: {lastSelectedWeapon.weaponGrade}");
+            Debug.Log($"[LevelUpUI] ì„ íƒëœ ë¬´ê¸°: {lastSelectedWeapon.weaponType}, ID: {weaponId}, ë“±ê¸‰: {lastSelectedWeapon.weaponGrade}");
             weaponsInventoryUI.IncrementWeaponSelectionCount(weaponId);
-            Debug.Log($"[LevelUpUI] ¹«±â {weaponId}ÀÇ ·¹º§ÀÌ Áõ°¡µÊ");
+            Debug.Log($"[LevelUpUI] ë¬´ê¸° {weaponId}ì˜ ë ˆë²¨ì´ ì¦ê°€ë¨");
             lastSelectedWeapon = new WeaponStatProvider.SubWeaponStat();
         }
         else
         {
-            Debug.Log("[LevelUpUI] ¼±ÅÃµÈ ¹«±â°¡ ¾ø°Å³ª weaponsInventoryUI°¡ nullÀÔ´Ï´Ù.");
+            Debug.Log("[LevelUpUI] ì„ íƒëœ ë¬´ê¸°ê°€ ì—†ê±°ë‚˜ weaponsInventoryUIê°€ nullì…ë‹ˆë‹¤.");
         }
 
         if (levelUpPanel != null)
@@ -229,7 +260,7 @@ public class LevelUpUI : MonoBehaviour
         }
 
         onPanelClosed?.Invoke();
-        Debug.Log("[LevelUpUI] onPanelClosed ÀÌº¥Æ® ¹ß»ı");
+        Debug.Log("[LevelUpUI] onPanelClosed ì´ë²¤íŠ¸ ë°œìƒ");
 
         GameManager.IsGamePaused = false;
     }
@@ -238,13 +269,13 @@ public class LevelUpUI : MonoBehaviour
     {
         switch (grade)
         {
-            case 0: return "½Å±Ô";
-            case 1: return "·¹º§ 1";
-            case 2: return "·¹º§ 2";
-            case 3: return "·¹º§ 3";
-            case 4: return "·¹º§ 4";
-            case 5: return "·¹º§ 5";
-            default: return $"·¹º§ {grade}";
+            case 0: return "ì‹ ê·œ";
+            case 1: return "ë ˆë²¨ 1";
+            case 2: return "ë ˆë²¨ 2";
+            case 3: return "ë ˆë²¨ 3";
+            case 4: return "ë ˆë²¨ 4";
+            case 5: return "ë ˆë²¨ 5";
+            default: return $"ë ˆë²¨ {grade}";
         }
     }
 }
