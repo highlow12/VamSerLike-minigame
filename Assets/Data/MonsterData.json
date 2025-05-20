@@ -110,5 +110,17 @@
   {
     "name": "FigureGhost",
     "korName": "피겨유령"
+  },
+  {
+    "name": "Portry",
+    "korName": "도자기 괴물"
+  },
+  {
+    "name": "PaintMonster",
+    "korName": "페인트몬스터"
+  },
+  {
+    "name": "Spider",
+    "korName": "거미"
   }
 ]
