@@ -6612,6 +6612,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44edc324f9bb7fd428ac9b6adbbad8d5, type: 3}
+--- !u!1001 &7004272080212630625
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5451055834812397287, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 6.87
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451055834812397287, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.61
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451055834812397287, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451055834812397287, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451055834812397287, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451055834812397287, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451055834812397287, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451055834812397287, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451055834812397287, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5451055834812397287, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8711038859467596212, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
+      propertyPath: m_Name
+      value: CrawlingMonster
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7b518853d1e109b4fa4bbfe6c400174d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -6633,3 +6690,4 @@ SceneRoots:
   - {fileID: 778439863}
   - {fileID: 587289369}
   - {fileID: 2759859756712951965}
+  - {fileID: 7004272080212630625}
