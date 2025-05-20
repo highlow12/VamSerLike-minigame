@@ -122,5 +122,13 @@
   {
     "name": "Spider",
     "korName": "거미"
+  },
+  {
+    "name": "Bat",
+    "korName": "박쥐"
+  },
+  {
+    "name": "CrawlingMonster",
+    "korName": "기어다니는 괴물"
   }
 ]
