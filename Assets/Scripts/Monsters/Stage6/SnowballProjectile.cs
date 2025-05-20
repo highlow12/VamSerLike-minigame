@@ -45,7 +45,7 @@ public class SnowballProjectile : MonoBehaviour
             Player player = other.GetComponent<Player>();
             if (player != null)
             {
-                player.TakeDamage(damage);
+                //player.TakeDamage(damage);
             }
             Destroy(gameObject);
         }

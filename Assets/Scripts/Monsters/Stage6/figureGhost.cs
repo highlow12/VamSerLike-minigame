@@ -191,7 +191,7 @@ public class FigureGhostIceShardProjectile : MonoBehaviour
             var player = col.GetComponent<Player>();
             if (player != null)
             {
-                player.TakeDamage(damage);
+                //player.TakeDamage(damage);
                 player.ApplySpecialEffect(Player.PlayerSpecialEffect.Stun, 2f);
             }
             Destroy(gameObject);

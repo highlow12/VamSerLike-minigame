@@ -51,7 +51,7 @@ public class IceGhost : NormalMonster
             // 플레이어가 아직 존재하는지 확인
             if (player != null)
             {
-                player.TakeDamage(poisonDamage);
+                //player.TakeDamage(poisonDamage);
                 //디버그 로그
                 Debug.Log($"Poison damage applied: {poisonDamage} to {player.name}");
                 // 시각적 피드백을 위한 특수 효과 (선택적)

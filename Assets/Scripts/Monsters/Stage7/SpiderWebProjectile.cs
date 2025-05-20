@@ -49,7 +49,7 @@ public class SpiderWebProjectile : MonoBehaviour
             if (player != null)
             {
                 // Apply immediate damage
-                player.TakeDamage(damage);
+                //player.TakeDamage(damage);
                 
                 // Apply poison effect
                 StartCoroutine(ApplyPoisonEffect(player));
@@ -78,7 +78,7 @@ public class SpiderWebProjectile : MonoBehaviour
             // Apply poison damage at regular intervals
             if (elapsedTime >= nextTick)
             {
-                player.TakeDamage(poisonDamage);
+                //player.TakeDamage(poisonDamage);
                 nextTick += tickRate;
                 
                 // Visual feedback on poison tick

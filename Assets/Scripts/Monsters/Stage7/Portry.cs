@@ -92,7 +92,7 @@ public class Portry : BossMonster
             Player player = collision.GetComponent<Player>();
             if (player != null)
             {
-                player.TakeDamage(damage); // BossMonster에서 상속받은 damage 사용
+                //player.TakeDamage(damage); // BossMonster에서 상속받은 damage 사용
             }
         }
     }

@@ -15,7 +15,7 @@ public class NamgosangMovement : NormalMonster
         {
             if (collision.TryGetComponent<Player>(out var player))
             {
-                player.TakeDamage(damage);
+                //player.TakeDamage(damage);
             }
         }
     }

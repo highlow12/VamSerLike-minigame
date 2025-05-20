@@ -146,7 +146,7 @@ public class PaintMonster : BossMonster
             if (player != null)
             {
                 // 데미지 적용
-                player.TakeDamage(damage);
+                //player.TakeDamage(damage);
                 
             }
         }
