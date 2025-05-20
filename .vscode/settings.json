@@ -1,4 +1,4 @@
-{
+{"chat.mcp.discovery.enabled": true,
     "files.exclude": {
         "**/.DS_Store": true,
         "**/.git": true,
