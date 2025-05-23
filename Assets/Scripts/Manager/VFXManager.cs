@@ -30,6 +30,8 @@ public class VFXManager : MonoBehaviour
     Material eyeMaterial;
     [SerializeField] Material _voronoiMaterial;
     Material voronoiMaterial;
+    [SerializeField] Material _waterMaterial;
+    Material waterMaterial;
 
     [SerializeField] GameObject up;
     [SerializeField] GameObject down;
@@ -41,8 +43,8 @@ public class VFXManager : MonoBehaviour
 
     bool eyeBlink = false;
 
-    public delegate void CustomBloodVFX (bool enable);
-    public delegate void CustomHandVFX (bool enable);
+    public delegate void CustomBloodVFX(bool enable);
+    public delegate void CustomHandVFX(bool enable);
 
     public CustomBloodVFX customBloodVFX;
     public CustomHandVFX customHandVFX;
@@ -57,10 +59,11 @@ public class VFXManager : MonoBehaviour
         spriteRenderer.material = defaultMaterial;
         spriteRenderer.color = new Color(1, 1, 1);
 
-        invertMaterial = Instantiate(_invertMaterial);
-        noiseMaterial = Instantiate(_noiseMaterial);
-        eyeMaterial = Instantiate(_eyeMaterial);
-        voronoiMaterial = Instantiate(_voronoiMaterial);
+        if (_invertMaterial) invertMaterial = Instantiate(_invertMaterial);
+        if (_noiseMaterial) noiseMaterial = Instantiate(_noiseMaterial);
+        if (_eyeMaterial) eyeMaterial = Instantiate(_eyeMaterial);
+        if (_voronoiMaterial) voronoiMaterial = Instantiate(_voronoiMaterial);
+        if (_waterMaterial) waterMaterial = Instantiate(_waterMaterial);
 
         volume = GetComponent<Volume>();
         volume.profile.TryGet(out chromaticAberration);
@@ -97,7 +100,7 @@ public class VFXManager : MonoBehaviour
     IEnumerator EyeBlink(float value)
     {
         spriteRenderer.material = eyeMaterial;
-        
+
         float oldValue = eyeMaterial.GetFloat("_T");
         float elapsedTime = 0f;
 
@@ -110,8 +113,10 @@ public class VFXManager : MonoBehaviour
         }
     }
 
-    IEnumerator EyeBlinkLoop() {
-        while (eyeBlink) {
+    IEnumerator EyeBlinkLoop()
+    {
+        while (eyeBlink)
+        {
             StartCoroutine(EyeBlink(1));
             yield return new WaitForSeconds(0.5f);
             StartCoroutine(EyeBlink(0f));
@@ -191,7 +196,8 @@ public class VFXManager : MonoBehaviour
         StartCoroutine(InvertColor(value, duration));
     }
 
-    public void AnimateNoise() {
+    public void AnimateNoise()
+    {
         spriteRenderer.material = noiseMaterial;
     }
 
@@ -233,18 +239,18 @@ public class VFXManager : MonoBehaviour
 
         while (elapsedTime < duration / 2)
         {
-            elapsedTime += Time.deltaTime * 1000;
-            float t = Mathf.Clamp01(elapsedTime / duration);
+            elapsedTime += 0.1f;
+            float t = elapsedTime / duration;
             cam.shakeIntensity = Mathf.Lerp(a, b, t);
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
         }
 
         while (elapsedTime < duration)
         {
-            elapsedTime += Time.deltaTime * 1000;
-            float t = Mathf.Clamp01(elapsedTime / duration);
+            elapsedTime += 0.1f;
+            float t = elapsedTime / duration;
             cam.shakeIntensity = Mathf.Lerp(b, a, t);
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
@@ -275,7 +281,7 @@ public class VFXManager : MonoBehaviour
         }
 
         elapsedTime = 0f;
-        
+
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime * 1000;
@@ -292,12 +298,14 @@ public class VFXManager : MonoBehaviour
 
     public void BloodParticle(bool enable = true)
     {
-        if (customBloodVFX != null) {
+        if (customBloodVFX != null)
+        {
             customBloodVFX(enable);
             return;
         }
 
-        if (bloodParticle != null) {
+        if (bloodParticle != null)
+        {
             bloodParticle.SetActive(false);
             bloodParticle.SetActive(enable);
         }
@@ -305,12 +313,14 @@ public class VFXManager : MonoBehaviour
 
     public void HandParticle(bool enable = true)
     {
-        if (customHandVFX != null) {
+        if (customHandVFX != null)
+        {
             customHandVFX(enable);
             return;
         }
 
-        if (handParticle != null) {
+        if (handParticle != null)
+        {
             handParticle.SetActive(false);
             handParticle.SetActive(enable);
         }
@@ -319,5 +329,25 @@ public class VFXManager : MonoBehaviour
     public void Journal(bool enable)
     {
         if (journal != null) journal.SetActive(enable);
+    }
+
+    public void AnimateWater(float duration)
+    {
+        StartCoroutine(Water(duration));
+    }
+
+    IEnumerator Water(float duration)
+    {
+        spriteRenderer.material = waterMaterial;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime * 1000;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            waterMaterial.SetFloat("_T", Mathf.Lerp(0, 1, t));
+            yield return null;
+        }
     }
 }

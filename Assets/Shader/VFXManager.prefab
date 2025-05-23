@@ -195,6 +195,7 @@ MonoBehaviour:
   _noiseMaterial: {fileID: 2100000, guid: 2f0093de863564736aae000cee25a11d, type: 2}
   _eyeMaterial: {fileID: 2100000, guid: 52bd10f2b60e14ece8c7e32272bb705b, type: 2}
   _voronoiMaterial: {fileID: 2100000, guid: dd3970573231f4f11b41af5a438af37a, type: 2}
+  _waterMaterial: {fileID: 2100000, guid: bc31451c1665f48ceb1c6fdb80e4bbef, type: 2}
   up: {fileID: 1675380297408033677}
   down: {fileID: 6483435778100210042}
   bloodParticle: {fileID: 0}
