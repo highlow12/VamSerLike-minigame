@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Pool;
 
 public class Stage8MapGenera : MonoBehaviour
 {
@@ -26,153 +27,162 @@ public class Stage8MapGenera : MonoBehaviour
     public int cellCheckRange = 4;
     [Tooltip("격자 셀 간격 (유니티 유닛, n*n마다 생성)")]
     public float cellGridStep = 1.0f;
+    [Tooltip("카메라(플레이어)로부터 이 거리 이상 멀어지면 오브젝트 풀로 반환 (유니티 유닛)")]
+    public float cullingDistance = 20f;
+
+    // 셀 생성/컬링 주기 (초)
+    [Tooltip("셀 생성/컬링 연산 주기 (초, 0이면 매 프레임)")]
+    public float updateInterval = 0.1f;
+    private float updateTimer = 0f;
+
+    // 오브젝트 풀: 프리팹별로 관리
+    private List<ObjectPool<GameObject>> blockPools = new List<ObjectPool<GameObject>>();
+    // 셀 인덱스별 활성화된 블록 오브젝트 관리
+    private Dictionary<Vector2Int, GameObject> activeBlocks = new Dictionary<Vector2Int, GameObject>();
+
+    // 컬링용 임시 리스트를 멤버로 두고 재사용하여 GC 최소화
+    private List<Vector2Int> toRelease = new List<Vector2Int>();
+
+    // 프리팹별 사이즈 캐싱 (Awake에서 계산)
+    private List<Vector2> cachedBlockSizes = new List<Vector2>();
 
     private Vector2 GetCellSize()
     {
-        if (blockPrefabs == null || blockPrefabs.Count == 0) return new Vector2(3f, 3f); // 기본값
+        if (cachedBlockSizes == null || cachedBlockSizes.Count == 0) return new Vector2(3f, 3f); // 기본값
         float maxX = 0f, maxY = 0f;
-        foreach (var prefab in blockPrefabs)
+        foreach (var size in cachedBlockSizes)
         {
-            var renderer = prefab.GetComponent<Renderer>();
-            if (renderer != null)
-            {
-                var size = renderer.bounds.size;
-                if (size.x > maxX) maxX = size.x;
-                if (size.y > maxY) maxY = size.y;
-            }
-            else
-            {
-                var collider = prefab.GetComponent<Collider2D>();
-                if (collider != null)
-                {
-                    var size = collider.bounds.size;
-                    if (size.x > maxX) maxX = size.x;
-                    if (size.y > maxY) maxY = size.y;
-                }
-            }
+            if (size.x > maxX) maxX = size.x;
+            if (size.y > maxY) maxY = size.y;
         }
         // 셀 크기는 가장 큰 프리팹의 크기 + cellSpacing (모두 유니티 유닛 기준)
         return new Vector2(maxX + cellSpacing, maxY + cellSpacing);
+    }
+
+    // 셀 인덱스 계산 유틸리티 (Floor 방식으로 변경)
+    private Vector2Int WorldToCell(Vector2 worldPos)
+    {
+        return new Vector2Int(
+            Mathf.FloorToInt(worldPos.x / cellGridStep),
+            Mathf.FloorToInt(worldPos.y / cellGridStep)
+        );
+    }
+    private Vector2 CellToWorld(Vector2Int cellIdx)
+    {
+        return new Vector2(cellIdx.x * cellGridStep, cellIdx.y * cellGridStep);
+    }
+
+    private void Awake()
+    {
+        // 프리팹별 오브젝트 풀 생성
+        blockPools.Clear();
+        cachedBlockSizes.Clear();
+        if (blockPrefabs != null)
+        {
+            foreach (var prefab in blockPrefabs)
+            {
+                var pool = new ObjectPool<GameObject>(
+                    () => Instantiate(prefab, transform),
+                    obj => obj.SetActive(true),
+                    obj => obj.SetActive(false),
+                    obj => Destroy(obj),
+                    false, 10, 100
+                );
+                blockPools.Add(pool);
+
+                // 사이즈 캐싱
+                Vector2 size = new Vector2(3f, 3f); // 기본값
+                var renderer = prefab.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    size = new Vector2(renderer.bounds.size.x, renderer.bounds.size.y);
+                }
+                else
+                {
+                    var collider = prefab.GetComponent<Collider2D>();
+                    if (collider != null)
+                        size = new Vector2(collider.bounds.size.x, collider.bounds.size.y);
+                }
+                cachedBlockSizes.Add(size);
+            }
+        }
     }
 
     private void Start() { /* 초기 맵 생성 없음 */ }
 
     private void Update()
     {
+        if (updateInterval > 0f)
+        {
+            updateTimer += Time.deltaTime;
+            if (updateTimer < updateInterval) return;
+            updateTimer = 0f;
+        }
         if (player == null) return;
         Vector2 cellSize = GetCellSize();
         Vector2 playerPos = new Vector2(player.position.x, player.position.y);
-        Vector2Int snappedPlayerCell = new Vector2Int(
-            Mathf.RoundToInt(playerPos.x / cellGridStep),
-            Mathf.RoundToInt(playerPos.y / cellGridStep)
-        );
+        Vector2Int snappedPlayerCell = WorldToCell(playerPos);
+        // 셀 생성 및 활성화
         for (int dx = -cellCheckRange; dx <= cellCheckRange; dx++)
         {
             for (int dy = -cellCheckRange; dy <= cellCheckRange; dy++)
             {
                 Vector2Int cellIdx = new Vector2Int(snappedPlayerCell.x + dx, snappedPlayerCell.y + dy);
-                // (0,0) 위치는 생성하지 않음
                 if (cellIdx.x == 0 && cellIdx.y == 0) continue;
-                if (!spawnedCells.Contains(cellIdx))
+                float dist = Vector2.Distance(CellToWorld(cellIdx), playerPos);
+                if (dist > cullingDistance) continue; // 컬링 거리 밖은 생성하지 않음
+                if (!activeBlocks.ContainsKey(cellIdx))
                 {
-                    Vector2 cellCenter = new Vector2(cellIdx.x * cellGridStep, cellIdx.y * cellGridStep);
+                    Vector2 cellCenter = CellToWorld(cellIdx);
                     int rot = Random.Range(0, 4) * 90;
-                    PlaceClosedCell(cellCenter, 6, 6, rot);
-                    spawnedCells.Add(cellIdx);
+                    PlaceClosedCellWithPooling(cellIdx, cellCenter, rot);
                 }
             }
         }
-    }
-
-    // 0.5 단위 위치로 스냅
-    private Vector2 SnapToGrid(Vector2 pos)
-    {
-        float x = Mathf.Round(pos.x * 2f) / 2f;
-        float y = Mathf.Round(pos.y * 2f) / 2f;
-        return new Vector2(x, y);
-    }
-
-    // 블록 배치 함수 (겹침 방지, 회전 지원, 2D xy축 위치, 프리팹 랜덤 선택, 거리 조건 적용)
-    public bool PlaceBlock(Vector2 pos, Vector2 size, Quaternion rotation)
-    {
-        Vector2 snappedPos = SnapToGrid(pos);
-        // 블록이 차지할 모든 0.5 단위 위치 체크 (회전은 90도 단위만 지원)
-        for (float dx = 0; dx < size.x; dx += 0.5f)
+        // 컬링: 컬링 거리 밖의 블록은 풀로 반환
+        toRelease.Clear();
+        foreach (var kv in activeBlocks)
         {
-            for (float dy = 0; dy < size.y; dy += 0.5f)
+            Vector2 cellWorld = CellToWorld(kv.Key);
+            float dist = Vector2.Distance(cellWorld, playerPos);
+            if (dist > cullingDistance)
             {
-                Vector2 offset2 = new Vector2(dx, dy);
-                Vector2 rotatedOffset2 = Rotate(offset2, (int)rotation.eulerAngles.z);
-                Vector2 checkPos = snappedPos + rotatedOffset2;
-                // 거리 조건: 기존 블록과 2유닛 이상 떨어져야 함
-                foreach (var occ in occupiedPositions)
-                {
-                    if (Vector2.Distance(occ, checkPos) < 2.0f)
-                        return false;
-                }
+                ReleaseBlockToPool(kv.Key);
+                toRelease.Add(kv.Key);
             }
         }
-        // 프리팹 리스트에서 랜덤 선택
-        if (blockPrefabs == null || blockPrefabs.Count == 0) return false;
-        GameObject prefabToUse = blockPrefabs[Random.Range(0, blockPrefabs.Count)];
-        // 배치 (z=0으로 고정)
-        Instantiate(prefabToUse, new Vector3(snappedPos.x, snappedPos.y, 0), rotation, transform);
-        // 위치 등록
-        for (float dx = 0; dx < size.x; dx += 0.5f)
-        {
-            for (float dy = 0; dy < size.y; dy += 0.5f)
-            {
-                Vector2 offset2 = new Vector2(dx, dy);
-                Vector2 rotatedOffset2 = Rotate(offset2, (int)rotation.eulerAngles.z);
-                Vector2 regPos = snappedPos + rotatedOffset2;
-                occupiedPositions.Add(regPos);
-            }
-        }
-        return true;
+        foreach (var idx in toRelease)
+            activeBlocks.Remove(idx);
     }
 
-    private Vector2 Rotate(Vector2 point, int degree)
+    // 오브젝트 풀에서 꺼내어 배치
+    private void PlaceClosedCellWithPooling(Vector2Int cellIdx, Vector2 cellCenter, int rotationDegree)
     {
-        switch (degree % 360)
-        {
-            case 90:  return new Vector2(-point.y, point.x);
-            case 180: return new Vector2(-point.x, -point.y);
-            case 270: return new Vector2(point.y, -point.x);
-            default:  return point;
-        }
+        if (blockPrefabs == null || blockPrefabs.Count == 0 || blockPools.Count != blockPrefabs.Count) return;
+        int prefabIdx = Random.Range(0, blockPrefabs.Count);
+        var pool = blockPools[prefabIdx];
+        GameObject block = pool.Get();
+        block.transform.position = new Vector3(cellCenter.x, cellCenter.y, 0);
+        block.transform.rotation = Quaternion.Euler(0, 0, rotationDegree);
+        block.transform.SetParent(transform);
+        activeBlocks[cellIdx] = block;
     }
 
-    // 셀(미로 구역) 생성: 셀당 하나의 블럭만 생성
-    public bool PlaceClosedCell(Vector2 origin, int width, int height, int rotationDegree = 0)
+    // 오브젝트를 풀로 반환
+    private void ReleaseBlockToPool(Vector2Int cellIdx)
     {
-        Quaternion rot = Quaternion.Euler(0, 0, rotationDegree); // z축 회전
-        // 셀의 중심에 blockPrefabs에서 랜덤으로 하나 배치
-        Vector2 cellCenter = origin;
-        Vector2 blockSize = new Vector2(1f, 1f); // 기본값, 프리팹마다 다를 수 있음
-        if (blockPrefabs != null && blockPrefabs.Count > 0)
+        if (!activeBlocks.ContainsKey(cellIdx)) return;
+        GameObject block = activeBlocks[cellIdx];
+        // 어떤 풀에 속하는지 찾기 (프리팹별로)
+        for (int i = 0; i < blockPrefabs.Count; i++)
         {
-            // 프리팹의 실제 크기 사용 및 회전 랜덤 적용
-            var prefab = blockPrefabs[Random.Range(0, blockPrefabs.Count)];
-            var renderer = prefab.GetComponent<Renderer>();
-            if (renderer != null)
+            if (block.name.StartsWith(blockPrefabs[i].name))
             {
-                var size = renderer.bounds.size;
-                blockSize = new Vector2(size.x, size.y);
+                blockPools[i].Release(block);
+                return;
             }
-            else
-            {
-                var collider = prefab.GetComponent<Collider2D>();
-                if (collider != null)
-                {
-                    var size = collider.bounds.size;
-                    blockSize = new Vector2(size.x, size.y);
-                }
-            }
-            // 프리팹마다 회전 랜덤 적용 (변수명 충돌 방지)
-            int rotDeg = Random.Range(0, 4) * 90;
-            Quaternion blockRot = Quaternion.Euler(0, 0, rotDeg);
-            return PlaceBlock(cellCenter, blockSize, blockRot);
         }
-        return PlaceBlock(cellCenter, blockSize, Quaternion.identity);
+        // 못 찾으면 그냥 비활성화
+        block.SetActive(false);
     }
 }
