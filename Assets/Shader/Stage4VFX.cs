@@ -34,9 +34,6 @@ public class Stage4VFX : MonoBehaviour
 
     IEnumerator VFX()
     {
-        VFXManager.Instance.AnimateShakeBack(0, 1, 2f);
-
-        // VFXManager.Instance.AnimateWater(2f);
         yield return new WaitForSeconds(2f);
         VFXManager.Instance.Normalize();
         yield return new WaitForSeconds(28f);
