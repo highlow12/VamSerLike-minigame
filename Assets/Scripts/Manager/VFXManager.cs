@@ -13,11 +13,11 @@ public class VFXManager : MonoBehaviour
         Instance = this;
     }
 
-    Volume volume;
-    ChromaticAberration chromaticAberration;
-    Vignette vignette;
-    Bloom bloom;
-    LensDistortion lensDistortion;
+    public Volume volume;
+    public ChromaticAberration chromaticAberration;
+    public Vignette vignette;
+    public Bloom bloom;
+    public LensDistortion lensDistortion;
 
     SpriteRenderer spriteRenderer;
 
@@ -152,6 +152,8 @@ public class VFXManager : MonoBehaviour
             float t = Mathf.Clamp01(elapsedTime / duration);
             lensDistortion.intensity.value = Mathf.Lerp(oldValue, value, t);
             lensDistortion.scale.value = Mathf.Lerp(oldScale, scale, t);
+            // lensDistortion.scale.Override(lensDistortion.scale.value);
+            // lensDistortion.intensity.Override(lensDistortion.intensity.value);
             yield return null;
         }
     }

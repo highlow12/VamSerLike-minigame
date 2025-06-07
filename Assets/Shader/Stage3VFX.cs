@@ -47,7 +47,7 @@ public class Stage3VFX : MonoBehaviour
         VFXManager.Instance.Journal(false);
         yield return new WaitForSeconds(203f);
         StartCoroutine(BloodParticle());
-        // 쓰레기
+        // TODO: 피가 흐르는 효과
     }
 
     IEnumerator BloodParticle()

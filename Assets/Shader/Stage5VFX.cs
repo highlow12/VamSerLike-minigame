@@ -30,10 +30,10 @@ public class Stage5VFX : MonoBehaviour
         yield return new WaitForSeconds(5f);
         VFXManager.Instance.Journal(false);
         yield return new WaitForSeconds(103f);
-        // 피가 흐르는 효과
+        // TODO: 피가 흐르는 효과
         yield return new WaitForSeconds(120f);
         VFXManager.Instance.AnimateShakeBack(0, 1, 2f);
         yield return new WaitForSeconds(110f);
-        // 붉은 화면 연출
+        // TODO: 붉은 화면 연출
     }
 }

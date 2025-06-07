@@ -26,7 +26,8 @@ public class Stage6VFX : MonoBehaviour
         float windowW = GetComponent<RectTransform>().rect.width;
         float sizeX = head.GetComponent<RectTransform>().rect.width;
         Debug.Log("windowW: " + windowW + " sizeX: " + sizeX);
-        rt.DOMoveX(windowW + (sizeX / 2), 4f);
+        rt.DOMoveX(windowW + (sizeX / 2), 4f).SetEase(Ease.Linear);
+        rt.DORotate(new Vector3(0, 0, -720), 4f, RotateMode.FastBeyond360).SetEase(Ease.Linear);
         yield return null;
     }
 

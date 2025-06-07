@@ -28,17 +28,20 @@ public class Stage4VFX : MonoBehaviour
         float windowW = GetComponent<RectTransform>().rect.width;
         float sizeX = Shadow.GetComponent<RectTransform>().rect.width;
         Debug.Log("windowW: " + windowW + " sizeX: " + sizeX);
-        rt.DOMoveX(windowW + (sizeX / 2), 5f);
+        rt.DOMoveX(windowW + (sizeX / 2), 5f).SetEase(Ease.Linear);
         yield return null;
     }
 
     IEnumerator VFX()
     {
+        // TODO: 심해로 가라앉는 효과
         yield return new WaitForSeconds(2f);
         VFXManager.Instance.Normalize();
         yield return new WaitForSeconds(28f);
         StartCoroutine(AnimateShadow());
-        yield return new WaitForSeconds(160f);
+        yield return new WaitForSeconds(130f);
+        // TODO: 물 색 변경
+        yield return new WaitForSeconds(30f);
         StartCoroutine(AnimateShadow());
         yield return new WaitForSeconds(110f);
         VFXManager.Instance.AnimateNoise();
@@ -51,17 +54,5 @@ public class Stage4VFX : MonoBehaviour
         VFXManager.Instance.AnimateShake(0, 5, 2f);
         // StartCoroutine(BloodParticle());
         // 쓰레기
-    }
-
-    IEnumerator HandVFX()
-    {
-        yield return new WaitForSeconds(2.5f);
-        handParticle.SetActive(false);
-    }
-
-    IEnumerator BloodVFX()
-    {
-        yield return new WaitForSeconds(2.5f);
-        bloodParticle.SetActive(false);
     }
 }

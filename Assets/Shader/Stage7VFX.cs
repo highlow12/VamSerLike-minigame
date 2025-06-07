@@ -29,7 +29,7 @@ public class Stage7VFX : MonoBehaviour
         VFXManager.Instance.Journal(false);
         yield return new WaitForSeconds(3f);
         yield return new WaitForSeconds(10f);
-        // ?
+        // TODO: 상체 기울인 애니메이션?
         yield return new WaitForSeconds(30f);
         VFXManager.Instance.AnimateVoronoi(0f, 0.5f, 2500f);
         yield return new WaitForSeconds(2.5f);
