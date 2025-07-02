@@ -103,11 +103,18 @@ public class MasterOfCloset : BossMonster
             return appearancePoints[0];
         }
 
-        Transform nextPoint;
-        do
+        // LINQ를 사용하여 마지막 위치를 제외한 목록을 만듭니다.
+        var availablePoints = appearancePoints.Where(p => p != lastAppearancePoint).ToList();
+        
+        // 만약 필터링된 목록이 비어있다면 (모든 포인트가 마지막 위치와 동일한 경우 등)
+        // 전체 목록에서 다시 선택하도록 합니다.
+        if (availablePoints.Count == 0)
         {
-            nextPoint = appearancePoints[Random.Range(0, appearancePoints.Count)];
-        } while (nextPoint == lastAppearancePoint);
+            availablePoints = appearancePoints;
+        }
+
+        // 새 목록에서 무작위로 하나를 선택합니다.
+        Transform nextPoint = availablePoints[Random.Range(0, availablePoints.Count)];
 
         lastAppearancePoint = nextPoint;
         return nextPoint;
@@ -267,23 +274,14 @@ public class MasterOfCloset : BossMonster
 
             RaycastHit2D[] hits = Physics2D.RaycastAll(rayStartPosition, direction, raycastDistance - 0.7f);
 
-            if (hits.Length == 0)
-            {
-                continue;
-            }
+            // LINQ를 사용하여 가장 가까운 'Block' 태그를 가진 부모의 첫 번째 자식 transform을 찾습니다.
+            var firstBlockHit = hits
+                .OrderBy(h => h.distance)
+                .FirstOrDefault(h => h.collider.transform.parent != null && h.collider.transform.parent.CompareTag("Block"));
 
-            // 거리가 가까운 순으로 정렬
-            System.Array.Sort(hits, (h1, h2) => h1.distance.CompareTo(h2.distance));
-
-            // 가장 먼저 발견된 'Block'을 찾음
-            foreach (var hit in hits)
+            if (firstBlockHit.collider != null)
             {
-                if (hit.collider.transform.parent != null && hit.collider.transform.parent.CompareTag("Block"))
-                {
-                    // 첫 번째로 발견된 블록을 추가하고 이 레이에 대한 검색을 중단
-                    foundPoints.Add(hit.collider.transform);
-                    break; // 다음 레이로 넘어감
-                }
+                foundPoints.Add(firstBlockHit.collider.transform);
             }
         }
         
