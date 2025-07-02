@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7552934512470329611}
   m_Layer: 0
   m_Name: GameObject (2)
-  m_TagString: Untagged
+  m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -60,6 +60,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Square (08)
       objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 1992882582541463404}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.4999996
@@ -105,6 +129,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+--- !u!212 &1992882582541463404 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2231705481205110957, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+  m_PrefabInstance: {fileID: 383008732826023873}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8254069593092954859 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
@@ -118,6 +147,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7552934512470329611}
     m_Modifications:
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 4325707484321671950}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 589838253357478657, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
       propertyPath: m_Name
       value: Square (1)
@@ -167,6 +220,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+--- !u!212 &4325707484321671950 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3585429197801323225, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+  m_PrefabInstance: {fileID: 993607570595713495}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6381828541319788251 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6150456856963688204, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
@@ -180,6 +238,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7552934512470329611}
     m_Modifications:
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 2436060608906958972}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 589838253357478657, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
       propertyPath: m_Name
       value: Square (15)
@@ -229,6 +311,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+--- !u!212 &2436060608906958972 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3585429197801323225, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+  m_PrefabInstance: {fileID: 1156476141603283621}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4996302885338072489 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6150456856963688204, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
@@ -245,6 +332,30 @@ PrefabInstance:
     - target: {fileID: 3228118216411995835, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_Name
       value: Square (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 4394097775114600946}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_LocalPosition.x
@@ -291,6 +402,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+--- !u!212 &4394097775114600946 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2231705481205110957, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+  m_PrefabInstance: {fileID: 2450632107195603295}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6187528156112532597 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
@@ -304,6 +420,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7552934512470329611}
     m_Modifications:
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 1317199172527525395}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 589838253357478657, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
       propertyPath: m_Name
       value: Square (13)
@@ -353,6 +493,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+--- !u!212 &1317199172527525395 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3585429197801323225, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+  m_PrefabInstance: {fileID: 2559629469106304202}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8565686632762332102 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6150456856963688204, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
@@ -369,6 +514,30 @@ PrefabInstance:
     - target: {fileID: 3228118216411995835, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_Name
       value: Square (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 2789727330742270858}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_LocalPosition.x
@@ -415,6 +584,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+--- !u!212 &2789727330742270858 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2231705481205110957, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+  m_PrefabInstance: {fileID: 4057609629231915815}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5734039504164851213 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
@@ -431,6 +605,30 @@ PrefabInstance:
     - target: {fileID: 3228118216411995835, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_Name
       value: Square (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 2463188882421586954}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_LocalPosition.x
@@ -477,6 +675,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+--- !u!212 &2463188882421586954 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2231705481205110957, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+  m_PrefabInstance: {fileID: 4384145880822564007}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5407553811859696013 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
@@ -493,6 +696,30 @@ PrefabInstance:
     - target: {fileID: 3228118216411995835, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_Name
       value: Square (10)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 5771844912747540640}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_LocalPosition.x
@@ -544,6 +771,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
   m_PrefabInstance: {fileID: 5683870460315674637}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &5771844912747540640 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2231705481205110957, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+  m_PrefabInstance: {fileID: 5683870460315674637}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6426615204299884081
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -552,6 +784,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7552934512470329611}
     m_Modifications:
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 7560959527507049704}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 589838253357478657, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
       propertyPath: m_Name
       value: Square (14)
@@ -606,6 +862,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6150456856963688204, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
   m_PrefabInstance: {fileID: 6426615204299884081}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &7560959527507049704 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3585429197801323225, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+  m_PrefabInstance: {fileID: 6426615204299884081}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7810550064408054695
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -617,6 +878,30 @@ PrefabInstance:
     - target: {fileID: 3228118216411995835, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_Name
       value: Square (11)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 8258539216514290442}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_LocalPosition.x
@@ -668,6 +953,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
   m_PrefabInstance: {fileID: 7810550064408054695}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &8258539216514290442 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2231705481205110957, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+  m_PrefabInstance: {fileID: 7810550064408054695}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8273006788958684529
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -676,6 +966,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7552934512470329611}
     m_Modifications:
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 4831692850301632424}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 589838253357478657, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
       propertyPath: m_Name
       value: Square (4)
@@ -730,6 +1044,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6150456856963688204, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
   m_PrefabInstance: {fileID: 8273006788958684529}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &4831692850301632424 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3585429197801323225, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+  m_PrefabInstance: {fileID: 8273006788958684529}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8394919118757648862
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -738,6 +1057,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7552934512470329611}
     m_Modifications:
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 4990760992451175175}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 589838253357478657, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
       propertyPath: m_Name
       value: Square (3)
@@ -792,6 +1135,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6150456856963688204, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
   m_PrefabInstance: {fileID: 8394919118757648862}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &4990760992451175175 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3585429197801323225, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+  m_PrefabInstance: {fileID: 8394919118757648862}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8784607935325402389
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -800,6 +1148,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7552934512470329611}
     m_Modifications:
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 5200305738092056524}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 589838253357478657, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
       propertyPath: m_Name
       value: Square (16)
@@ -854,6 +1226,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6150456856963688204, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
   m_PrefabInstance: {fileID: 8784607935325402389}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &5200305738092056524 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3585429197801323225, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+  m_PrefabInstance: {fileID: 8784607935325402389}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8862461518160693824
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -862,6 +1239,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7552934512470329611}
     m_Modifications:
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 5422273548138541209}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 589838253357478657, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
       propertyPath: m_Name
       value: Square (12)
@@ -916,6 +1317,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6150456856963688204, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
   m_PrefabInstance: {fileID: 8862461518160693824}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &5422273548138541209 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3585429197801323225, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+  m_PrefabInstance: {fileID: 8862461518160693824}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8942110585368249806
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -924,6 +1330,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7552934512470329611}
     m_Modifications:
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 5610010591044337431}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7532844577354172477, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 589838253357478657, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
       propertyPath: m_Name
       value: Square (7)
@@ -978,6 +1408,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6150456856963688204, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
   m_PrefabInstance: {fileID: 8942110585368249806}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &5610010591044337431 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3585429197801323225, guid: 065a7fe5fc299704aa2b9bf94a196ba1, type: 3}
+  m_PrefabInstance: {fileID: 8942110585368249806}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &9008051516086965350
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -989,6 +1424,30 @@ PrefabInstance:
     - target: {fileID: 3228118216411995835, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_Name
       value: Square (07)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 7204522930696195275}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1040,6 +1499,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
   m_PrefabInstance: {fileID: 9008051516086965350}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &7204522930696195275 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2231705481205110957, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+  m_PrefabInstance: {fileID: 9008051516086965350}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &9104685883662646995
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1051,6 +1515,30 @@ PrefabInstance:
     - target: {fileID: 3228118216411995835, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_Name
       value: Square (06)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_HasRenderer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousEdgeProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowCastingSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_PreviousShadowShape2DSource
+      value: 
+      objectReference: {fileID: 6963352124683740798}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386921924778576118, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1100,5 +1588,10 @@ PrefabInstance:
 --- !u!4 &686437664909857785 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8637025549037808938, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
+  m_PrefabInstance: {fileID: 9104685883662646995}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6963352124683740798 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2231705481205110957, guid: c1d0b6555c45840488f4b2da94b8e219, type: 3}
   m_PrefabInstance: {fileID: 9104685883662646995}
   m_PrefabAsset: {fileID: 0}
