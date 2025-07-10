@@ -107,9 +107,10 @@ namespace UI.Stage
         private void LoadSelectedStage()
         {
             // 스테이지 씬은 "Stage1", "Stage2" 등으로 이름이 지정됨
-            SceneManager.LoadScene("Stage" + (currentStageIndex + 1));
+            //SceneManager.LoadScene("Stage" + (currentStageIndex + 1));
+            //씬빌드 인덱스 사용
+            SceneManager.LoadScene(currentStageIndex + 1);
         }
-
         public void OpenStageSelectScreen()
         {
             // 홈 화면 숨기기
