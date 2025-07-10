@@ -33,7 +33,7 @@ namespace UI.Stage
 
         void Start()
         {
-            stageSelectionManager = FindObjectOfType<StageSelectionManager>();
+            stageSelectionManager = FindAnyObjectByType<StageSelectionManager>();
 
             // 버튼 리스너 설정
             if (enterButton != null)
