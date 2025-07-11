@@ -35,6 +35,7 @@ public class HomeScreenManager : MonoBehaviour
         
         // Setup button listeners
         if (enterButton != null)
+            Debug.Log("Enter Button found and set up.");
             enterButton.onClick.AddListener(EnterSelectedStage);
             
         if (stageSelectButton != null)

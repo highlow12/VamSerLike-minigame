@@ -40,6 +40,30 @@ public class StageLoadManager : Singleton<StageLoadManager>
             StartCoroutine(LoadSceneDirectly(sceneName));
         }
     }
+    public void LoadSceneAsync(int sceneIndex, bool useLoadingScene = false, string loadingSceneName = "LoadingScene")
+    {
+        if (isLoading)
+        {
+            Debug.LogWarning("Already loading a scene!");
+            return;
+        }
+
+        string sceneName = SceneUtility.GetScenePathByBuildIndex(sceneIndex);
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogError("Invalid scene index: " + sceneIndex);
+            return;
+        }
+
+        if (useLoadingScene)
+        {
+            StartCoroutine(LoadSceneWithLoadingScreen(sceneName, loadingSceneName));
+        }
+        else
+        {
+            StartCoroutine(LoadSceneDirectly(sceneName));
+        }
+    }
     
     /// <summary>
     /// 로딩 씬 없이 씬을 직접 로드합니다.
@@ -48,18 +72,18 @@ public class StageLoadManager : Singleton<StageLoadManager>
     {
         isLoading = true;
         loadingProgress = 0f;
-        
+
         // 씬 로드 시작
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
         asyncOperation.allowSceneActivation = false;
-        
+
         // 로딩이 완료될 때까지 진행 상황 업데이트
         while (!asyncOperation.isDone)
         {
             // 로딩 진행률은 0.9까지만 진행됨 (마지막 0.1은 씬 활성화 시 진행)
             loadingProgress = Mathf.Clamp01(asyncOperation.progress / 0.9f);
             OnLoadingProgressChanged?.Invoke(loadingProgress);
-            
+
             // 로딩이 거의 완료되었을 때
             if (asyncOperation.progress >= 0.9f)
             {
@@ -67,10 +91,10 @@ public class StageLoadManager : Singleton<StageLoadManager>
                 OnLoadingProgressChanged?.Invoke(loadingProgress);
                 asyncOperation.allowSceneActivation = true;
             }
-            
+
             yield return null;
         }
-        
+
         isLoading = false;
         OnLoadingCompleted?.Invoke();
     }
