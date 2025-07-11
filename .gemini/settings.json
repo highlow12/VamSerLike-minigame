@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "unityMCP": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "C:\\Users\\highl\\AppData\\Local\\Programs\\UnityMCP\\UnityMcpServer\\src",
+        "run",
+        "server.py"
+      ]
+    }
+  }
+}
