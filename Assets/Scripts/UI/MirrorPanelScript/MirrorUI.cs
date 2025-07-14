@@ -46,6 +46,8 @@ public partial class MirrorUI : MonoBehaviour
     public WeaponDataLoader weaponDataLoader;
 
     protected List<EquipmentItem> equipmentItems = new List<EquipmentItem>();
+    
+    
     protected EquipmentItem equippedWeapon;
     protected EquipmentItem equippedCloak;
 
@@ -74,16 +76,19 @@ public partial class MirrorUI : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("Start 메서드가 호출되었습니다."); // Start 메서드 호출 확인 로그 추가
+
         InitializeUI();
 
         // weaponDataLoader에서 실제 무기 데이터 로드
         if (weaponDataLoader != null)
         {
-            Main_LoadEquipmentItems();
+            Debug.Log("Main_LoadEquipmentItems 호출 준비 완료.");
+            // Main_LoadEquipmentItems(); // Start에서 호출하지 않도록 수정
         }
         else
         {
-            // 데이터 로더가 없으면 테스트 데이터 사용
+            Debug.LogWarning("WeaponDataLoader가 null입니다. LoadMockItems를 호출합니다.");
             LoadMockItems();
         }
 
@@ -105,35 +110,93 @@ public partial class MirrorUI : MonoBehaviour
             {
                 Debug.Log($"WeaponDataLoader에서 {weapons.Count}개의 무기 데이터를 로드했습니다.");
 
-                // 획득 순서 설정 (인덱스 기반)
                 for (int i = 0; i < weapons.Count; i++)
                 {
                     acquireOrderMap[weapons[i]] = i + 1;
                     equipmentItems.Add(weapons[i]);
                 }
 
-                // 첫 번째 무기를 기본 장착
-                if (weapons.Count > 0)
+                EquipmentItem firstWeapon = weapons.Find(item => item.category == EquipmentCategory.Weapon);
+                if (firstWeapon != null)
                 {
-                    // 무기 카테고리에서 첫 번째 아이템 찾기
-                    EquipmentItem firstWeapon = weapons.Find(item => item.category == EquipmentCategory.Weapon);
-                    if (firstWeapon != null)
-                    {
-                        equippedWeapon = firstWeapon;
-                        Debug.Log($"기본 무기 '{firstWeapon.itemName}'이(가) 장착되었습니다.");
-                    }
+                    equippedWeapon = firstWeapon;
+                    Debug.Log($"기본 무기 '{firstWeapon.itemName}'이(가) 장착되었습니다.");
                 }
             }
             else
             {
-                Debug.LogWarning("WeaponDataLoader에서 무기 데이터를 가져올 수 없습니다. 테스트 데이터를 사용합니다.");
+                Debug.LogWarning("WeaponDataLoader에서 무기 데이터를 가져올 수 없습니다. 샘플 아이템을 사용합니다.");
                 LoadMockItems();
             }
         }
         else
         {
-            Debug.LogWarning("무기 데이터 로더를 찾을 수 없어 기본 아이템을 사용합니다.");
+            Debug.LogWarning("WeaponDataLoader를 찾을 수 없어 샘플 아이템을 사용합니다.");
             LoadMockItems();
+        }
+
+        AdjustItemGrid();
+    }
+
+    protected void AdjustItemGrid()
+    {
+        Debug.Log("AdjustItemGrid 메서드가 호출되었습니다.");
+
+        int itemCount = equipmentItems.Count;
+        Debug.Log($"로드된 아이템 개수: {itemCount}");
+
+        // 최소값 설정
+        int minItems = 16;
+
+        // 기존 슬롯 제거
+        foreach (Transform child in itemGridContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // 슬롯 동적 생성
+        int totalSlots = Mathf.Max(itemCount, minItems);
+        Debug.Log($"생성할 슬롯 개수: {totalSlots}");
+
+        for (int i = 0; i < totalSlots; i++)
+        {
+            GameObject newSlot = Instantiate(itemSlotPrefab, itemGridContainer.transform);
+            if (newSlot == null)
+            {
+                Debug.LogError("itemSlotPrefab이 null입니다. Prefab을 확인하세요.");
+                continue;
+            }
+
+            Debug.Log($"슬롯 생성: {newSlot.name}");
+            newSlot.name = $"ItemSlot_{i + 1}";
+
+            // 슬롯에 아이템 데이터 바인딩
+            ItemSlot itemSlot = newSlot.GetComponent<ItemSlot>();
+            if (itemSlot == null)
+            {
+                Debug.LogError("ItemSlot 컴포넌트를 찾을 수 없습니다. Prefab을 확인하세요.");
+                continue;
+            }
+
+            if (i < itemCount)
+            {
+                //EquipmentItem item = equipmentItems[i];
+                if (equipmentItems[i] == null)
+                {
+                    Debug.LogError($"equipmentItems[{i}]가 null입니다. 데이터를 확인하세요.");
+                    continue;
+                }
+
+                try
+                {
+                    itemSlot.SetItem(equipmentItems[i]);
+                    Debug.Log($"아이템 바인딩 성공: {equipmentItems[i].itemName}");
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"아이템 바인딩 중 오류 발생: {ex.Message}");
+                }
+            }
         }
     }
 
@@ -148,6 +211,16 @@ public partial class MirrorUI : MonoBehaviour
         enhancementButton.onClick.AddListener(Grid_OpenEnhancementMode);
         weaponSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedWeapon, EquipmentCategory.Weapon));
         cloakSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedCloak, EquipmentCategory.Cloak));
+    }
+
+    public void weaponCategory_Grid_SwitchCategory()
+    {
+        Grid_SwitchCategory(EquipmentCategory.Weapon);
+        Debug.Log("무기 카테고리로 전환되었습니다.");
+    }public void cloakCategory_Grid_SwitchCategory()
+    {
+        Grid_SwitchCategory(EquipmentCategory.Cloak);
+        Debug.Log("망토 카테고리로 전환되었습니다.");
     }
 
     // 샘플 아이템 로드 (테스트용)

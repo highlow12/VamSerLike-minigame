@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 055282e75aa91884bb98abfbd14b2872, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemImage: {fileID: 0}
+  itemImage: {fileID: 1307545150936643965}
   rarityText: {fileID: 368640180867742231}
   item:
     itemName: 

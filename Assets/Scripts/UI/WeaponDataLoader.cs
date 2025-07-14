@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LitJson;
 
 public class WeaponDataLoader : MonoBehaviour
 {
@@ -268,5 +269,26 @@ public class WeaponDataLoader : MonoBehaviour
         }
 
         return new List<EquipmentItem>(loadedWeapons);
+    }
+
+    // 무기 데이터 업데이트하기
+    public void UpdateWeaponData(JsonData updatedData)
+    {
+        if (LocalDataManager.Instance == null)
+        {
+            Debug.LogError("LocalDataManager.Instance가 null입니다. LocalDataManager가 초기화되었는지 확인하세요.");
+            return;
+        }
+
+        bool success = LocalDataManager.Instance.UpdateLocalUserMainWeaponData(updatedData);
+        if (success)
+        {
+            Debug.Log("무기 데이터가 성공적으로 업데이트되었습니다.");
+            LoadWeaponData(); // 업데이트 후 무기 데이터 다시 로드
+        }
+        else
+        {
+            Debug.LogError("무기 데이터를 업데이트하는 데 실패했습니다.");
+        }
     }
 }

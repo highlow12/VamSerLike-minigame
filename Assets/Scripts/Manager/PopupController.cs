@@ -142,20 +142,18 @@ public class PopupController : MonoBehaviour
     {
         if (!showDebugLogs) return;
 
-        Debug.Log($"{prefix}Panel: {panel.name}, 활성화: {panel.activeSelf}");
-
-        // Canvas 컴포넌트 확인
         Canvas canvas = panel.GetComponent<Canvas>();
         if (canvas != null)
         {
-            Debug.Log($"{prefix}- Canvas: RenderMode={canvas.renderMode}, SortOrder={canvas.sortingOrder}");
+            // Debug.Log 제거
+            // Debug.Log($"{prefix}- Canvas: RenderMode={canvas.renderMode}, SortOrder={canvas.sortingOrder}");
         }
 
-        // CanvasGroup 컴포넌트 확인
         CanvasGroup canvasGroup = panel.GetComponent<CanvasGroup>();
         if (canvasGroup != null)
         {
-            Debug.Log($"{prefix}- CanvasGroup: Alpha={canvasGroup.alpha}, Interactable={canvasGroup.interactable}, BlocksRaycasts={canvasGroup.blocksRaycasts}");
+            // Debug.Log 제거
+            // Debug.Log($"{prefix}- CanvasGroup: Alpha={canvasGroup.alpha}, Interactable={canvasGroup.interactable}, BlocksRaycasts={canvasGroup.blocksRaycasts}");
         }
 
         foreach (Transform child in panel.transform)
@@ -167,7 +165,8 @@ public class PopupController : MonoBehaviour
                 positionInfo = rt.anchoredPosition.ToString();
             }
 
-            Debug.Log($"{prefix}- Child: {child.name}, 활성화: {child.gameObject.activeSelf}, 위치: {positionInfo}");
+            // Debug.Log 제거
+            // Debug.Log($"{prefix}- Child: {child.name}, 활성화: {child.gameObject.activeSelf}, 위치: {positionInfo}");
 
             // 재귀적으로 자식들도 확인
             if (child.childCount > 0)

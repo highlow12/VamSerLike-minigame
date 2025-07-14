@@ -101,6 +101,7 @@ public partial class MirrorUI
     // 카테고리 변경 (MirrorUI_GridFunctions)
     protected void Grid_SwitchCategory(EquipmentCategory newCategory)
     {
+        Debug.Log($"카테고리 변경: {currentCategory} -> {newCategory}");
         currentCategory = newCategory;
         Grid_PopulateItemGrid();
 
