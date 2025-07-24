@@ -24,18 +24,16 @@ public partial class MirrorUI : MonoBehaviour
 
         Core_UpdateEquippedStats();
         Grid_PopulateItemGrid();
+
+        if (enhancementPanel != null)
+        {
+            enhancementPanel.gameObject.SetActive(false); // Ensure the panel is disabled on enable
+        }
     }
 
     private void Basic_InitializeUI()
     {
-        closeButton.onClick.AddListener(Grid_CloseMirror);
-        weaponCategory.onClick.AddListener(() => Grid_SwitchCategory(EquipmentCategory.Weapon));
-        cloakCategory.onClick.AddListener(() => Grid_SwitchCategory(EquipmentCategory.Cloak));
-        raritySort.onClick.AddListener(() => Grid_SortItems(SortType.ByRarity));
-        acquiredSort.onClick.AddListener(() => Grid_SortItems(SortType.ByAcquired));
-        enhancementButton.onClick.AddListener(Grid_OpenEnhancementMode);
-        weaponSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedWeapon, EquipmentCategory.Weapon));
-        cloakSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedCloak, EquipmentCategory.Cloak));
+
     }
 
     private void Basic_LoadMockItems()

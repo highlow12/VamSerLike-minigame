@@ -38,6 +38,7 @@ public partial class MirrorUI : MonoBehaviour
 
     [Header("Enhancement Button")]
     public Button enhancementButton;
+    public Transform enhancementPanel; // Enhancement panel to be set in the inspector
 
     [Header("Item Info Panel")]
     public GameObject itemInfoPanelPrefab;
@@ -95,7 +96,6 @@ public partial class MirrorUI : MonoBehaviour
         Core_UpdateEquippedStats();
         Grid_PopulateItemGrid();
     }
-
     // 장비 아이템 로드 (WeaponDataLoader 사용)
     protected void Main_LoadEquipmentItems()
     {
@@ -208,9 +208,18 @@ public partial class MirrorUI : MonoBehaviour
         cloakCategory.onClick.AddListener(() => Grid_SwitchCategory(EquipmentCategory.Cloak));
         raritySort.onClick.AddListener(() => Grid_SortItems(SortType.ByRarity));
         acquiredSort.onClick.AddListener(() => Grid_SortItems(SortType.ByAcquired));
-        enhancementButton.onClick.AddListener(Grid_OpenEnhancementMode);
+        enhancementButton.onClick.AddListener(ToggleEnhancementPanel);
         weaponSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedWeapon, EquipmentCategory.Weapon));
         cloakSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedCloak, EquipmentCategory.Cloak));
+    }
+
+    private void ToggleEnhancementPanel()
+    {
+        if (enhancementPanel != null)
+        {
+            bool isActive = enhancementPanel.gameObject.activeSelf;
+            enhancementPanel.gameObject.SetActive(!isActive); // Toggle the panel's active state
+        }
     }
 
     public void weaponCategory_Grid_SwitchCategory()
