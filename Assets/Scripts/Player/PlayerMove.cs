@@ -21,6 +21,7 @@ public class PlayerMove : MonoBehaviour
 
     public void OnMove(InputValue value)
     {
+        Debug.Log("PlayerMove OnMove called");//작동 안함..
         inputVec = value.Get<Vector2>();
     }
     public void OnMoveWithVirtualJoystick(Vector2 value)
@@ -30,6 +31,7 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(inputVec);
         moveSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.MovementSpeed, baseMoveSpeed);
         transform.Translate(inputVec * Time.deltaTime * CheckDebuff() * moveSpeed);
         if (moveSpeed > 0)

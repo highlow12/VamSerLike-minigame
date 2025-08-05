@@ -160,6 +160,17 @@
                     "isOR": false
                 }
             ]
+        },
+        {
+            "name": "test",
+            "bindingGroup": "test",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
         }
     ]
 }
