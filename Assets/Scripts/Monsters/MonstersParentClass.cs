@@ -343,7 +343,7 @@ public abstract class BossMonster : Monster
     [SerializeField] private float phaseChangeHealthThreshold;
     [SerializeField] private float berserkHealthThreshold;
     protected Dictionary<int, BaseState> states;
-    private float stateTimer;
+    protected float stateTimer;
     protected MonsterFSM monsterFSM;
 
 

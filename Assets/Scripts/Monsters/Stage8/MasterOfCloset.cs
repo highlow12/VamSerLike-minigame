@@ -5,7 +5,7 @@ using System.Linq;
 public class MasterOfCloset : BossMonster
 {
     public Animator animator { get; private set; }
-    public new float attackRange = 2f; // 공격 사거리
+    public new float closetAttackRange = 2f; // 공격 사거리
     public float hideTime = 2f; // 숨어있는 시간
     public float appearTime = 3f; // 나타나는 데 걸리는 시간
     
@@ -16,7 +16,9 @@ public class MasterOfCloset : BossMonster
     private List<Transform> appearancePoints = new List<Transform>(); // 나타날 수 있는 위치 목록
     private HashSet<Transform> foundPoints = new HashSet<Transform>(); // 중복 방지를 위한 재사용 HashSet
     private RaycastHit2D[] raycastHits = new RaycastHit2D[20]; // RaycastNonAlloc을 위한 재사용 배열
-    private float stateTimer = 0f;
+
+    //stateTimer는 BossMonster에 이미 존재함
+    //private float stateTimer = 0f;
     private MasterOfClosetAction currentAction;
     private Transform lastAppearancePoint;
 
@@ -134,7 +136,7 @@ public class MasterOfCloset : BossMonster
             return;
         }
 
-        if (Vector2.Distance(transform.position, playerTransform.position) < attackRange)
+        if (Vector2.Distance(transform.position, playerTransform.position) < closetAttackRange)
         {
             ChangeState(MasterOfClosetAction.Attack);
         }
@@ -289,6 +291,9 @@ public class MasterOfCloset : BossMonster
         appearancePoints.AddRange(foundPoints);
     }
 
+    // Scene 뷰에서 보이는 것:
+    // 🟢 <- 초록색 와이어 구체들이 MasterOfCloset이 나타날 수 있는 위치마다 표시됨
+    // 이를 통해 개발자가 보스의 출현 패턴을 시각적으로 확인 가능
     private void OnDrawGizmos()
     {
         if (appearancePoints == null || appearancePoints.Count == 0)

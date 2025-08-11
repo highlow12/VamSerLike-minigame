@@ -18,7 +18,6 @@ public class FigureGhost : BossMonster
 
     private bool isInvincible = false;
     private FigureGhostAction currentAction = FigureGhostAction.SkateMove;
-    private float stateTimer = 0f;
 
     enum FigureGhostAction { SkateMove = 0, IceShardAttack = 1, GlacierAttack = 2 }
 

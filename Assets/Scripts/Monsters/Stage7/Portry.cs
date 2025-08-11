@@ -20,7 +20,8 @@ public class Portry : BossMonster
     [SerializeField] private AudioClip jointCrackSound; // 관절 꺾이는 소리
     private AudioSource audioSource;
 
-    private float stateTimer; // 현재 상태 유지 시간 타이머
+    //stateTimer는 BossMonster에 이미 존재함
+    //private float stateTimer; // 현재 상태 유지 시간 타이머
     private PortryAction currentAction; // 현재 상태
 
     // 애니메이터 컴포넌트

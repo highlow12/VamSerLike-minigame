@@ -21,17 +21,37 @@ public class PlayerMove : MonoBehaviour
 
     public void OnMove(InputValue value)
     {
-        Debug.Log("PlayerMove OnMove called");//작동 안함..
         inputVec = value.Get<Vector2>();
     }
     public void OnMoveWithVirtualJoystick(Vector2 value)
     {
         inputVec = value;
     }
+     
+    // Old Input System 추가
+    void HandleOldInputSystem()
+    {
+        // WASD 또는 Arrow Keys 입력 받기
+        float horizontal = Input.GetAxis("Horizontal"); // A/D, Left/Right Arrow
+        float vertical = Input.GetAxis("Vertical");     // W/S, Up/Down Arrow
+
+        Vector2 oldInputVec = new Vector2(horizontal, vertical);
+
+        // 입력이 있을 때만 업데이트
+        if (oldInputVec != Vector2.zero)
+        {
+            inputVec = oldInputVec.normalized; // 입력 벡터를 정규화하여 방향만 유지
+        }
+        else
+        {
+            inputVec = Vector2.zero;
+        }
+    }
 
     void Update()
     {
-        Debug.Log(inputVec);
+        HandleOldInputSystem();
+
         moveSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.MovementSpeed, baseMoveSpeed);
         transform.Translate(inputVec * Time.deltaTime * CheckDebuff() * moveSpeed);
         if (moveSpeed > 0)
