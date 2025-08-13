@@ -29,7 +29,7 @@ public class PlayerMove : MonoBehaviour
     }
      
     // Old Input System 추가
-    void HandleOldInputSystem()
+    void TempOnMove()
     {
         // WASD 또는 Arrow Keys 입력 받기
         float horizontal = Input.GetAxis("Horizontal"); // A/D, Left/Right Arrow
@@ -37,8 +37,8 @@ public class PlayerMove : MonoBehaviour
 
         Vector2 oldInputVec = new Vector2(horizontal, vertical);
 
-        // 입력이 있을 때만 업데이트
-        if (oldInputVec != Vector2.zero)
+        // 확실한 입력이 있을 때만 업데이트
+        if (oldInputVec.magnitude > 0.1f)
         {
             inputVec = oldInputVec.normalized; // 입력 벡터를 정규화하여 방향만 유지
         }
@@ -50,7 +50,7 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
-        HandleOldInputSystem();
+        TempOnMove();
 
         moveSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.MovementSpeed, baseMoveSpeed);
         transform.Translate(inputVec * Time.deltaTime * CheckDebuff() * moveSpeed);

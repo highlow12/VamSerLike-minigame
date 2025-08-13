@@ -231,6 +231,7 @@ public class MasterOfCloset : BossMonster
         newPosition.z = blockTransform.position.z - 0.1f; // 블록보다 약간 앞에 위치하도록 Z값 조정
         transform.position = newPosition;
 
+        //잘못된 코드. 직각으로 나와버림
         // 플레이어를 바라보는 방향 계산
         Vector2 directionToPlayer = (Vector2)GameManager.Instance.playerScript.transform.position - (Vector2)transform.position;
         float angleToPlayer = Vector2.SignedAngle(Vector2.right, directionToPlayer.normalized);

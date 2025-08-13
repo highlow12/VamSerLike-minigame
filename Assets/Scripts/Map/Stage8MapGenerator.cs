@@ -134,7 +134,7 @@ public class Stage8MapGenera : MonoBehaviour
                 if (!activeBlocks.ContainsKey(cellIdx))
                 {
                     Vector2 cellCenter = CellToWorld(cellIdx);
-                    int rot = Random.Range(0, 4) * 90;
+                    int rot = Random.Range(0, 4) * 90;//0~270
                     PlaceClosedCellWithPooling(cellIdx, cellCenter, rot);
                 }
             }
