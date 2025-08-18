@@ -7,12 +7,12 @@ public class EyeMonster : BossMonster
 {
 
     [Header("State Time Settings")]
-    [SerializeField] private float traceTime = 2f; // 변칙적인 움직임을 위한 시간
+    [SerializeField] private float traceTime = 2f; // 추적을 위한 시간
     [SerializeField] private float irregularMoveTime = 3f; // 변칙적인 움직임을 위한 시간
-    [SerializeField] private float attackTime = 4f; // 변칙적인 움직임을 위한 시간
-    [SerializeField] private float waitTime = 1f; // 변칙적인 움직임을 위한 시간
+    [SerializeField] private float attackTime = 4f; // 공격을 위한 시간
+    [SerializeField] private float waitTime = 1f; // 다시 움직이기 위한 대기시간
     [SerializeField] private float razorDelay = 1f; // 레이저 발사 지연 시간
-    [SerializeField] private float razorDuration = 2f; // 레이저 발사 시간
+    [SerializeField] private float razorDuration = 2f; // 레이저 발사 시간 (지연과 발사시간의 총합이 공격 시간과 같아야함)
 
     [Header("Sprites")]
     [SerializeField] private Sprite normalSprite;
