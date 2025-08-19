@@ -40,7 +40,8 @@ public class PlayerAttack : MonoBehaviour
             mainWeapon.projectileCount = (int)GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackProjectileCount, mainWeapon.baseProjectileCount);
             mainWeapon.projectileSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackProjectileSpeed, mainWeapon.baseProjectileSpeed);
 
-            StartCoroutine(mainWeapon.Attack(attackDirection));
+            //임시로 막아놓음
+            //StartCoroutine(mainWeapon.Attack(attackDirection));
         }
         foreach (Weapon.SubWeapon subWeapon in subWeapons)
         {

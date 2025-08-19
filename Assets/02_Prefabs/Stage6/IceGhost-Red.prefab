@@ -25,6 +25,18 @@ PrefabInstance:
       value: IceGhost-Red
       objectReference: {fileID: 0}
     - target: {fileID: 7920526959576114443, guid: cf8b1cdf010b2604094c8c714e5d8107, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.822
+      objectReference: {fileID: 0}
+    - target: {fileID: 7920526959576114443, guid: cf8b1cdf010b2604094c8c714e5d8107, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.822
+      objectReference: {fileID: 0}
+    - target: {fileID: 7920526959576114443, guid: cf8b1cdf010b2604094c8c714e5d8107, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3.822
+      objectReference: {fileID: 0}
+    - target: {fileID: 7920526959576114443, guid: cf8b1cdf010b2604094c8c714e5d8107, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
