@@ -80,7 +80,7 @@ public abstract class Monster : MonoBehaviour
     protected virtual void DropLoot()
     {
         // 임시 로직
-        DropItemManager.Instance.DropItem(transform.position);
+        //DropItemManager.Instance.DropItem(transform.position);
     }
 
     //protected abstract void DropLoot();

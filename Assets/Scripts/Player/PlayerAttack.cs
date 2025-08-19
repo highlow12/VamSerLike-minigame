@@ -40,7 +40,7 @@ public class PlayerAttack : MonoBehaviour
             mainWeapon.projectileCount = (int)GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackProjectileCount, mainWeapon.baseProjectileCount);
             mainWeapon.projectileSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackProjectileSpeed, mainWeapon.baseProjectileSpeed);
 
-            //임시로 막아놓음
+            //풀 매니저와 드롭 매니저로 인해 테스트중 오류가 자꾸 떠서 일단 막아둠
             //StartCoroutine(mainWeapon.Attack(attackDirection));
         }
         foreach (Weapon.SubWeapon subWeapon in subWeapons)

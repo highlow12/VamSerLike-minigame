@@ -79,6 +79,12 @@ public class DropItemManager : Singleton<DropItemManager>
                 Item.DropItemType parsedItemId = (Item.DropItemType)Enum.Parse(typeof(Item.DropItemType), itemId);
                 string itemName = Enum.GetName(typeof(Item.DropItemType), parsedItemId);
 
+                if(itemName == null)
+                {
+                    Debug.LogError($"[DropItem] Item is null for itemId: {itemId}");
+                    return "Void";
+                }
+
                 if (parsedItemId == Item.DropItemType.Experience)
                 {
                     DropExperience(position);
