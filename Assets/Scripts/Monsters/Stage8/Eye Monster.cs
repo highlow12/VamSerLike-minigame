@@ -1,102 +1,112 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 
 public class EyeMonster : BossMonster
 {
-    public Animator animator { get; private set; }
-    public new float attackRange = 3f; // 공격 사거리
-    public float traceSpeed = 5f; // 추적 속도
-    public float pathfindingUpdateInterval = 0.5f; // 경로 업데이트 주기
-    
-    // 공격 데미지에 접근하기 위한 프로퍼티
-    public float AttackDamage => damage;
-    
-    [Header("Pathfinding Settings")]
-    public LayerMask obstacleLayerMask = -1; // 장애물 레이어
-    public float nodeSize = 0.5f; // 그리드 노드 크기
-    public int maxPathLength = 50; // 최대 경로 길이 (성능 최적화)
-    public float maxPathfindingDistance = 15f; // 최대 pathfinding 거리
-    
-    private Vector3 targetPosition;
-    private List<Vector3> currentPath = new List<Vector3>();
-    private int currentPathIndex = 0;
-    private float pathUpdateTimer = 0f;
+
+    [Header("State Time Settings")]
+    [SerializeField] private float traceTime = 2f; // 추적을 위한 시간
+    [SerializeField] private float irregularMoveTime = 3f; // 변칙적인 움직임을 위한 시간
+    [SerializeField] private float attackTime = 4f; // 공격을 위한 시간
+    [SerializeField] private float waitTime = 1f; // 다시 움직이기 위한 대기시간
+    [SerializeField] private float razorDelay = 1f; // 레이저 발사 지연 시간
+    [SerializeField] private float razorDuration = 2f; // 레이저 발사 시간 (지연과 발사시간의 총합이 공격 시간과 같아야함)
+
+    [Header("Sprites")]
+    [SerializeField] private Sprite normalSprite;
+    [SerializeField] private Sprite attackSprite;
+    [Header("Others")]
+    [SerializeField] private float traceSpeed = 1f;
+    [SerializeField] private float irregularMoveSpeed = 4f;
+    [SerializeField] private float pupilRange = 1f; // 동공의 이동 범위
+    [SerializeField] private float maxDistanceToPlayer = 7f; // 플레이어와의 최대 거리
+    [SerializeField] private GameObject RazorPrefab; // Razor 프리팹
+
+
+
+    public bool isWatching { get; set; } //state함수들이 접근해서 변경함
+
+    //public Animator animator { get; private set; }
+    //private SpriteRenderer spriteRenderer; //부모에 이미 들어있음?
     private EyeMonsterAction currentAction;
-    private float stateTimer = 0f;
-    
-    // A* 알고리즘을 위한 노드 클래스
-    private class PathNode
-    {
-        public Vector2 position;
-        public float gCost; // 시작점으로부터의 거리
-        public float hCost; // 목표점까지의 추정 거리
-        public float fCost => gCost + hCost; // 총 비용
-        public PathNode parent;
-        public bool isWalkable;
-        
-        public PathNode(Vector2 pos, bool walkable = true)
-        {
-            position = pos;
-            isWalkable = walkable;
-        }
-    }
-    
-    public enum EyeMonsterAction
-    {
-        Idle,
-        Chase,
-        Attack
-    }
-    
+    private Transform pupil;
+    private Vector3 prevBlockPosition;
+
     protected override void Awake()
     {
-        base.Awake();
+        base.Awake();//anim 변수로 animator 컴포넌트 불러옴?
+        //spriteRenderer = GetComponent<SpriteRenderer>();
+        pupil = transform.Find("Pupil");
     }
-    
+
+    public enum EyeMonsterAction
+    {
+        Trace = 0,
+        IrregularMove = 1,
+        Attack,
+        Wait
+    }
+
     protected override void Start()
     {
         base.Start();
-        targetPosition = GameManager.Instance.player.transform.position;
+        // SearchForAppearancePoints(); // 이제 나타날 때마다 호출하므로 시작 시에는 필요 없습니다.
     }
-    
-    protected override void initState()
+
+    protected override void initState()//start에서 호출함
     {
-        animator = GetComponent<Animator>();
+        //animator = GetComponent<Animator>();
+        //부모인 BossMonster 클래스의 states 변수에다가 만들어 놓은 상태들을 저장해둠
+        stateTimer = 0f;
         states = new Dictionary<int, BaseState>
         {
-            { (int)EyeMonsterAction.Idle, new EyeMonsterIdle(this) },
-            { (int)EyeMonsterAction.Chase, new EyeMonsterChase(this) },
-            { (int)EyeMonsterAction.Attack, new EyeMonsterAttack(this) }
+            { (int)EyeMonsterAction.Trace, new EyeMonsterTrace(this, traceSpeed) },
+            { (int)EyeMonsterAction.IrregularMove, new EyeMonsterIrregularMove(this, irregularMoveSpeed) },
+            { (int)EyeMonsterAction.Attack, new EyeMonsterAttack(this) },
+            { (int)EyeMonsterAction.Wait, new EyeMonsterWait(this) }
         };
-        ChangeState(EyeMonsterAction.Chase);
+        ChangeState(EyeMonsterAction.Trace);
     }
-    
+
     protected override void checkeState()
-    {
-        // 플레이어와의 거리 체크
-        float distanceToPlayer = Vector3.Distance(transform.position, GameManager.Instance.player.transform.position);
-        
-        if (currentAction == EyeMonsterAction.Chase && distanceToPlayer <= attackRange)
+    {//Update 메서드에서 계속 호출되는 함수
+        stateTimer += Time.deltaTime;
+        if (currentAction == EyeMonsterAction.Trace)
         {
-            ChangeState(EyeMonsterAction.Attack);
+            if (stateTimer >= traceTime)
+            {
+                ChangeState(EyeMonsterAction.IrregularMove);
+            }
         }
-        else if (currentAction == EyeMonsterAction.Attack && distanceToPlayer > attackRange)
+        else if (currentAction == EyeMonsterAction.IrregularMove)
         {
-            ChangeState(EyeMonsterAction.Chase);
+            if (stateTimer >= irregularMoveTime)
+            {
+                ChangeState(EyeMonsterAction.Attack);
+            }
         }
-        
-        // 경로 업데이트 타이머
-        pathUpdateTimer += Time.deltaTime;
-        if (pathUpdateTimer >= pathfindingUpdateInterval)
+        else if (currentAction == EyeMonsterAction.Attack)
         {
-            pathUpdateTimer = 0f;
-            UpdatePathToTarget();
+            if (stateTimer >= attackTime)
+            {
+                ChangeState(EyeMonsterAction.Wait);
+            }
+        }
+        else if (currentAction == EyeMonsterAction.Wait)
+        {
+            if (stateTimer >= waitTime)
+            {
+                ChangeState(EyeMonsterAction.Trace);
+                Debug.Log("EyeMonster 패턴 종료 및 Trace 재시작");
+            }
         }
     }
-    
+
     public void ChangeState(EyeMonsterAction nextAction)
     {
+        stateTimer = 0f;//다음 state의 경과시간 계산 위해 0으로 초기화
         currentAction = nextAction;
         if (monsterFSM == null)
         {
@@ -107,378 +117,382 @@ public class EyeMonster : BossMonster
             monsterFSM.ChangeState(states[(int)nextAction]);
         }
     }
-    
-    // A* 경로 찾기 알고리즘
-    public List<Vector3> FindPath(Vector3 startPos, Vector3 targetPos)
+
+    public void RazorAttack(Vector3 targetPosition)
     {
-        List<Vector3> path = new List<Vector3>();
-        
-        // 그리드 기반 A* 구현
-        Vector2 startNode = new Vector2(
-            Mathf.Round(startPos.x / nodeSize) * nodeSize,
-            Mathf.Round(startPos.y / nodeSize) * nodeSize
-        );
-        
-        Vector2 targetNode = new Vector2(
-            Mathf.Round(targetPos.x / nodeSize) * nodeSize,
-            Mathf.Round(targetPos.y / nodeSize) * nodeSize
-        );
-        
-        List<PathNode> openSet = new List<PathNode>();
-        HashSet<Vector2> closedSet = new HashSet<Vector2>();
-        Dictionary<Vector2, PathNode> allNodes = new Dictionary<Vector2, PathNode>();
-        
-        PathNode startPathNode = new PathNode(startNode);
-        startPathNode.gCost = 0;
-        startPathNode.hCost = Vector2.Distance(startNode, targetNode);
-        
-        openSet.Add(startPathNode);
-        allNodes[startNode] = startPathNode;
-        
-        Vector2[] directions = {
-            Vector2.up * nodeSize, Vector2.down * nodeSize,
-            Vector2.left * nodeSize, Vector2.right * nodeSize,
-            new Vector2(nodeSize, nodeSize), new Vector2(-nodeSize, nodeSize),
-            new Vector2(nodeSize, -nodeSize), new Vector2(-nodeSize, -nodeSize)
-        };
-        
-        int iterations = 0;
-        while (openSet.Count > 0 && iterations < maxPathLength)
-        {
-            iterations++;
-            
-            // 가장 낮은 fCost를 가진 노드 선택
-            PathNode currentNode = openSet.OrderBy(n => n.fCost).ThenBy(n => n.hCost).First();
-            openSet.Remove(currentNode);
-            closedSet.Add(currentNode.position);
-            
-            // 목표에 도달했는지 확인
-            if (Vector2.Distance(currentNode.position, targetNode) < nodeSize)
-            {
-                // 경로 재구성
-                PathNode pathNode = currentNode;
-                while (pathNode != null)
-                {
-                    path.Add(new Vector3(pathNode.position.x, pathNode.position.y, 0));
-                    pathNode = pathNode.parent;
-                }
-                path.Reverse();
-                break;
-            }
-            
-            // 인접 노드들 검사
-            foreach (Vector2 direction in directions)
-            {
-                Vector2 neighborPos = currentNode.position + direction;
-                
-                if (closedSet.Contains(neighborPos))
-                    continue;
-                
-                // 장애물 체크
-                if (IsPositionBlocked(neighborPos))
-                    continue;
-                
-                PathNode neighbor;
-                if (!allNodes.TryGetValue(neighborPos, out neighbor))
-                {
-                    neighbor = new PathNode(neighborPos);
-                    allNodes[neighborPos] = neighbor;
-                }
-                
-                float tentativeGCost = currentNode.gCost + Vector2.Distance(currentNode.position, neighborPos);
-                
-                if (!openSet.Contains(neighbor))
-                {
-                    openSet.Add(neighbor);
-                }
-                else if (tentativeGCost >= neighbor.gCost)
-                {
-                    continue;
-                }
-                
-                neighbor.parent = currentNode;
-                neighbor.gCost = tentativeGCost;
-                neighbor.hCost = Vector2.Distance(neighborPos, targetNode);
-            }
-        }
-        
-        return path;
+        Vector3 direction = (targetPosition - transform.position).normalized;
+        StartCoroutine(RazorAttackCoroutine(direction));
+
     }
-    
-    // 위치에 장애물이 있는지 확인
-    private bool IsPositionBlocked(Vector2 position)
+    IEnumerator RazorAttackCoroutine(Vector3 direction) 
     {
-        // 더 큰 반지름으로 체크하여 안전한 거리 확보
-        Collider2D hit = Physics2D.OverlapCircle(position, nodeSize * 0.6f, obstacleLayerMask);
+
+        pupil.GetComponent<SpriteRenderer>().color = Color.red; // 동공 색상 변경 (공격 준비)
+        yield return new WaitForSeconds(razorDelay);
         
-        // Block 태그를 가진 객체나 그 부모가 Block 태그를 가진 경우 차단된 것으로 판단
-        if (hit != null && hit.gameObject != gameObject && hit.gameObject != GameManager.Instance.player)
-        {
-            // 직접 Block 태그를 가지고 있거나
-            if (hit.CompareTag("Block"))
-                return true;
-                
-            // 부모가 Block 태그를 가지고 있는 경우
-            if (hit.transform.parent != null && hit.transform.parent.CompareTag("Block"))
-                return true;
-        }
+        RazorPrefab.SetActive(true);
+        RazorPrefab.transform.rotation = Quaternion.LookRotation(Vector3.forward, direction);
         
-        return false;
+        yield return new WaitForSeconds(razorDuration);
+        pupil.GetComponent<SpriteRenderer>().color = Color.white; // 동공 색상 변경 (공격 종료)
+        RazorPrefab.SetActive(false);
     }
-    
-    // 목표로의 경로 업데이트
-    public void UpdatePathToTarget()
+
+    public void Watch()
     {
-        if (GameManager.Instance.player == null) return;
-        
-        targetPosition = GameManager.Instance.player.transform.position;
-        
-        // 거리가 너무 멀면 직선 이동 사용
-        float distanceToPlayer = Vector3.Distance(transform.position, targetPosition);
-        if (distanceToPlayer > maxPathfindingDistance)
+        if (isWatching)
         {
-            currentPath.Clear();
-            return;
+            Vector3 direction = GameManager.Instance.player.transform.position - transform.position;
+            direction.Normalize();
+            pupil.position = transform.position + direction * pupilRange;
         }
-        
-        currentPath = FindPath(transform.position, targetPosition);
-        currentPathIndex = 0;
     }
-    
-    // 경로를 따라 이동
-    public void MoveAlongPath()
+
+    public void ChangeToAttackSprite()
     {
-        if (currentPath.Count == 0) 
+        sr.sprite = attackSprite;
+
+    }
+    public void ChangeToNormalSprite()
+    {
+        sr.sprite = normalSprite;
+    }
+
+    void TurnToPlayer(bool isHorizontal, Vector3 blockPosition)
+    {
+        if (isHorizontal)
         {
-            // 경로가 없으면 직선으로 플레이어에게 이동 (fallback)
-            MoveDirectlyTowardsPlayer();
-            return;
-        }
-        
-        // 현재 목표 지점에 도달했는지 확인
-        if (currentPathIndex < currentPath.Count)
-        {
-            Vector3 targetWaypoint = currentPath[currentPathIndex];
-            float distance = Vector3.Distance(transform.position, targetWaypoint);
-            
-            if (distance < nodeSize * 0.5f)
+            Debug.Log("EyeMonster: 가로형태의 블록 발견 - ");
+            //플레이어가 위에 있는지 아래에 있는지 판단
+            if (GameManager.Instance.player.transform.position.y > blockPosition.y)
             {
-                currentPathIndex++;
+                transform.rotation = Quaternion.Euler(0, 0, -90);
+                Debug.Log("EyeMonster: 플레이어가 블록 위에 있음");
             }
             else
             {
-                // 목표 지점으로 이동
-                Vector3 direction = (targetWaypoint - transform.position).normalized;
-                transform.position += direction * traceSpeed * Time.deltaTime;
-                
-                // 스프라이트 방향 조정
-                UpdateSpriteDirection(direction);
+                Debug.Log("EyeMonster: 플레이어가 블록 아래에 있음");
+                transform.rotation = Quaternion.Euler(0, 0, 90);
             }
         }
         else
         {
-            // 모든 경로를 완주했으면 직선으로 목표에 접근
-            MoveDirectlyTowardsPlayer();
-        }
-    }
-    
-    // 직선으로 플레이어에게 이동 (pathfinding 실패 시 fallback)
-    private void MoveDirectlyTowardsPlayer()
-    {
-        if (GameManager.Instance.player == null) return;
-        
-        Vector3 direction = (targetPosition - transform.position).normalized;
-        transform.position += direction * traceSpeed * Time.deltaTime;
-        UpdateSpriteDirection(direction);
-    }
-    
-    // 스프라이트 방향 업데이트
-    private void UpdateSpriteDirection(Vector3 direction)
-    {
-        if (direction.x > 0)
-            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-        else if (direction.x < 0)
-            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-    }
-    
-    // 디버그용 경로 그리기
-    private void OnDrawGizmos()
-    {
-        if (currentPath != null && currentPath.Count > 1)
-        {
-            Gizmos.color = Color.red;
-            for (int i = 0; i < currentPath.Count - 1; i++)
+            Debug.Log("EyeMonster: 세로형태의 블록 발견 - ");
+            //플레이어가 왼쪽에 있는지 오른쪽에 있는지 판단
+            if (GameManager.Instance.player.transform.position.x > blockPosition.x)
             {
-                Gizmos.DrawLine(currentPath[i], currentPath[i + 1]);
+                Debug.Log("EyeMonster: 플레이어가 블록 오른쪽에 있음");
+                transform.rotation = Quaternion.Euler(0, 0, 180);
+            }
+            else
+            {
+                Debug.Log("EyeMonster: 플레이어가 블록 왼쪽에 있음");
+                transform.rotation = Quaternion.Euler(0, 0, 0);
             }
         }
-        
-        if (currentPath != null && currentPathIndex < currentPath.Count)
+    }
+
+    public Vector3 FindRandomBlock()
+    {
+        // Block 레이어만 검사 (LayerMask 사용)
+        LayerMask blockLayer = LayerMask.GetMask("MiddleBlock");
+
+        for (int i = 0; i < 20; i++)
         {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(currentPath[currentPathIndex], 0.2f);
+            Vector2 direction = Random.insideUnitCircle.normalized;
+            RaycastHit2D hit = Physics2D.Raycast(GameManager.Instance.player.transform.position, direction, 20f, blockLayer);
+
+            if (hit.collider != null)
+            {
+                GameObject block = hit.collider.gameObject;
+                Vector3 blockPosition = block.transform.position;
+                float distanceToPlayer = Vector2.Distance(blockPosition, GameManager.Instance.player.transform.position);
+
+                if (distanceToPlayer < maxDistanceToPlayer && block.activeInHierarchy && !CheckIsNearBlock(blockPosition, prevBlockPosition))
+                {
+                    Debug.Log("EyeMonster: 찾은 블록 - " + block.name + " (거리: " + distanceToPlayer + ")");
+                    prevBlockPosition = blockPosition;
+                    TurnToPlayer(CheckIsHorizontalRotation(block), blockPosition);
+                    return blockPosition;
+                }
+            }
         }
-        
-        // 공격 범위 표시
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-        
-        // 목표 위치 표시
-        if (GameManager.Instance?.player != null)
+        //적합한 블록을 찾지 못한 경우, 이전 블럭 위치를 반환
+        return prevBlockPosition;
+    }
+
+    bool CheckIsHorizontalRotation(GameObject cur_block)
+    {
+        float block_z = cur_block.transform.rotation.eulerAngles.z;//eulerAngles의 값은 다 양수 -90 == 270
+        block_z = SnapToNearestAngle(block_z); // 0, 90, 180, 270 중 가장 가까운 값으로 스냅
+        float block_parent_z = cur_block.transform.parent.transform.rotation.eulerAngles.z;
+        block_parent_z = SnapToNearestAngle(block_parent_z); // 0, 90, 180, 270 중 가장 가까운 값으로 스냅
+        Debug.Log("블록 부모 로테이션" + block_parent_z);
+        Debug.Log("블록 로테이션" + block_z);
+
+        if (block_parent_z == 0)
         {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(targetPosition, 0.3f);
+            if (block_z == 0)
+            {
+                Debug.Log("EyeMonster: 블록이 수평 상태");
+                return true;
+            }
+            else
+            {
+                Debug.Log("EyeMonster: 블록이 수직 상태");
+                return false;
+            }
+        }
+        else if (block_parent_z == 270)
+        {
+            if (block_z == 270)
+            {
+                Debug.Log("EyeMonster: 블록이 수직 상태");
+                return false;
+            }
+            else
+            {
+                Debug.Log("EyeMonster: 블록이 수평 상태");
+                return true;
+            }
+        }
+        else if (block_parent_z == 90)
+        {
+            if (block_z == 90)
+            {
+                Debug.Log("EyeMonster: 블록이 수직 상태");
+                return false;
+            }
+            else
+            {
+                Debug.Log("EyeMonster: 블록이 수평 상태");
+                return true;
+            }
+        }
+        else if (block_parent_z == 180)
+        {
+            if (block_z == 180)
+            {
+                Debug.Log("EyeMonster: 블록이 수평 상태");
+                return true;
+            }
+            else
+            {
+                Debug.Log("EyeMonster: 블록이 수직 상태");
+                return false;
+            }
+        }
+
+        Debug.LogError("EyeMonster: 알 수 없는 블록 회전 상태");
+        return false;
+
+        /*switch (cur_block.transform.parent.transform.rotation.eulerAngles.z)
+        {
+            case 0:
+            case 360:
+            case 180:
+            case -180:
+                //정상 부모 회전 상태
+                Debug.Log("EyeMonster: 부모가 정상 기울기인 블록 발견");
+                return CalculateChildBlockRotation(cur_block, true);
+                break;
+            case -90:
+            case 90:
+            case 270:
+            case -270:
+                //90도 회전된 부모 상태                
+                Debug.Log("EyeMonster: 부모가 정상 기울기가 아닌 블록 발견");
+                return CalculateChildBlockRotation(cur_block, false);
+                break;
+
+            default:
+                Debug.LogError("EyeMonster: 알 수 없는 기울기 발견");
+                return false;
+                break;
+        }*/
+    }
+    bool CalculateChildBlockRotation(GameObject cur_block, bool isNormal)
+    {
+        float rot_z = cur_block.transform.rotation.eulerAngles.z;
+        Debug.Log("EyeMonster: 현재 블록 회전 각도: " + rot_z);
+
+        float absRot = System.Math.Abs(rot_z);
+        float snappedAngle = SnapToNearestAngle(absRot);
+
+        Debug.Log($"EyeMonster: 원본 각도: {rot_z}, 절댓값: {absRot}, 스냅된 각도: {snappedAngle}, 이름 {cur_block.name}");
+
+        if (isNormal) // 정상 부모 회전 상태
+        {
+            return snappedAngle == 0 || snappedAngle == 180;
+        }
+        else
+        {
+            return snappedAngle == 90;
+        }
+        // 참이면 가로, 거짓이면 세로
+    }
+
+    private float SnapToNearestAngle(float angle)
+    {
+        float[] targetAngles = { 0, 90, 180, 270 };
+        float nearestAngle = targetAngles[0];
+        float minDistance = System.Math.Abs(angle - targetAngles[0]);
+
+        foreach (float target in targetAngles)
+        {
+            float distance = System.Math.Abs(angle - target);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                nearestAngle = target;
+            }
+        }
+
+        return nearestAngle;
+    }
+
+
+    private bool CheckIsNearBlock(Vector3 position1, Vector3 position2)
+    {
+        float maxDistance = 5f;
+        float distance = Vector3.Distance(position1, position2);
+        return distance < maxDistance; // maxDistance 이내에 있으면 근접한 것으로 간주
+    }
+
+    // 플레이어와 충돌 시 처리
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            Debug.Log("EyeMonster 충돌: 플레이어와 접촉");
+            //Attack
+        }
+    }
+
+    public void SetIsMoving(bool isMoving)
+    {
+        //anim.SetBool("isMoving", isMoving);
+        if (isMoving)
+        {
+            anim.SetTrigger("Move");
         }
     }
 }
 
-// 기본 상태 - 대기
-public class EyeMonsterIdle : BaseState
+//Monster 부모 클래스에 monstrFSM이라는 변수가 있어서, 여기에 상태를 계속 업데이트 해나가며 EyeMonster를 대신 변경해줌.
+public class EyeMonsterTrace : BaseState
 {
-    private EyeMonster eyeMonster;
-    
-    public EyeMonsterIdle(EyeMonster monster) : base(monster)
+    EyeMonster boss;
+    private float traceSpeed = 3.0f; // 이동 속도
+
+    public EyeMonsterTrace(EyeMonster boss, float traceSpeed) : base(boss)
     {
-        eyeMonster = monster;
+        this.boss = boss;
+        this.traceSpeed = traceSpeed;
     }
-    
+
     public override void OnStateEnter()
     {
-        if (eyeMonster.animator != null)
-        {
-            eyeMonster.animator.SetTrigger("Idle");
-        }
+        boss.ChangeToNormalSprite(); // 일반 스프라이트로 변경
+        boss.isWatching = true;
+        boss.SetIsMoving(true); // 걷는 애니메이션 시작
     }
-    
     public override void OnStateUpdate()
-    {
-        // 대기 상태에서는 특별한 동작 없음
+    {//monsterTransform은 BaseState클래스로 상속받아 사용
+        var dir = (GameManager.Instance.player.transform.position - monsterTransform.position).normalized;
+        Vector3 newPosition = monsterTransform.position;
+        newPosition.x += dir.x * traceSpeed * Time.deltaTime;
+        newPosition.y += dir.y * traceSpeed * Time.deltaTime;
+        monsterTransform.position = newPosition;
+        boss.Watch();
     }
-    
-    public override void OnStateExit()
-    {
-    }
+    public override void OnStateExit(){ }
 }
 
-// 추적 상태
-public class EyeMonsterChase : BaseState
+public class EyeMonsterIrregularMove : BaseState
 {
-    private EyeMonster eyeMonster;
-    
-    public EyeMonsterChase(EyeMonster monster) : base(monster)
+    EyeMonster boss;
+    Vector3 targetBlock;
+    float irregularMoveSpeed = 4.0f;
+
+    public EyeMonsterIrregularMove(EyeMonster boss, float irregularMoveSpeed) : base(boss)
     {
-        eyeMonster = monster;
+        this.boss = boss;
+        this.irregularMoveSpeed = irregularMoveSpeed;
     }
-    
+
     public override void OnStateEnter()
     {
-        if (eyeMonster.animator != null)
-        {
-            eyeMonster.animator.SetTrigger("Chase");
-        }
-        eyeMonster.UpdatePathToTarget();
+        boss.isWatching = true;
+        targetBlock = boss.FindRandomBlock();
+        boss.SetIsMoving(true); // 걷는 애니메이션 시작
     }
-    
     public override void OnStateUpdate()
     {
-        // 경로를 따라 이동
-        eyeMonster.MoveAlongPath();
+        Vector3 dir = (targetBlock - monsterTransform.position);
+        if (dir.magnitude < 0.5f)// 벡터가 0에 가까운 경우 (즉, 목표 위치에 도착)
+        {
+            Vector3 endPosition = new Vector3(targetBlock.x, targetBlock.y, monsterTransform.position.z);
+            monsterTransform.position = endPosition;
+            //boss스프라이트 변경
+            //Debug.Log("EyeMonster가 블록에 도착: " + targetBlock);
+            boss.Watch();
+            boss.ChangeToAttackSprite();
+            return;
+        }
+        dir = dir.normalized;
+        Vector3 newPosition = monsterTransform.position;
+        newPosition.x += dir.x * irregularMoveSpeed * Time.deltaTime;
+        newPosition.y += dir.y * irregularMoveSpeed * Time.deltaTime;
+        monsterTransform.position = newPosition;
+        //Debug.Log("EyeMonster가 블록을 향해 이동 중: " + newPosition);
+        boss.Watch();
     }
-    
-    public override void OnStateExit()
-    {
-    }
+    public override void OnStateExit(){ }
 }
 
-// 공격 상태 (라인 383-410에 해당)
+
 public class EyeMonsterAttack : BaseState
 {
-    private EyeMonster eyeMonster;
-    private float attackCooldown = 2f;
-    private float attackTimer = 0f;
-    private bool hasAttacked = false;
-    
-    public EyeMonsterAttack(EyeMonster monster) : base(monster)
+    EyeMonster boss;
+
+    public EyeMonsterAttack(EyeMonster boss) : base(boss)
     {
-        eyeMonster = monster;
+        this.boss = boss;
     }
-    
     public override void OnStateEnter()
     {
-        // 공격 애니메이션 재생
-        if (eyeMonster.animator != null)
-        {
-            eyeMonster.animator.SetTrigger("Attack");
-        }
-        
-        attackTimer = 0f;
-        hasAttacked = false;
-        
-        // 공격 중에도 경로 찾기로 플레이어에게 접근
-        eyeMonster.UpdatePathToTarget();
+        //아마도 고정된 상태에서 공격을 진행함
+        //벽에 붙어있는 상태의 스프라이트로 설정
+        //광선 발사 애니메이션 시작
+        boss.Watch();//공격전 마지막 플레이어 위치를 계속 바라봄
+        boss.isWatching = false; // 공격 시에는 시선을 고정
+        boss.SetIsMoving(false); // 걷는 애니메이션 중지
+        boss.RazorAttack(GameManager.Instance.player.transform.position); // 플레이어 위치로 레이저 공격
     }
-    
     public override void OnStateUpdate()
     {
-        attackTimer += Time.deltaTime;
-        
-        // 공격 쿨다운 중에도 경로를 따라 이동 (traceSpeed 유지)
-        if (!hasAttacked && attackTimer < attackCooldown * 0.5f)
-        {
-            eyeMonster.MoveAlongPath();
-        }
-        
-        // 공격 실행
-        if (!hasAttacked && attackTimer >= attackCooldown * 0.5f)
-        {
-            ExecuteAttack();
-            hasAttacked = true;
-        }
-        
-        // 공격 완료 후 다시 추적 상태로 전환
-        if (hasAttacked && attackTimer >= attackCooldown)
-        {
-            eyeMonster.ChangeState(EyeMonster.EyeMonsterAction.Chase);
-        }
+
     }
-    
-    public override void OnStateExit()
+    public override void OnStateExit(){ }
+}
+
+public class EyeMonsterWait : BaseState
+{
+    EyeMonster boss;
+
+    public EyeMonsterWait(EyeMonster boss) : base(boss)
     {
+        this.boss = boss;
     }
-    
-    // 라인 412-452에 해당하는 공격 실행 로직
-    private void ExecuteAttack()
+    public override void OnStateEnter()
     {
-        // 플레이어와의 거리 확인
-        float distanceToPlayer = Vector3.Distance(eyeMonster.transform.position, GameManager.Instance.player.transform.position);
-        
-        if (distanceToPlayer <= eyeMonster.attackRange)
-        {
-            // 공격 사운드 재생
-            eyeMonster.PlayAttackSound();
-            
-            // 플레이어에게 데미지 적용
-            Player player = GameManager.Instance.player.GetComponent<Player>();
-            if (player != null)
-            {
-                // 기본 공격력으로 데미지 적용
-                player.TakeDamage(eyeMonster.AttackDamage);
-            }
-            
-            // 공격 이펙트 생성 (선택사항)
-            CreateAttackEffect();
-        }
-        else
-        {
-            // 공격 범위 밖이면 경로 찾기로 접근
-            eyeMonster.UpdatePathToTarget();
-            eyeMonster.MoveAlongPath();
-        }
+        boss.isWatching = true;
+        boss.SetIsMoving(false); // 걷는 애니메이션 중지
     }
-    
-    private void CreateAttackEffect()
+    public override void OnStateUpdate()
     {
-        // 공격 이펙트 생성 로직 (필요시 구현)
-        Debug.Log("Eye Monster Attack Effect!");
+        boss.Watch();
     }
+    public override void OnStateExit(){ }
 }
