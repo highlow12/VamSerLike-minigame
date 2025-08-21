@@ -15,7 +15,8 @@ public class EyeMonster : BossMonster
     [Header("Pathfinding Settings")]
     public LayerMask obstacleLayerMask = -1; // 장애물 레이어
     public float nodeSize = 0.5f; // 그리드 노드 크기
-    public int maxPathLength = 100; // 최대 경로 길이
+    public int maxPathLength = 50; // 최대 경로 길이 (성능 최적화)
+    public float maxPathfindingDistance = 15f; // 최대 pathfinding 거리
     
     private Vector3 targetPosition;
     private List<Vector3> currentPath = new List<Vector3>();
@@ -207,8 +208,22 @@ public class EyeMonster : BossMonster
     // 위치에 장애물이 있는지 확인
     private bool IsPositionBlocked(Vector2 position)
     {
-        Collider2D hit = Physics2D.OverlapCircle(position, nodeSize * 0.4f, obstacleLayerMask);
-        return hit != null && hit.gameObject != gameObject && hit.gameObject != GameManager.Instance.player;
+        // 더 큰 반지름으로 체크하여 안전한 거리 확보
+        Collider2D hit = Physics2D.OverlapCircle(position, nodeSize * 0.6f, obstacleLayerMask);
+        
+        // Block 태그를 가진 객체나 그 부모가 Block 태그를 가진 경우 차단된 것으로 판단
+        if (hit != null && hit.gameObject != gameObject && hit.gameObject != GameManager.Instance.player)
+        {
+            // 직접 Block 태그를 가지고 있거나
+            if (hit.CompareTag("Block"))
+                return true;
+                
+            // 부모가 Block 태그를 가지고 있는 경우
+            if (hit.transform.parent != null && hit.transform.parent.CompareTag("Block"))
+                return true;
+        }
+        
+        return false;
     }
     
     // 목표로의 경로 업데이트
@@ -217,6 +232,15 @@ public class EyeMonster : BossMonster
         if (GameManager.Instance.player == null) return;
         
         targetPosition = GameManager.Instance.player.transform.position;
+        
+        // 거리가 너무 멀면 직선 이동 사용
+        float distanceToPlayer = Vector3.Distance(transform.position, targetPosition);
+        if (distanceToPlayer > maxPathfindingDistance)
+        {
+            currentPath.Clear();
+            return;
+        }
+        
         currentPath = FindPath(transform.position, targetPosition);
         currentPathIndex = 0;
     }
@@ -224,7 +248,12 @@ public class EyeMonster : BossMonster
     // 경로를 따라 이동
     public void MoveAlongPath()
     {
-        if (currentPath.Count == 0) return;
+        if (currentPath.Count == 0) 
+        {
+            // 경로가 없으면 직선으로 플레이어에게 이동 (fallback)
+            MoveDirectlyTowardsPlayer();
+            return;
+        }
         
         // 현재 목표 지점에 도달했는지 확인
         if (currentPathIndex < currentPath.Count)
@@ -243,12 +272,33 @@ public class EyeMonster : BossMonster
                 transform.position += direction * traceSpeed * Time.deltaTime;
                 
                 // 스프라이트 방향 조정
-                if (direction.x > 0)
-                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-                else if (direction.x < 0)
-                    transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                UpdateSpriteDirection(direction);
             }
         }
+        else
+        {
+            // 모든 경로를 완주했으면 직선으로 목표에 접근
+            MoveDirectlyTowardsPlayer();
+        }
+    }
+    
+    // 직선으로 플레이어에게 이동 (pathfinding 실패 시 fallback)
+    private void MoveDirectlyTowardsPlayer()
+    {
+        if (GameManager.Instance.player == null) return;
+        
+        Vector3 direction = (targetPosition - transform.position).normalized;
+        transform.position += direction * traceSpeed * Time.deltaTime;
+        UpdateSpriteDirection(direction);
+    }
+    
+    // 스프라이트 방향 업데이트
+    private void UpdateSpriteDirection(Vector3 direction)
+    {
+        if (direction.x > 0)
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        else if (direction.x < 0)
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
     }
     
     // 디버그용 경로 그리기
@@ -263,10 +313,21 @@ public class EyeMonster : BossMonster
             }
         }
         
-        if (currentPathIndex < currentPath.Count)
+        if (currentPath != null && currentPathIndex < currentPath.Count)
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(currentPath[currentPathIndex], 0.2f);
+        }
+        
+        // 공격 범위 표시
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+        
+        // 목표 위치 표시
+        if (GameManager.Instance?.player != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(targetPosition, 0.3f);
         }
     }
 }
@@ -397,11 +458,11 @@ public class EyeMonsterAttack : BaseState
             eyeMonster.PlayAttackSound();
             
             // 플레이어에게 데미지 적용
-            PlayerStat playerStat = GameManager.Instance.player.GetComponent<PlayerStat>();
-            if (playerStat != null)
+            Player player = GameManager.Instance.player.GetComponent<Player>();
+            if (player != null)
             {
                 // 기본 공격력으로 데미지 적용
-                playerStat.TakeDamage(eyeMonster.AttackDamage);
+                player.TakeDamage(eyeMonster.AttackDamage);
             }
             
             // 공격 이펙트 생성 (선택사항)
