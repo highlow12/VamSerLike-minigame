@@ -193,6 +193,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\uB208\uC54C\uAD34\uBB3C"
       objectReference: {fileID: 0}
+    - target: {fileID: 3750451979937321399, guid: 990a86f554e0ed34994fb204b5a5fc3b, type: 3}
+      propertyPath: irregularMoveTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750451979937321399, guid: 990a86f554e0ed34994fb204b5a5fc3b, type: 3}
+      propertyPath: irregularMoveSpeed
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

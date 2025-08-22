@@ -25,6 +25,12 @@ public class EyeMonster : BossMonster
     [SerializeField] private float fixedOffset = 1f; // 플레이어와의 최대 거리
     [SerializeField] private GameObject RazorPrefab; // Razor 프리팹
 
+    [Header("Pathfinding Settings")]
+    [SerializeField] private LayerMask obstacleLayerMask; // 장애물 레이어
+    [SerializeField] private float nodeSize = 0.5f; // 그리드 노드 크기
+    [SerializeField] private int maxPathLength = 50; // 최대 경로 길이
+    [SerializeField] private float pathfindingUpdateInterval = 0.5f; // 경로 업데이트 주기
+
 
 
     public bool isWatching { get; set; } //state함수들이 접근해서 변경함
@@ -36,11 +42,39 @@ public class EyeMonster : BossMonster
     private Transform pupil;
     private Vector3 prevBlockPosition;
 
+    // A* 경로 찾기를 위한 변수들
+    public List<Vector3> currentPath = new List<Vector3>();
+    private int currentPathIndex = 0;
+    private float pathUpdateTimer = 0f;
+
+    // A* 알고리즘을 위한 노드 클래스
+    private class PathNode
+    {
+        public Vector2 position;
+        public float gCost; // 시작점으로부터의 거리
+        public float hCost; // 목표점까지의 추정 거리
+        public float fCost => gCost + hCost; // 총 비용
+        public PathNode parent;
+        public bool isWalkable;
+
+        public PathNode(Vector2 pos, bool walkable = true)
+        {
+            position = pos;
+            isWalkable = walkable;
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();//anim 변수로 animator 컴포넌트 불러옴?
         //spriteRenderer = GetComponent<SpriteRenderer>();
         pupil = transform.Find("Pupil");
+
+        // 장애물 레이어 마스크 초기화 (기본값이 설정되지 않은 경우)
+        if (obstacleLayerMask == 0)
+        {
+            obstacleLayerMask = LayerMask.GetMask("MiddleBlock");
+        }
     }
 
     public enum EyeMonsterAction
@@ -126,10 +160,10 @@ public class EyeMonster : BossMonster
         StartCoroutine(RazorAttackCoroutine(direction));
 
     }
-    IEnumerator RazorAttackCoroutine(Vector3 direction) 
+    IEnumerator RazorAttackCoroutine(Vector3 direction)
     {
         //Debug.Log("EyeMonster: RazorAttackCoroutine 및 진동 시작");
-        VFXManager.Instance.AnimateShakeBack(0f, 0.5f, 300f);
+        VFXManager.Instance.AnimateShakeBack(0f, 0.5f, razorDelay + 1);
         pupil.GetComponent<SpriteRenderer>().color = Color.red; // 동공 색상 변경 (공격 준비)
         yield return new WaitForSeconds(razorDelay);
 
@@ -200,24 +234,30 @@ public class EyeMonster : BossMonster
         }
     }
 
-    public void FixedToBlock(Vector3 blockPosition)//벽에 고정되었을 때, 벽의 표면에 붙어있을 수 있도록 offset만큼 위치 옮겨줌
+
+    Vector3 GetPositionWithRotation(Vector3 blockPosition, float z_value)
     {
-        switch (currentRotation_z)
+        Vector3 pos;
+        switch (z_value)
         {
             case -90://수평 위쪽
-                transform.position = new Vector3(blockPosition.x, blockPosition.y + fixedOffset, transform.position.z);
+                pos = new Vector3(blockPosition.x, blockPosition.y + fixedOffset, transform.position.z);
                 break;
             case 90://수평 아래쪽
-                transform.position = new Vector3(blockPosition.x, blockPosition.y - fixedOffset, transform.position.z);
+                pos = new Vector3(blockPosition.x, blockPosition.y - fixedOffset, transform.position.z);
                 break;
             case 0://수직 왼쪽
-                transform.position = new Vector3(blockPosition.x - fixedOffset, blockPosition.y, transform.position.z);
+                pos = new Vector3(blockPosition.x - fixedOffset, blockPosition.y, transform.position.z);
                 break;
             case 180://수직 오른쪽
-                transform.position = new Vector3(blockPosition.x + fixedOffset, blockPosition.y, transform.position.z);
+                pos = new Vector3(blockPosition.x + fixedOffset, blockPosition.y, transform.position.z);
+                break;
+            default:
+                Debug.LogError("EyeMonster: 알 수 없는 회전 값: " + z_value);
+                pos = blockPosition; // 기본 위치로 설정
                 break;
         }
-        Debug.Log("EyeMonster: 블록에 고정됨, 현재 위치: " + transform.position + ", currentRotation_z: " + currentRotation_z);
+        return pos;
     }
 
     public Vector3 FindRandomBlock()
@@ -242,7 +282,7 @@ public class EyeMonster : BossMonster
                     prevBlockPosition = blockPosition;
                     //블럭을 찾았으면 그 블럭에 적합한 각도로 변경해줌
                     TurnToPlayer(CheckIsHorizontalRotation(block), blockPosition);
-                    return blockPosition;
+                    return GetPositionWithRotation(blockPosition, currentRotation_z);
                 }
             }
         }
@@ -254,7 +294,19 @@ public class EyeMonster : BossMonster
     {
         float block_z = cur_block.transform.rotation.eulerAngles.z;//eulerAngles의 값은 다 양수 -90 == 270
         block_z = SnapToNearestAngle(block_z); // 0, 90, 180, 270 중 가장 가까운 값으로 스냅
-        float block_parent_z = cur_block.transform.parent.transform.rotation.eulerAngles.z;
+        switch( block_z)
+        {
+            case 0:
+            case 180:
+                Debug.Log("EyeMonster: 블록이 수평 상태");
+                return true; // 수평 상태
+            case 90:
+            case 270:
+                Debug.Log("EyeMonster: 블록이 수직 상태");
+                return false; // 수직 상태
+        }
+
+        /*float block_parent_z = cur_block.transform.parent.transform.rotation.eulerAngles.z;
         block_parent_z = SnapToNearestAngle(block_parent_z); // 0, 90, 180, 270 중 가장 가까운 값으로 스냅
         Debug.Log("블록 부모 로테이션" + block_parent_z);
         Debug.Log("블록 로테이션" + block_z);
@@ -310,7 +362,7 @@ public class EyeMonster : BossMonster
                 Debug.Log("EyeMonster: 블록이 수직 상태");
                 return false;
             }
-        }
+        }*/
 
         Debug.LogError("EyeMonster: 알 수 없는 블록 회전 상태");
         return false;
@@ -381,6 +433,150 @@ public class EyeMonster : BossMonster
             anim.SetTrigger("Move");
         }
     }
+
+    // A* 경로 찾기 알고리즘
+    public List<Vector3> FindPath(Vector3 startPos, Vector3 targetPos)
+    {
+        List<Vector3> path = new List<Vector3>();
+
+        // 그리드 기반 A* 구현
+        Vector2 startNode = new Vector2(
+            Mathf.Round(startPos.x / nodeSize) * nodeSize,
+            Mathf.Round(startPos.y / nodeSize) * nodeSize
+        );
+
+        Vector2 targetNode = new Vector2(
+            Mathf.Round(targetPos.x / nodeSize) * nodeSize,
+            Mathf.Round(targetPos.y / nodeSize) * nodeSize
+        );
+
+        List<PathNode> openSet = new List<PathNode>();
+        HashSet<Vector2> closedSet = new HashSet<Vector2>();
+        Dictionary<Vector2, PathNode> allNodes = new Dictionary<Vector2, PathNode>();
+
+        PathNode startPathNode = new PathNode(startNode);
+        startPathNode.gCost = 0;
+        startPathNode.hCost = Vector2.Distance(startNode, targetNode);
+
+        openSet.Add(startPathNode);
+        allNodes[startNode] = startPathNode;
+
+        Vector2[] directions = {
+            Vector2.up * nodeSize, Vector2.down * nodeSize,
+            Vector2.left * nodeSize, Vector2.right * nodeSize,
+            new Vector2(nodeSize, nodeSize), new Vector2(-nodeSize, nodeSize),
+            new Vector2(nodeSize, -nodeSize), new Vector2(-nodeSize, -nodeSize)
+        };
+
+        int iterations = 0;
+        while (openSet.Count > 0 && iterations < maxPathLength)
+        {
+            iterations++;
+
+            // 가장 낮은 fCost를 가진 노드 선택
+            PathNode currentNode = openSet.OrderBy(n => n.fCost).ThenBy(n => n.hCost).First();
+            openSet.Remove(currentNode);
+            closedSet.Add(currentNode.position);
+
+            // 목표에 도달했는지 확인
+            if (Vector2.Distance(currentNode.position, targetNode) < nodeSize)
+            {
+                // 경로 재구성
+                PathNode pathNode = currentNode;
+                while (pathNode != null)
+                {
+                    path.Add(new Vector3(pathNode.position.x, pathNode.position.y, 0));
+                    pathNode = pathNode.parent;
+                }
+                path.Reverse();
+                break;
+            }
+
+            // 인접 노드들 검사
+            foreach (Vector2 direction in directions)
+            {
+                Vector2 neighborPos = currentNode.position + direction;
+
+                if (closedSet.Contains(neighborPos))
+                    continue;
+
+                // 장애물 체크
+                if (IsPositionBlocked(neighborPos))
+                    continue;
+
+                PathNode neighbor;
+                if (!allNodes.TryGetValue(neighborPos, out neighbor))
+                {
+                    neighbor = new PathNode(neighborPos);
+                    allNodes[neighborPos] = neighbor;
+                }
+
+                float tentativeGCost = currentNode.gCost + Vector2.Distance(currentNode.position, neighborPos);
+
+                if (!openSet.Contains(neighbor))
+                {
+                    openSet.Add(neighbor);
+                }
+                else if (tentativeGCost >= neighbor.gCost)
+                {
+                    continue;
+                }
+
+                neighbor.parent = currentNode;
+                neighbor.gCost = tentativeGCost;
+                neighbor.hCost = Vector2.Distance(neighborPos, targetNode);
+            }
+        }
+
+        return path;
+    }
+
+    // 해당 위치에 장애물이 있는지 확인
+    private bool IsPositionBlocked(Vector2 position)
+    {
+        Collider2D collider = Physics2D.OverlapCircle(position, nodeSize * 0.4f, obstacleLayerMask);
+        return collider != null;
+    }
+
+    // 경로를 따라 이동하는 메서드
+    public bool MoveAlongPath(float speed)
+    {
+        if (currentPath == null || currentPath.Count == 0)
+            return false;
+
+        if (currentPathIndex >= currentPath.Count)
+            return true; // 경로 완료
+
+        Vector3 targetPos = currentPath[currentPathIndex];
+        Vector3 direction = (targetPos - transform.position).normalized;
+
+        float distanceToTarget = Vector3.Distance(transform.position, targetPos);
+
+        if (distanceToTarget < 0.1f)
+        {
+            currentPathIndex++;
+            return currentPathIndex >= currentPath.Count;
+        }
+
+        Vector3 newPosition = transform.position;
+        newPosition.x += direction.x * speed * Time.deltaTime;
+        newPosition.y += direction.y * speed * Time.deltaTime;
+        transform.position = newPosition;
+
+        return false;
+    }
+
+    // 목표 위치로의 경로 업데이트
+    public void UpdatePathToTarget(Vector3 targetPosition)
+    {
+        pathUpdateTimer += Time.deltaTime;
+        if (pathUpdateTimer >= pathfindingUpdateInterval)
+        {
+            pathUpdateTimer = 0f;
+            currentPath = FindPath(transform.position, targetPosition);
+            currentPathIndex = 0;
+        }
+    }
 }
 
 //Monster 부모 클래스에 monstrFSM이라는 변수가 있어서, 여기에 상태를 계속 업데이트 해나가며 EyeMonster를 대신 변경해줌.
@@ -400,14 +596,28 @@ public class EyeMonsterTrace : BaseState
         boss.ChangeToNormalSprite(); // 일반 스프라이트로 변경
         boss.isWatching = true;
         boss.SetIsMoving(true); // 걷는 애니메이션 시작
+
+        // 초기 경로 계산
+        boss.UpdatePathToTarget(GameManager.Instance.player.transform.position);
     }
     public override void OnStateUpdate()
-    {//monsterTransform은 BaseState클래스로 상속받아 사용
-        var dir = (GameManager.Instance.player.transform.position - monsterTransform.position).normalized;
-        Vector3 newPosition = monsterTransform.position;
-        newPosition.x += dir.x * traceSpeed * Time.deltaTime;
-        newPosition.y += dir.y * traceSpeed * Time.deltaTime;
-        monsterTransform.position = newPosition;
+    {
+        // A* 경로 업데이트 및 이동
+        boss.UpdatePathToTarget(GameManager.Instance.player.transform.position);
+        
+        // A* 경로를 따라 이동, 경로가 없으면 직접 이동
+        bool pathCompleted = boss.MoveAlongPath(traceSpeed);
+        
+        if (pathCompleted || boss.currentPath.Count == 0)
+        {
+            // 경로가 없거나 완료된 경우 직접 이동 (fallback)
+            var dir = (GameManager.Instance.player.transform.position - monsterTransform.position).normalized;
+            Vector3 newPosition = monsterTransform.position;
+            newPosition.x += dir.x * traceSpeed * Time.deltaTime;
+            newPosition.y += dir.y * traceSpeed * Time.deltaTime;
+            monsterTransform.position = newPosition;
+        }
+
         boss.Watch();
     }
     public override void OnStateExit(){ }
@@ -432,6 +642,9 @@ public class EyeMonsterIrregularMove : BaseState
         isEnd = false;
         targetBlock = boss.FindRandomBlock();
         boss.SetIsMoving(true); // 걷는 애니메이션 시작
+
+        // 목표 블록으로의 초기 경로 계산
+        boss.UpdatePathToTarget(targetBlock);
     }
     public override void OnStateUpdate()
     {
@@ -448,17 +661,28 @@ public class EyeMonsterIrregularMove : BaseState
             //monsterTransform.position = endPosition;
             boss.Watch();
             boss.ChangeToAttackSprite();
-            boss.FixedToBlock(targetBlock);
+            monsterTransform.position = targetBlock;
             isEnd = true;
             //position 이동해서 벽에 붙어있는 상태로 반환
             return;
         }
-        dir = dir.normalized;
-        Vector3 newPosition = monsterTransform.position;
-        newPosition.x += dir.x * irregularMoveSpeed * Time.deltaTime;
-        newPosition.y += dir.y * irregularMoveSpeed * Time.deltaTime;
-        monsterTransform.position = newPosition;
-        //Debug.Log("EyeMonster가 블록을 향해 이동 중: " + newPosition);
+        // A* 경로 업데이트 및 이동
+        boss.UpdatePathToTarget(targetBlock);
+
+        // A* 경로를 따라 이동, 경로가 없으면 직접 이동
+        bool pathCompleted = boss.MoveAlongPath(irregularMoveSpeed);
+
+        if (pathCompleted || boss.currentPath.Count == 0)
+        {
+            // 경로가 없거나 완료된 경우 직접 이동 (fallback)
+            dir = dir.normalized;
+            Vector3 newPosition = monsterTransform.position;
+            newPosition.x += dir.x * irregularMoveSpeed * Time.deltaTime;
+            newPosition.y += dir.y * irregularMoveSpeed * Time.deltaTime;
+            monsterTransform.position = newPosition;
+        }
+
+        //Debug.Log("EyeMonster가 블록을 향해 이동 중: " + monsterTransform.position);
         boss.Watch();
     }
     public override void OnStateExit(){ }
