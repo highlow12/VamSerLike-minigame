@@ -233,7 +233,7 @@ public class VFXManager : MonoBehaviour
         }
     }
 
-    IEnumerator ShakeBack(float a, float b, float duration)
+    IEnumerator ShakeBack(float a, float b, float duration)//**duration의 단위는 "밀리초(ms)"**
     {
         cameraMove cam = Camera.main.GetComponent<cameraMove>();
         cam.shakeIntensity = a;

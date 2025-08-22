@@ -22,6 +22,7 @@ public class EyeMonster : BossMonster
     [SerializeField] private float irregularMoveSpeed = 4f;
     [SerializeField] private float pupilRange = 1f; // 동공의 이동 범위
     [SerializeField] private float maxDistanceToPlayer = 7f; // 플레이어와의 최대 거리
+    [SerializeField] private float fixedOffset = 1f; // 플레이어와의 최대 거리
     [SerializeField] private GameObject RazorPrefab; // Razor 프리팹
 
 
@@ -31,6 +32,7 @@ public class EyeMonster : BossMonster
     //public Animator animator { get; private set; }
     //private SpriteRenderer spriteRenderer; //부모에 이미 들어있음?
     private EyeMonsterAction currentAction;
+    private int currentRotation_z;
     private Transform pupil;
     private Vector3 prevBlockPosition;
 
@@ -126,14 +128,15 @@ public class EyeMonster : BossMonster
     }
     IEnumerator RazorAttackCoroutine(Vector3 direction) 
     {
-
+        //Debug.Log("EyeMonster: RazorAttackCoroutine 및 진동 시작");
+        VFXManager.Instance.AnimateShakeBack(0f, 0.5f, 300f);
         pupil.GetComponent<SpriteRenderer>().color = Color.red; // 동공 색상 변경 (공격 준비)
         yield return new WaitForSeconds(razorDelay);
-        
+
         RazorPrefab.SetActive(true);
         RazorPrefab.transform.rotation = Quaternion.LookRotation(Vector3.forward, direction);
-        
         yield return new WaitForSeconds(razorDuration);
+
         pupil.GetComponent<SpriteRenderer>().color = Color.white; // 동공 색상 변경 (공격 종료)
         RazorPrefab.SetActive(false);
     }
@@ -151,11 +154,12 @@ public class EyeMonster : BossMonster
     public void ChangeToAttackSprite()
     {
         sr.sprite = attackSprite;
-
+        Debug.Log("EyeMonster: ChangeToAttackSprite 호출");
     }
     public void ChangeToNormalSprite()
     {
         sr.sprite = normalSprite;
+        Debug.Log("EyeMonster: ChangeToNormalSprite 호출");
     }
 
     void TurnToPlayer(bool isHorizontal, Vector3 blockPosition)
@@ -167,12 +171,14 @@ public class EyeMonster : BossMonster
             if (GameManager.Instance.player.transform.position.y > blockPosition.y)
             {
                 transform.rotation = Quaternion.Euler(0, 0, -90);
+                currentRotation_z = -90;
                 Debug.Log("EyeMonster: 플레이어가 블록 위에 있음");
             }
             else
             {
                 Debug.Log("EyeMonster: 플레이어가 블록 아래에 있음");
                 transform.rotation = Quaternion.Euler(0, 0, 90);
+                currentRotation_z = 90;
             }
         }
         else
@@ -183,13 +189,35 @@ public class EyeMonster : BossMonster
             {
                 Debug.Log("EyeMonster: 플레이어가 블록 오른쪽에 있음");
                 transform.rotation = Quaternion.Euler(0, 0, 180);
+                currentRotation_z = 180;
             }
             else
             {
                 Debug.Log("EyeMonster: 플레이어가 블록 왼쪽에 있음");
                 transform.rotation = Quaternion.Euler(0, 0, 0);
+                currentRotation_z = 0;
             }
         }
+    }
+
+    public void FixedToBlock(Vector3 blockPosition)//벽에 고정되었을 때, 벽의 표면에 붙어있을 수 있도록 offset만큼 위치 옮겨줌
+    {
+        switch (currentRotation_z)
+        {
+            case -90://수평 위쪽
+                transform.position = new Vector3(blockPosition.x, blockPosition.y + fixedOffset, transform.position.z);
+                break;
+            case 90://수평 아래쪽
+                transform.position = new Vector3(blockPosition.x, blockPosition.y - fixedOffset, transform.position.z);
+                break;
+            case 0://수직 왼쪽
+                transform.position = new Vector3(blockPosition.x - fixedOffset, blockPosition.y, transform.position.z);
+                break;
+            case 180://수직 오른쪽
+                transform.position = new Vector3(blockPosition.x + fixedOffset, blockPosition.y, transform.position.z);
+                break;
+        }
+        Debug.Log("EyeMonster: 블록에 고정됨, 현재 위치: " + transform.position + ", currentRotation_z: " + currentRotation_z);
     }
 
     public Vector3 FindRandomBlock()
@@ -212,6 +240,7 @@ public class EyeMonster : BossMonster
                 {
                     Debug.Log("EyeMonster: 찾은 블록 - " + block.name + " (거리: " + distanceToPlayer + ")");
                     prevBlockPosition = blockPosition;
+                    //블럭을 찾았으면 그 블럭에 적합한 각도로 변경해줌
                     TurnToPlayer(CheckIsHorizontalRotation(block), blockPosition);
                     return blockPosition;
                 }
@@ -285,31 +314,6 @@ public class EyeMonster : BossMonster
 
         Debug.LogError("EyeMonster: 알 수 없는 블록 회전 상태");
         return false;
-
-        /*switch (cur_block.transform.parent.transform.rotation.eulerAngles.z)
-        {
-            case 0:
-            case 360:
-            case 180:
-            case -180:
-                //정상 부모 회전 상태
-                Debug.Log("EyeMonster: 부모가 정상 기울기인 블록 발견");
-                return CalculateChildBlockRotation(cur_block, true);
-                break;
-            case -90:
-            case 90:
-            case 270:
-            case -270:
-                //90도 회전된 부모 상태                
-                Debug.Log("EyeMonster: 부모가 정상 기울기가 아닌 블록 발견");
-                return CalculateChildBlockRotation(cur_block, false);
-                break;
-
-            default:
-                Debug.LogError("EyeMonster: 알 수 없는 기울기 발견");
-                return false;
-                break;
-        }*/
     }
     bool CalculateChildBlockRotation(GameObject cur_block, bool isNormal)
     {
@@ -414,6 +418,7 @@ public class EyeMonsterIrregularMove : BaseState
     EyeMonster boss;
     Vector3 targetBlock;
     float irregularMoveSpeed = 4.0f;
+    bool isEnd = false;
 
     public EyeMonsterIrregularMove(EyeMonster boss, float irregularMoveSpeed) : base(boss)
     {
@@ -424,20 +429,28 @@ public class EyeMonsterIrregularMove : BaseState
     public override void OnStateEnter()
     {
         boss.isWatching = true;
+        isEnd = false;
         targetBlock = boss.FindRandomBlock();
         boss.SetIsMoving(true); // 걷는 애니메이션 시작
     }
     public override void OnStateUpdate()
     {
+        if (isEnd)
+        {
+            boss.Watch();
+            return;
+        }
         Vector3 dir = (targetBlock - monsterTransform.position);
         if (dir.magnitude < 0.5f)// 벡터가 0에 가까운 경우 (즉, 목표 위치에 도착)
         {
-            Vector3 endPosition = new Vector3(targetBlock.x, targetBlock.y, monsterTransform.position.z);
-            monsterTransform.position = endPosition;
-            //boss스프라이트 변경
-            //Debug.Log("EyeMonster가 블록에 도착: " + targetBlock);
+            //밑에 코드들은 딱 한번만 실행됨
+            //Vector3 endPosition = new Vector3(targetBlock.x, targetBlock.y, monsterTransform.position.z);//통일해야함
+            //monsterTransform.position = endPosition;
             boss.Watch();
             boss.ChangeToAttackSprite();
+            boss.FixedToBlock(targetBlock);
+            isEnd = true;
+            //position 이동해서 벽에 붙어있는 상태로 반환
             return;
         }
         dir = dir.normalized;
