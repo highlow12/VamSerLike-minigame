@@ -27,7 +27,7 @@ namespace UI.Stage
             }
         }
 
-        // ½ºÅ×ÀÌÁö µ¥ÀÌÅÍ ¸ñ·Ï
+        // ìŠ¤í…Œì´ì§€ ë°ì´í„° ëª©ë¡
         [SerializeField]
         private List<StageData> stages = new List<StageData>();
 
@@ -42,7 +42,7 @@ namespace UI.Stage
             _instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // µ¥ÀÌÅÍ°¡ ºñ¾îÀÖÀ¸¸é ÃÊ±âÈ­
+            // ë°ì´í„°ê°€ ë¹„ì–´ìˆìœ¼ë©´ ì´ˆê¸°í™”
             if (stages.Count == 0)
             {
                 InitializeStageData();
@@ -51,89 +51,89 @@ namespace UI.Stage
 
         private void InitializeStageData()
         {
-            // ¹®¼­¿¡¼­ ÃßÃâÇÑ ½ºÅ×ÀÌÁö µ¥ÀÌÅÍ·Î ÃÊ±âÈ­
+            // ë¬¸ì„œì—ì„œ ì¶”ì¶œí•œ ìŠ¤í…Œì´ì§€ ë°ì´í„°ë¡œ ì´ˆê¸°í™”
             stages.Add(new StageData()
             {
-                stageName = "¹ö·ÁÁø ¹«µµÈ¸Àå",
-                stageDescription = "ÇÑ¶§ È­·ÁÇß´ø ¹«µµÈ¸Àå¿¡ °í¿äÇÔ¸¸ÀÌ ³²¾Ò´Ù. ³°Àº ¼§µé¸®¿¡ ÁÖº¯, ÃãÀÇ ¾Ç¸ù ¼ÓÀ¸·Î ²ø·Áµé¾î°£´Ù.",
+                stageName = "ë²„ë ¤ì§„ ë¬´ë„íšŒì¥",
+                stageDescription = "í•œë•Œ í™”ë ¤í–ˆë˜ ë¬´ë„íšŒì¥ì— ê³ ìš”í•¨ë§Œì´ ë‚¨ì•˜ë‹¤. ë‚¡ì€ ìƒ¹ë“¤ë¦¬ì— ì£¼ë³€, ì¶¤ì˜ ì•…ëª½ ì†ìœ¼ë¡œ ëŒë ¤ë“¤ì–´ê°„ë‹¤.",
                 sceneName = "Stage1",
                 difficulty = 1
             });
 
             stages.Add(new StageData()
             {
-                stageName = "±Í½Åµé¸° ÇĞ±³",
-                stageDescription = "ÀÍ¼÷ÇÏÁö¸¸ ³¸¼± ±³½Ç ¼Ó¿¡¼­ ÀÌ»óÇÏ°Ô µÚÆ²·Á °¡´Â ÇĞ±³¸¦ ¸¶ÁÖÇÑ´Ù.",
+                stageName = "ê·€ì‹ ë“¤ë¦° í•™êµ",
+                stageDescription = "ìµìˆ™í•˜ì§€ë§Œ ë‚¯ì„  êµì‹¤ ì†ì—ì„œ ì´ìƒí•˜ê²Œ ë’¤í‹€ë ¤ ê°€ëŠ” í•™êµë¥¼ ë§ˆì£¼í•œë‹¤.",
                 sceneName = "Stage2",
                 difficulty = 1
             });
 
             stages.Add(new StageData()
             {
-                stageName = "ºÎÆĞÀÇ µÕÁö",
-                stageDescription = "½âÀº ¾ÇÃë°¡ °¡µæÇÑ Æó±â¹°, ¹ú·¹µéÀÌ µé²ú´Â ¾îµÒ ¼Ó º¸ÀÌÁö ¾Ê´Â ½Ã¼±µéÀÌ ³ª¸¦ ÁöÄÑº¸°í ÀÖ´Ù.",
+                stageName = "ë¶€íŒ¨ì˜ ë‘¥ì§€",
+                stageDescription = "ì©ì€ ì•…ì·¨ê°€ ê°€ë“í•œ íê¸°ë¬¼, ë²Œë ˆë“¤ì´ ë“¤ë“ëŠ” ì–´ë‘  ì† ë³´ì´ì§€ ì•ŠëŠ” ì‹œì„ ë“¤ì´ ë‚˜ë¥¼ ì§€ì¼œë³´ê³  ìˆë‹¤.",
                 sceneName = "Stage3",
                 difficulty = 2
             });
 
             stages.Add(new StageData()
             {
-                stageName = "½ÉÇØÀÇ ±×¸²ÀÚ",
-                stageDescription = "°í¿äÇÏ°í ¼û ¸·È÷´Â ½ÉÇØ, ¾Æ·¡·Î °¡¶ó¾ÉÀ»¼ö·Ï Â£Àº ¾îµÒÀÌ ³ª¸¦ »ïÅ²´Ù.",
+                stageName = "ì‹¬í•´ì˜ ê·¸ë¦¼ì",
+                stageDescription = "ê³ ìš”í•˜ê³  ìˆ¨ ë§‰íˆëŠ” ì‹¬í•´, ì•„ë˜ë¡œ ê°€ë¼ì•‰ì„ìˆ˜ë¡ ì§™ì€ ì–´ë‘ ì´ ë‚˜ë¥¼ ì‚¼í‚¨ë‹¤.",
                 sceneName = "Stage4",
                 difficulty = 2
             });
 
             stages.Add(new StageData()
             {
-                stageName = "³¡¾ø´Â ÀüÃ¶",
-                stageDescription = "´Ş¸®´Â ÀüÃ¶ ¾È, µµÂøÁö´Â º¸ÀÌÁö ¾Ê´Â´Ù. ¸ñÀûÁö¸¦ ÀÒ¾î¹ö¸° Ã¤ ³¡¾ø´Â ¿©Á¤ ¼Ó¿¡¼­ ¾îµğ·Î ÇâÇØ¾ß ÇÒ °ÍÀÎ°¡.",
+                stageName = "ëì—†ëŠ” ì „ì² ",
+                stageDescription = "ë‹¬ë¦¬ëŠ” ì „ì²  ì•ˆ, ë„ì°©ì§€ëŠ” ë³´ì´ì§€ ì•ŠëŠ”ë‹¤. ëª©ì ì§€ë¥¼ ìƒì–´ë²„ë¦° ì±„ ëì—†ëŠ” ì—¬ì • ì†ì—ì„œ ì–´ë””ë¡œ í–¥í•´ì•¼ í•  ê²ƒì¸ê°€.",
                 sceneName = "Stage5",
                 difficulty = 3
             });
 
             stages.Add(new StageData()
             {
-                stageName = "¾ó¾îºÙÀº È£¼ö",
-                stageDescription = "Ãß°İÇÏ´Â ¸ó½ºÅÍµéÀ» ÇÇÇØ ¾ó¾îºÙÀº È£¼ö¸¦ °Ç³Ê¾ß ÇÑ´Ù.",
+                stageName = "ì–¼ì–´ë¶™ì€ í˜¸ìˆ˜",
+                stageDescription = "ì¶”ê²©í•˜ëŠ” ëª¬ìŠ¤í„°ë“¤ì„ í”¼í•´ ì–¼ì–´ë¶™ì€ í˜¸ìˆ˜ë¥¼ ê±´ë„ˆì•¼ í•œë‹¤.",
                 sceneName = "Stage6",
                 difficulty = 3
             });
 
             stages.Add(new StageData()
             {
-                stageName = "ÁöÇÏ Ã¢°í",
-                stageDescription = "Ä£±¸¿Í ÇÔ²² ¼û¹Ù²ÀÁúÀ» ÇÏ¸ç ³î¾Ò´ø Àå¼Ò. ±×·¯³ª ÀÌ°÷Àº ´õ ÀÌ»ó Áñ°Å¿î ³îÀÌÀÇ °ø°£ÀÌ ¾Æ´Ï´Ù.",
+                stageName = "ì§€í•˜ ì°½ê³ ",
+                stageDescription = "ì¹œêµ¬ì™€ í•¨ê»˜ ìˆ¨ë°”ê¼­ì§ˆì„ í•˜ë©° ë†€ì•˜ë˜ ì¥ì†Œ. ê·¸ëŸ¬ë‚˜ ì´ê³³ì€ ë” ì´ìƒ ì¦ê±°ìš´ ë†€ì´ì˜ ê³µê°„ì´ ì•„ë‹ˆë‹¤.",
                 sceneName = "Stage7",
                 difficulty = 4
             });
 
             stages.Add(new StageData()
             {
-                stageName = "º®Àå ¼ÓÀÇ ³ª",
-                stageDescription = "º¹ÁıÇÏ°Ô ¾ôÈù º®Àå ¼Ó ¹Ì·Î¿¡¼­ ±«¹°µéÀ» ÇÇÇØ Å»ÃâÇØ¶ó.",
+                stageName = "ë²½ì¥ ì†ì˜ ë‚˜",
+                stageDescription = "ë³µì§‘í•˜ê²Œ ì–½íŒ ë²½ì¥ ì† ë¯¸ë¡œì—ì„œ ê´´ë¬¼ë“¤ì„ í”¼í•´ íƒˆì¶œí•´ë¼.",
                 sceneName = "Stage8",
                 difficulty = 4
             });
 
             stages.Add(new StageData()
             {
-                stageName = "ÀØÇôÁø ÀÚµéÀÇ Á¤¿ø",
-                stageDescription = "´©±º°¡ÀÇ ¹«´ı ¾Õ¿¡ ³ªÅ¸³­ ÀÒ¾î¹ö¸° ±â¾ïÀ» Ã£¾Æ¾ß ÇÑ´Ù.",
+                stageName = "ìŠí˜€ì§„ ìë“¤ì˜ ì •ì›",
+                stageDescription = "ëˆ„êµ°ê°€ì˜ ë¬´ë¤ ì•ì— ë‚˜íƒ€ë‚œ ìƒì–´ë²„ë¦° ê¸°ì–µì„ ì°¾ì•„ì•¼ í•œë‹¤.",
                 sceneName = "Stage9",
                 difficulty = 5
             });
 
             stages.Add(new StageData()
             {
-                stageName = "º°ÀÌ Èå¸£´Â ¾ğ´ö",
-                stageDescription = "¸¶Ä§³» Ã£°ÔµÈ Ä£±¸, ±×¸®°í °ú°Å¿¡ ¸¶ÁÖÇß´ø ¸ğµç Á¸ÀçµéÀÌ ´Ù½Ã ³ªÅ¸³ª ±æÀ» ¸·´Â´Ù. º°ºû ¾Æ·¡ ÆîÃÄÁö´Â ÃÖÈÄÀÇ °áÀü, ÁÖÀÎ°øÀº ÀÚ½ÅÀÌ ÂÑ¾Æ¿Â Áø½ÇÀ» ¹Ş¾ÆµéÀÏ °ÍÀÎ°¡, ¾Æ´Ï¸é ´Ù½Ã ±æÀ» ÀÒÀ» °ÍÀÎ°¡?",
+                stageName = "ë³„ì´ íë¥´ëŠ” ì–¸ë•",
+                stageDescription = "ë§ˆì¹¨ë‚´ ì°¾ê²Œëœ ì¹œêµ¬, ê·¸ë¦¬ê³  ê³¼ê±°ì— ë§ˆì£¼í–ˆë˜ ëª¨ë“  ì¡´ì¬ë“¤ì´ ë‹¤ì‹œ ë‚˜íƒ€ë‚˜ ê¸¸ì„ ë§‰ëŠ”ë‹¤. ë³„ë¹› ì•„ë˜ í¼ì³ì§€ëŠ” ìµœí›„ì˜ ê²°ì „, ì£¼ì¸ê³µì€ ìì‹ ì´ ì«“ì•„ì˜¨ ì§„ì‹¤ì„ ë°›ì•„ë“¤ì¼ ê²ƒì¸ê°€, ì•„ë‹ˆë©´ ë‹¤ì‹œ ê¸¸ì„ ìƒì„ ê²ƒì¸ê°€?",
                 sceneName = "Stage10",
                 difficulty = 5
             });
         }
 
-        // ½ºÅ×ÀÌÁö µ¥ÀÌÅÍ °¡Á®¿À±â (Á¤Àû ¸Ş¼­µå)
+        // ìŠ¤í…Œì´ì§€ ë°ì´í„° ê°€ì ¸ì˜¤ê¸° (ì •ì  ë©”ì„œë“œ)
         public static StageData GetStageData(int index)
         {
             if (Instance.stages.Count > index && index >= 0)
@@ -143,7 +143,7 @@ namespace UI.Stage
             return null;
         }
 
-        // ¸ğµç ½ºÅ×ÀÌÁö µ¥ÀÌÅÍ °¡Á®¿À±â (Á¤Àû ¸Ş¼­µå)
+        // ëª¨ë“  ìŠ¤í…Œì´ì§€ ë°ì´í„° ê°€ì ¸ì˜¤ê¸° (ì •ì  ë©”ì„œë“œ)
         public static List<StageData> GetAllStageData()
         {
             return Instance.stages;
