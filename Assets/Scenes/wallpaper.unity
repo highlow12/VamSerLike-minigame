@@ -214,10 +214,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 3
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -695,7 +695,7 @@ RectTransform:
   m_Father: {fileID: 398562}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1915,7 +1915,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: -351, y: 0}
-  m_SizeDelta: {x: 702, y: 0}
+  m_SizeDelta: {x: 702, y: -714}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &235331743
 MonoBehaviour:
@@ -6172,9 +6172,9 @@ RectTransform:
   m_Father: {fileID: 654683316}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -17, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1050102452
 MonoBehaviour:
@@ -7031,7 +7031,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1211698800
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7152,7 +7152,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1278841948
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10948,7 +10948,7 @@ GameObject:
   - component: {fileID: 2044843677}
   - component: {fileID: 2044843676}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: StageStarter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10966,7 +10966,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c52384bff9be11488411139f9f63d55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  surrentStageIndex: 0
+  currentStageIndex: 0
 --- !u!4 &2044843677
 Transform:
   m_ObjectHideFlags: 0
@@ -11220,10 +11220,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2044843675}
-        m_TargetAssemblyTypeName: PopupController, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 5
+      - m_Target: {fileID: 2044843676}
+        m_TargetAssemblyTypeName: stageatart, Assembly-CSharp
+        m_MethodName: LoadStageSelectScene
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -11427,7 +11427,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 71543050}
   m_HandleRect: {fileID: 71543049}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

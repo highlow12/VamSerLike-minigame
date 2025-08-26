@@ -14,7 +14,8 @@ public class StageSelectManager : Singleton<StageSelectManager>
     #region UI Buttons
     public void SelectButton()
     {
-        StageLoadManager.Instance.LoadSceneAsync("Stage " + currentStageIndex);
+        //StageLoadManager.Instance.LoadSceneAsync("Stage " + currentStageIndex);//기획서상 옳지 않음
+        
     }
     public void LeftButton()
     {

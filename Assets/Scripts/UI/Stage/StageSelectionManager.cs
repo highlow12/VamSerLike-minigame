@@ -7,49 +7,49 @@ namespace UI.Stage
 {
     public class StageSelectionManager : MonoBehaviour
     {
-        [Header("UI ¿ä¼Ò")]
-        public GameObject stageSelectionScreen; // ½ºÅ×ÀÌÁö ¼±ÅÃ È­¸é
-        public Button leftArrowButton; // ¿ŞÂÊ È­»ìÇ¥ ¹öÆ°
-        public Button rightArrowButton; // ¿À¸¥ÂÊ È­»ìÇ¥ ¹öÆ°
-        public Button confirmButton; // È®ÀÎ(¼±ÅÃ) ¹öÆ°
-        public Button backButton; // µÚ·Î °¡±â ¹öÆ°
+        [Header("UI ìš”ì†Œ")]
+        public GameObject stageSelectionScreen; // ìŠ¤í…Œì´ì§€ ì„ íƒ í™”ë©´
+        public Button leftArrowButton; // ì™¼ìª½ í™”ì‚´í‘œ ë²„íŠ¼
+        public Button rightArrowButton; // ì˜¤ë¥¸ìª½ í™”ì‚´í‘œ ë²„íŠ¼
+        public Button confirmButton; // í™•ì¸(ì„ íƒ) ë²„íŠ¼
+        public Button backButton; // ë’¤ë¡œ ê°€ê¸° ë²„íŠ¼
 
-        [Header("½ºÅ×ÀÌÁö Ç¥½Ã")]
-        public RectTransform stageContainer; // ½ºÅ×ÀÌÁö ÄÁÅ×ÀÌ³Ê
-        public Image stagePortalImage; // ½ºÅ×ÀÌÁö Æ÷ÅĞ ÀÌ¹ÌÁö
-        public Text stageTitleText; // ½ºÅ×ÀÌÁö Á¦¸ñ ÅØ½ºÆ®
-        public Text stageDescriptionText; // ½ºÅ×ÀÌÁö ¼³¸í ÅØ½ºÆ®
-        public CanvasGroup infoPanel; // Á¤º¸ ÆĞ³Î Äµ¹ö½º ±×·ì
+        [Header("ìŠ¤í…Œì´ì§€ í‘œì‹œ")]
+        public RectTransform stageContainer; // ìŠ¤í…Œì´ì§€ ì»¨í…Œì´ë„ˆ
+        public Image stagePortalImage; // ìŠ¤í…Œì´ì§€ í¬í„¸ ì´ë¯¸ì§€
+        public Text stageTitleText; // ìŠ¤í…Œì´ì§€ ì œëª© í…ìŠ¤íŠ¸
+        public Text stageDescriptionText; // ìŠ¤í…Œì´ì§€ ì„¤ëª… í…ìŠ¤íŠ¸
+        public CanvasGroup infoPanel; // ì •ë³´ íŒ¨ë„ ìº”ë²„ìŠ¤ ê·¸ë£¹
 
-        [Header("¾Ö´Ï¸ŞÀÌ¼Ç ¼³Á¤")]
-        public float slideSpeed = 0.5f; // ½½¶óÀÌµå ¼Óµµ
-        public float fadeDuration = 0.3f; // ÆäÀÌµå Áö¼Ó ½Ã°£
-        public AnimationCurve slideCurve = AnimationCurve.EaseInOut(0, 0, 1, 1); // ½½¶óÀÌµå °î¼±
+        [Header("ì• ë‹ˆë©”ì´ì…˜ ì„¤ì •")]
+        public float slideSpeed = 0.5f; // ìŠ¬ë¼ì´ë“œ ì†ë„
+        public float fadeDuration = 0.3f; // í˜ì´ë“œ ì§€ì† ì‹œê°„
+        public AnimationCurve slideCurve = AnimationCurve.EaseInOut(0, 0, 1, 1); // ìŠ¬ë¼ì´ë“œ ê³¡ì„ 
 
-        // È¨ È­¸é ¸Å´ÏÀú ÂüÁ¶
+        // í™ˆ í™”ë©´ ë§¤ë‹ˆì € ì°¸ì¡°
         private HomeScreenManager homeScreenManager;
 
-        // ÇöÀç Ç¥½ÃµÈ ½ºÅ×ÀÌÁö ÀÎµ¦½º
+        // í˜„ì¬ í‘œì‹œëœ ìŠ¤í…Œì´ì§€ ì¸ë±ìŠ¤
         private int currentStageIndex = 0;
 
-        // ½½¶óÀÌµù ¾Ö´Ï¸ŞÀÌ¼Ç È°¼º ÇÃ·¡±×
+        // ìŠ¬ë¼ì´ë”© ì• ë‹ˆë©”ì´ì…˜ í™œì„± í”Œë˜ê·¸
         private bool isSliding = false;
 
-        // ½ºÅ×ÀÌÁö µ¥ÀÌÅÍ ¸ñ·Ï
+        // ìŠ¤í…Œì´ì§€ ë°ì´í„° ëª©ë¡
         private List<StageData> stageDataList = new List<StageData>();
 
-        // ½ºÅ×ÀÌÁö Àá±İ »óÅÂ
+        // ìŠ¤í…Œì´ì§€ ì ê¸ˆ ìƒíƒœ
         private List<bool> stageUnlocked = new List<bool>();
 
         void Awake()
         {
             homeScreenManager = FindObjectOfType<HomeScreenManager>();
 
-            // ÃÊ±â¿¡ ¼±ÅÃ È­¸é ¼û±â±â
+            // ì´ˆê¸°ì— ì„ íƒ í™”ë©´ ìˆ¨ê¸°ê¸°
             if (stageSelectionScreen != null)
                 stageSelectionScreen.SetActive(false);
 
-            // ¹öÆ° ¸®½º³Ê ¼³Á¤
+            // ë²„íŠ¼ ë¦¬ìŠ¤ë„ˆ ì„¤ì •
             if (leftArrowButton != null)
                 leftArrowButton.onClick.AddListener(SlideLeft);
 
@@ -62,21 +62,21 @@ namespace UI.Stage
             if (backButton != null)
                 backButton.onClick.AddListener(ReturnToHomeScreen);
 
-            // ½ºÅ×ÀÌÁö µ¥ÀÌÅÍ ·Îµå
+            // ìŠ¤í…Œì´ì§€ ë°ì´í„° ë¡œë“œ
             stageDataList = StageDataManager.GetAllStageData();
 
-            // Àá±İ ÇØÁ¦ »óÅÂ ÃÊ±âÈ­
+            // ì ê¸ˆ í•´ì œ ìƒíƒœ ì´ˆê¸°í™”
             InitializeUnlockStatus();
         }
 
         private void InitializeUnlockStatus()
         {
-            stageUnlocked = new List<bool>(10); // 10°³ ½ºÅ×ÀÌÁö °¡Á¤
+            stageUnlocked = new List<bool>(10); // 10ê°œ ìŠ¤í…Œì´ì§€ ê°€ì •
 
-            // Ã¹ ¹øÂ° ½ºÅ×ÀÌÁö´Â Ç×»ó ÇØ±İ
+            // ì²« ë²ˆì§¸ ìŠ¤í…Œì´ì§€ëŠ” í•­ìƒ í•´ê¸ˆ
             stageUnlocked.Add(true);
 
-            // ³ª¸ÓÁö ½ºÅ×ÀÌÁö´Â PlayerPrefs¿¡¼­ È®ÀÎ
+            // ë‚˜ë¨¸ì§€ ìŠ¤í…Œì´ì§€ëŠ” PlayerPrefsì—ì„œ í™•ì¸
             for (int i = 1; i < 10; i++)
             {
                 bool isUnlocked = PlayerPrefs.GetInt("Stage_" + i + "_Unlocked", 0) == 1;
@@ -88,13 +88,13 @@ namespace UI.Stage
         {
             currentStageIndex = Mathf.Clamp(initialStageIndex, 0, stageDataList.Count - 1);
 
-            // ¼±ÅÃ È­¸é Ç¥½Ã
+            // ì„ íƒ í™”ë©´ í‘œì‹œ
             stageSelectionScreen.SetActive(true);
 
-            // ½ºÅ×ÀÌÁö Á¤º¸ ¾÷µ¥ÀÌÆ®
+            // ìŠ¤í…Œì´ì§€ ì •ë³´ ì—…ë°ì´íŠ¸
             UpdateStageDisplay();
 
-            // ³×ºñ°ÔÀÌ¼Ç ¹öÆ° ¾÷µ¥ÀÌÆ®
+            // ë„¤ë¹„ê²Œì´ì…˜ ë²„íŠ¼ ì—…ë°ì´íŠ¸
             UpdateNavigationButtons();
         }
 
@@ -116,13 +116,13 @@ namespace UI.Stage
 
         public void SlideToStage(int targetStageIndex)
         {
-            // À¯È¿ÇÑ ¹üÀ§·Î ´ë»ó ÀÎµ¦½º Á¦ÇÑ
+            // ìœ íš¨í•œ ë²”ìœ„ë¡œ ëŒ€ìƒ ì¸ë±ìŠ¤ ì œí•œ
             targetStageIndex = Mathf.Clamp(targetStageIndex, 0, stageDataList.Count - 1);
 
-            // ÇöÀç¿Í µ¿ÀÏÇÏ¸é ½½¶óÀÌµå ÇÊ¿ä ¾øÀ½
+            // í˜„ì¬ì™€ ë™ì¼í•˜ë©´ ìŠ¬ë¼ì´ë“œ í•„ìš” ì—†ìŒ
             if (targetStageIndex == currentStageIndex) return;
 
-            // ½½¶óÀÌµù ¾Ö´Ï¸ŞÀÌ¼Ç ½ÃÀÛ
+            // ìŠ¬ë¼ì´ë”© ì• ë‹ˆë©”ì´ì…˜ ì‹œì‘
             StartCoroutine(SlideAnimation(targetStageIndex));
         }
 
@@ -130,20 +130,20 @@ namespace UI.Stage
         {
             isSliding = true;
 
-            // ÇöÀç ½ºÅ×ÀÌÁö Á¤º¸ ÆäÀÌµå ¾Æ¿ô
+            // í˜„ì¬ ìŠ¤í…Œì´ì§€ ì •ë³´ í˜ì´ë“œ ì•„ì›ƒ
             StartCoroutine(FadeStageInfo(false));
 
-            // ÀÌµ¿ ¹æÇâ °áÁ¤ (-1: ¿ŞÂÊ, 1: ¿À¸¥ÂÊ)
+            // ì´ë™ ë°©í–¥ ê²°ì • (-1: ì™¼ìª½, 1: ì˜¤ë¥¸ìª½)
             int direction = (targetStageIndex > currentStageIndex) ? 1 : -1;
 
-            // ÀÌ¹ÌÁö ½½¶óÀÌµå ¾Ö´Ï¸ŞÀÌ¼Ç
+            // ì´ë¯¸ì§€ ìŠ¬ë¼ì´ë“œ ì• ë‹ˆë©”ì´ì…˜
             RectTransform imageRect = stagePortalImage.rectTransform;
             Vector2 startPos = imageRect.anchoredPosition;
-            Vector2 exitPos = startPos + new Vector2(direction * 1000, 0); // È­¸é ¹ÛÀ¸·Î ÀÌµ¿
+            Vector2 exitPos = startPos + new Vector2(direction * 1000, 0); // í™”ë©´ ë°–ìœ¼ë¡œ ì´ë™
 
             float elapsedTime = 0;
 
-            // ÇöÀç ÀÌ¹ÌÁö ½½¶óÀÌµå ¾Æ¿ô
+            // í˜„ì¬ ì´ë¯¸ì§€ ìŠ¬ë¼ì´ë“œ ì•„ì›ƒ
             while (elapsedTime < slideSpeed / 2)
             {
                 float t = slideCurve.Evaluate(elapsedTime / (slideSpeed / 2));
@@ -153,17 +153,17 @@ namespace UI.Stage
                 yield return null;
             }
 
-            // ÇöÀç ÀÎµ¦½º ¾÷µ¥ÀÌÆ®
+            // í˜„ì¬ ì¸ë±ìŠ¤ ì—…ë°ì´íŠ¸
             currentStageIndex = targetStageIndex;
 
-            // ÀÌ¹ÌÁö ±³Ã¼ ÁØºñ
+            // ì´ë¯¸ì§€ êµì²´ ì¤€ë¹„
             UpdateStageImage();
 
-            // ¹İ´ëÆí¿¡¼­ ½ÃÀÛÇÏµµ·Ï À§Ä¡ ¼³Á¤
+            // ë°˜ëŒ€í¸ì—ì„œ ì‹œì‘í•˜ë„ë¡ ìœ„ì¹˜ ì„¤ì •
             Vector2 enterPos = startPos + new Vector2(-direction * 1000, 0);
             imageRect.anchoredPosition = enterPos;
 
-            // »õ ÀÌ¹ÌÁö ½½¶óÀÌµå ÀÎ
+            // ìƒˆ ì´ë¯¸ì§€ ìŠ¬ë¼ì´ë“œ ì¸
             elapsedTime = 0;
             while (elapsedTime < slideSpeed / 2)
             {
@@ -174,14 +174,14 @@ namespace UI.Stage
                 yield return null;
             }
 
-            // Á¤È®ÇÑ À§Ä¡·Î º¸Á¤
+            // ì •í™•í•œ ìœ„ì¹˜ë¡œ ë³´ì •
             imageRect.anchoredPosition = startPos;
 
-            // ½ºÅ×ÀÌÁö Á¤º¸ ¾÷µ¥ÀÌÆ® ¹× ÆäÀÌµå ÀÎ
+            // ìŠ¤í…Œì´ì§€ ì •ë³´ ì—…ë°ì´íŠ¸ ë° í˜ì´ë“œ ì¸
             UpdateStageInfo();
             StartCoroutine(FadeStageInfo(true));
 
-            // ³×ºñ°ÔÀÌ¼Ç ¹öÆ° ¾÷µ¥ÀÌÆ®
+            // ë„¤ë¹„ê²Œì´ì…˜ ë²„íŠ¼ ì—…ë°ì´íŠ¸
             UpdateNavigationButtons();
 
             isSliding = false;
@@ -209,16 +209,16 @@ namespace UI.Stage
 
         private void UpdateStageDisplay()
         {
-            // ÀÌ¹ÌÁö ¾÷µ¥ÀÌÆ®
+            // ì´ë¯¸ì§€ ì—…ë°ì´íŠ¸
             UpdateStageImage();
 
-            // ÅØ½ºÆ® Á¤º¸ ¾÷µ¥ÀÌÆ®
+            // í…ìŠ¤íŠ¸ ì •ë³´ ì—…ë°ì´íŠ¸
             UpdateStageInfo();
         }
 
         private void UpdateStageImage()
         {
-            // ÇöÀç ½ºÅ×ÀÌÁö ÀÌ¹ÌÁö ¾÷µ¥ÀÌÆ®
+            // í˜„ì¬ ìŠ¤í…Œì´ì§€ ì´ë¯¸ì§€ ì—…ë°ì´íŠ¸
             if (stagePortalImage != null && currentStageIndex < stageDataList.Count)
             {
                 StageData stageData = stageDataList[currentStageIndex];
@@ -227,7 +227,7 @@ namespace UI.Stage
                     stagePortalImage.sprite = stageData.portalImage;
                 }
 
-                // Àá±ä ½ºÅ×ÀÌÁö´Â ¾îµÓ°Ô Ç¥½Ã
+                // ì ê¸´ ìŠ¤í…Œì´ì§€ëŠ” ì–´ë‘¡ê²Œ í‘œì‹œ
                 bool isUnlocked = stageUnlocked[currentStageIndex];
                 Color color = stagePortalImage.color;
                 color.a = isUnlocked ? 1.0f : 0.5f;
@@ -237,14 +237,14 @@ namespace UI.Stage
 
         private void UpdateStageInfo()
         {
-            // ½ºÅ×ÀÌÁö µ¥ÀÌÅÍ ¸Å´ÏÀú¿¡¼­ ½ºÅ×ÀÌÁö µ¥ÀÌÅÍ È¹µæ
+            // ìŠ¤í…Œì´ì§€ ë°ì´í„° ë§¤ë‹ˆì €ì—ì„œ ìŠ¤í…Œì´ì§€ ë°ì´í„° íšë“
             if (currentStageIndex < stageDataList.Count)
             {
                 StageData stageData = stageDataList[currentStageIndex];
 
                 if (stageData != null)
                 {
-                    // ÅØ½ºÆ® ¾÷µ¥ÀÌÆ®
+                    // í…ìŠ¤íŠ¸ ì—…ë°ì´íŠ¸
                     stageTitleText.text = stageData.stageName;
                     stageDescriptionText.text = stageData.stageDescription;
                 }
@@ -253,27 +253,27 @@ namespace UI.Stage
 
         private void UpdateNavigationButtons()
         {
-            // ÇöÀç À§Ä¡¿¡ µû¶ó ³×ºñ°ÔÀÌ¼Ç ¹öÆ° È°¼ºÈ­/ºñÈ°¼ºÈ­
+            // í˜„ì¬ ìœ„ì¹˜ì— ë”°ë¼ ë„¤ë¹„ê²Œì´ì…˜ ë²„íŠ¼ í™œì„±í™”/ë¹„í™œì„±í™”
             leftArrowButton.interactable = (currentStageIndex > 0);
             rightArrowButton.interactable = (currentStageIndex < stageDataList.Count - 1);
 
-            // ½ºÅ×ÀÌÁö Àá±İ ÇØÁ¦ »óÅÂ¿¡ µû¶ó È®ÀÎ ¹öÆ° È°¼ºÈ­/ºñÈ°¼ºÈ­
+            // ìŠ¤í…Œì´ì§€ ì ê¸ˆ í•´ì œ ìƒíƒœì— ë”°ë¼ í™•ì¸ ë²„íŠ¼ í™œì„±í™”/ë¹„í™œì„±í™”
             bool isUnlocked = stageUnlocked[currentStageIndex];
             confirmButton.interactable = isUnlocked;
         }
 
         private void ConfirmStageSelection()
         {
-            // ¼±ÅÃµÈ ½ºÅ×ÀÌÁö·Î È¨ È­¸éÀ¸·Î µ¹¾Æ°¡±â
+            // ì„ íƒëœ ìŠ¤í…Œì´ì§€ë¡œ í™ˆ í™”ë©´ìœ¼ë¡œ ëŒì•„ê°€ê¸°
             ReturnToHomeScreen();
         }
 
         private void ReturnToHomeScreen()
         {
-            // ¼±ÅÃ È­¸é ¼û±â±â
+            // ì„ íƒ í™”ë©´ ìˆ¨ê¸°ê¸°
             stageSelectionScreen.SetActive(false);
 
-            // È¨ È­¸é¿¡ ¼±ÅÃ ¾Ë¸²
+            // í™ˆ í™”ë©´ì— ì„ íƒ ì•Œë¦¼
             if (homeScreenManager != null)
             {
                 homeScreenManager.ReturnFromStageSelection(currentStageIndex);
