@@ -20,10 +20,12 @@ namespace UI.Stage
 
         [Header("애니메이션")]
         public float fadeSpeed = 1.0f; // 페이드 속도
-        public Animator portalAnimator; // 포털 애니메이터
+        public Animator portalAnimator; // 포털 애니메이터 (있는 경우): 포털 선택해서 들어갈때 지연시키면서 애니메이션 효과 넣어줌
+
 
         // 스테이지 선택 매니저 참조
-        private StageSelectionManager stageSelectionManager;
+        [Header("Stage Selection Manager")]
+        [SerializeField] private StageSelectionManager stageSelectionManager;
 
         // 현재 선택된 스테이지
         private int currentStageIndex = 0;
@@ -33,7 +35,7 @@ namespace UI.Stage
 
         void Start()
         {
-            stageSelectionManager = FindAnyObjectByType<StageSelectionManager>();
+            //stageSelectionManager = FindAnyObjectByType<StageSelectionManager>();
 
             // 버튼 리스너 설정
             if (enterButton != null)
@@ -46,13 +48,13 @@ namespace UI.Stage
             InitializeStages();
 
             // 포털 표시 업데이트
-            UpdatePortalDisplay();
+            //UpdatePortalDisplay();
         }
 
         private void InitializeStages()
         {
             // 실제 게임에서는 저장 데이터에서 로드할 것
-            stageUnlocked = new List<bool>(10); // 총 10개 스테이지 가정
+            //stageUnlocked = new List<bool>(10); // 총 10개 스테이지 가정
 
             // 최소한 스테이지 1은 항상 잠금 해제
             stageUnlocked.Add(true);
@@ -109,17 +111,22 @@ namespace UI.Stage
             // 스테이지 씬은 "Stage1", "Stage2" 등으로 이름이 지정됨
             //SceneManager.LoadScene("Stage" + (currentStageIndex + 1));
             //씬빌드 인덱스 사용
-            SceneManager.LoadScene(currentStageIndex + 1);
+            //SceneManager.LoadScene(currentStageIndex + 1);
+            StageLoadManager.Instance.LoadSceneAsync("Stage " + currentStageIndex);//로딩창과 함께 이동
         }
         public void OpenStageSelectScreen()
         {
             // 홈 화면 숨기기
-            homeScreenUI.SetActive(false);
+            //homeScreenUI.SetActive(false);//현재 코드상 이러면 캔버스 자체가 비활성화돼서 ui가 아무것도 안보임;;
 
             // 스테이지 선택 화면 표시
             if (stageSelectionManager != null)
             {
                 stageSelectionManager.ShowStageSelection(currentStageIndex);
+            }
+            else
+            {
+                Debug.LogError("StageSelectionManager not found!");
             }
         }
 
@@ -145,7 +152,7 @@ namespace UI.Stage
 
             if (stageData != null)
             {
-                portalStageNameText.text = stageData.stageName;
+                portalStageNameText.text = stageData.stageName;//portalStageNameText가 null인 상태로 시작하는듯. 근데 왜 게임 시작할때 이 코드가 실행되지?=>처음부터 스테이지 정보 받아와서 넣어주려고
                 portalStageDescriptionText.text = stageData.stageDescription;
 
                 // 스테이지에 따라 포털 시각 효과도 업데이트할 수 있음

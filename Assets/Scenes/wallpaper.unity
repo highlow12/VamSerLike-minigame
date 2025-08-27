@@ -1247,7 +1247,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: "\uB85C\uB529\uC911..."
 --- !u!222 &151200221
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1427,7 +1427,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 1780, y: -250}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &171019603
 MonoBehaviour:
@@ -1719,7 +1719,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 1270, y: -250}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &215440186
 MonoBehaviour:
@@ -1841,7 +1841,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 217036953}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 477495137}
+        m_TargetAssemblyTypeName: UI.Stage.StageSelectionManager, Assembly-CSharp
+        m_MethodName: ReturnToHomeScreen
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
 --- !u!114 &217036953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2321,7 +2333,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 305363652}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
   m_Name: 
@@ -2413,7 +2425,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 250, y: -250}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &325009689
 MonoBehaviour:
@@ -2523,7 +2535,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: "\uB85C\uB529\uC911.."
 --- !u!222 &339775937
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3555,10 +3567,10 @@ RectTransform:
   - {fileID: 1495452233}
   m_Father: {fileID: 391749532}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1920, y: 1230}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &477495137
 MonoBehaviour:
@@ -3578,12 +3590,27 @@ MonoBehaviour:
   confirmButton: {fileID: 217036952}
   backButton: {fileID: 0}
   stageContainer: {fileID: 305363653}
-  stagePortalImage: {fileID: 0}
+  stagePortalImageList:
+  - {fileID: 325009689}
+  - {fileID: 1097495043}
+  - {fileID: 215440186}
+  - {fileID: 171019603}
+  - {fileID: 1900307561}
+  - {fileID: 1979125997}
+  - {fileID: 1171810058}
+  - {fileID: 1426444665}
+  - {fileID: 1159214593}
+  - {fileID: 1696247978}
+  stagePortalImage: {fileID: 325009689}
   stageTitleText: {fileID: 339775936}
   stageDescriptionText: {fileID: 151200220}
   infoPanel: {fileID: 1162978206}
   slideSpeed: 0.5
   fadeDuration: 0.3
+  StageImagesOffset: 510
+  normalWidthHeight: 400
+  selectedWidthHeight: 500
+  sizeUpSpeed: 3
   slideCurve:
     serializedVersion: 2
     m_Curve:
@@ -6373,7 +6400,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 760, y: -250}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1097495043
 MonoBehaviour:
@@ -6558,7 +6585,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 4330, y: -250}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1159214593
 MonoBehaviour:
@@ -6723,7 +6750,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 3310, y: -250}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1171810058
 MonoBehaviour:
@@ -7383,7 +7410,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1383274735}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5e001bfa8443714eb93577aba853c6b, type: 3}
   m_Name: 
@@ -7472,7 +7499,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 3820, y: -250}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1426444665
 MonoBehaviour:
@@ -8467,7 +8494,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 4840, y: -250}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1696247978
 MonoBehaviour:
@@ -9797,7 +9824,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 2290, y: -250}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1900307561
 MonoBehaviour:
@@ -10206,14 +10233,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a62e9be387186204e9853212cd64f443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enterButton: {fileID: 0}
-  stageSelectButton: {fileID: 0}
+  enterButton: {fileID: 460701267}
+  stageSelectButton: {fileID: 2075299295}
   homeScreenUI: {fileID: 391749528}
   portalVisual: {fileID: 0}
-  portalStageNameText: {fileID: 0}
-  portalStageDescriptionText: {fileID: 0}
+  portalStageNameText: {fileID: 339775936}
+  portalStageDescriptionText: {fileID: 151200220}
   fadeSpeed: 1
   portalAnimator: {fileID: 0}
+  stageSelectionManager: {fileID: 477495137}
 --- !u!1 &1943466660
 GameObject:
   m_ObjectHideFlags: 0
@@ -10445,7 +10473,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 2800, y: -250}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1979125997
 MonoBehaviour:
@@ -11220,9 +11248,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2044843676}
-        m_TargetAssemblyTypeName: stageatart, Assembly-CSharp
-        m_MethodName: LoadStageSelectScene
+      - m_Target: {fileID: 1938101232}
+        m_TargetAssemblyTypeName: UI.Stage.HomeScreenManager, Assembly-CSharp
+        m_MethodName: OpenStageSelectScreen
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
