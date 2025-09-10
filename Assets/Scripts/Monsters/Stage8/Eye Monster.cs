@@ -23,6 +23,9 @@ public class EyeMonster : BossMonster
     [SerializeField] private float pupilRange = 1f; // 동공의 이동 범위
     [SerializeField] private float maxDistanceToPlayer = 7f; // 플레이어와의 최대 거리
     [SerializeField] private float fixedOffset = 1f; // 플레이어와의 최대 거리
+    [SerializeField] private float offsetMultiplier = 2f;//오프셋 위치에 곱하여 이동 초기 위치 설정\
+    [SerializeField] private float navigationBossSize = 0.1f;//블럭을 피해가기 위한 보스 사이즈
+    [SerializeField] private Vector3 cur_offsetPos;//현재 붙어있는 블록 기준 오프셋 위치
     [SerializeField] private GameObject RazorPrefab; // Razor 프리팹
 
     [Header("Pathfinding Settings")]
@@ -237,27 +240,32 @@ public class EyeMonster : BossMonster
 
     Vector3 GetPositionWithRotation(Vector3 blockPosition, float z_value)
     {
-        Vector3 pos;
+        //Vector3 pos;
         switch (z_value)
         {
             case -90://수평 위쪽
-                pos = new Vector3(blockPosition.x, blockPosition.y + fixedOffset, transform.position.z);
+                cur_offsetPos = new Vector3(0, fixedOffset, 0);
+                //pos = new Vector3(blockPosition.x, blockPosition.y + fixedOffset, transform.position.z);
                 break;
             case 90://수평 아래쪽
-                pos = new Vector3(blockPosition.x, blockPosition.y - fixedOffset, transform.position.z);
+                cur_offsetPos = new Vector3(0, -fixedOffset, 0);
+                //pos = new Vector3(blockPosition.x, blockPosition.y - fixedOffset, transform.position.z);
                 break;
             case 0://수직 왼쪽
-                pos = new Vector3(blockPosition.x - fixedOffset, blockPosition.y, transform.position.z);
+                cur_offsetPos = new Vector3(-fixedOffset, 0, 0);
+                //pos = new Vector3(blockPosition.x - fixedOffset, blockPosition.y, transform.position.z);
                 break;
             case 180://수직 오른쪽
-                pos = new Vector3(blockPosition.x + fixedOffset, blockPosition.y, transform.position.z);
+                cur_offsetPos = new Vector3(fixedOffset, 0, 0);
+                //pos = new Vector3(blockPosition.x + fixedOffset, blockPosition.y, transform.position.z);
                 break;
             default:
                 Debug.LogError("EyeMonster: 알 수 없는 회전 값: " + z_value);
-                pos = blockPosition; // 기본 위치로 설정
+                //pos = blockPosition; // 기본 위치로 설정
+                cur_offsetPos = blockPosition;
                 break;
         }
-        return pos;
+        return blockPosition + cur_offsetPos;
     }
 
     public Vector3 FindRandomBlock()
@@ -430,12 +438,15 @@ public class EyeMonster : BossMonster
         //anim.SetBool("isMoving", isMoving);
         if (isMoving)
         {
-            anim.SetTrigger("Move");
+            anim.Play("Move", 0, 0f);
+        }
+        else{
+            anim.StopPlayback();
         }
     }
 
     // A* 경로 찾기 알고리즘
-    public List<Vector3> FindPath(Vector3 startPos, Vector3 targetPos)
+    public List<Vector3> FindPath(Vector3 startPos, Vector3 targetPos) // startPos = cur_offsetPos
     {
         List<Vector3> path = new List<Vector3>();
 
@@ -475,6 +486,7 @@ public class EyeMonster : BossMonster
 
             // 가장 낮은 fCost를 가진 노드 선택
             PathNode currentNode = openSet.OrderBy(n => n.fCost).ThenBy(n => n.hCost).First();
+            //Debug.Log($"A* 경로 탐색: 현재 노드 {currentNode.position}, fCost: {currentNode.fCost}, hCost: {currentNode.hCost}");
             openSet.Remove(currentNode);
             closedSet.Add(currentNode.position);
 
@@ -527,14 +539,22 @@ public class EyeMonster : BossMonster
                 neighbor.hCost = Vector2.Distance(neighborPos, targetNode);
             }
         }
-
+        int pathDebugCount = 0;
+        foreach (Vector3 p in path){
+            //Debug.Log(pathDebugCount + ": path 포인트: " + p);
+            pathDebugCount++;
+        }
         return path;
     }
 
     // 해당 위치에 장애물이 있는지 확인
     private bool IsPositionBlocked(Vector2 position)
     {
-        Collider2D collider = Physics2D.OverlapCircle(position, nodeSize * 0.4f, obstacleLayerMask);
+        Collider2D collider = Physics2D.OverlapCircle(position, nodeSize * 0.2f, obstacleLayerMask);
+        if (collider != null)
+        {
+            Debug.Log($"장애물 체크: {position}, 장애물 발견 - {collider.name}");
+        } 
         return collider != null;
     }
 
@@ -567,7 +587,7 @@ public class EyeMonster : BossMonster
     }
 
     // 목표 위치로의 경로 업데이트
-    public void UpdatePathToTarget(Vector3 targetPosition)
+    public void UpdatePathToTarget(Vector3 targetPosition)//시간 제한 없이, 도착할때까지 보스 상태 변화 기다려주는 코드 필요
     {
         pathUpdateTimer += Time.deltaTime;
         if (pathUpdateTimer >= pathfindingUpdateInterval)
@@ -575,8 +595,84 @@ public class EyeMonster : BossMonster
             pathUpdateTimer = 0f;
             currentPath = FindPath(transform.position, targetPosition);
             currentPathIndex = 0;
+            
         }
     }
+
+    public void GetOutOfBlock(){
+        transform.position += cur_offsetPos * offsetMultiplier;
+    }
+
+#if UNITY_EDITOR
+    // 에디터에서 경로를 시각적으로 표시
+    private void OnDrawGizmos()
+    {
+        // 현재 경로가 있을 때만 그리기
+        if (currentPath != null && currentPath.Count > 0)
+        {
+            // 경로 라인 색상 설정
+            UnityEditor.Handles.color = Color.cyan;
+            
+            // 경로 점들을 연결하는 라인 그리기
+            for (int i = 0; i < currentPath.Count - 1; i++)
+            {
+                Vector3 start = currentPath[i];
+                Vector3 end = currentPath[i + 1];
+                UnityEditor.Handles.DrawLine(start, end);
+            }
+            
+            // 각 경로 점에 구체 표시
+            for (int i = 0; i < currentPath.Count; i++)
+            {
+                Vector3 point = currentPath[i];
+                
+                // 현재 목표 지점은 빨간색, 나머지는 노란색
+                if (i == currentPathIndex)
+                {
+                    Gizmos.color = Color.red;
+                }
+                else
+                {
+                    Gizmos.color = Color.yellow;
+                }
+                
+                Gizmos.DrawWireSphere(point, 0.2f);
+                
+                // 경로 인덱스 번호 표시
+                UnityEditor.Handles.color = Color.white;
+                UnityEditor.Handles.Label(point + Vector3.up * 0.3f, i.ToString());
+            }
+            
+            // 시작점과 목표점 특별 표시
+            if (currentPath.Count > 0)
+            {
+                // 시작점 (초록색)
+                Gizmos.color = Color.green;
+                Gizmos.DrawSphere(currentPath[0], 0.15f);
+                UnityEditor.Handles.color = Color.green;
+                UnityEditor.Handles.Label(currentPath[0] + Vector3.up * 0.5f, "START");
+                
+                // 목표점 (파란색)
+                Gizmos.color = Color.blue;
+                Gizmos.DrawSphere(currentPath[currentPath.Count - 1], 0.15f);
+                UnityEditor.Handles.color = Color.blue;
+                UnityEditor.Handles.Label(currentPath[currentPath.Count - 1] + Vector3.up * 0.5f, "END");
+            }
+        }
+        
+        // 현재 위치와 offset 위치 표시
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(transform.position, 0.3f);
+        
+        Vector3 offsetPosition = transform.position + cur_offsetPos * offsetMultiplier;
+        Gizmos.color = new Color(1f, 0.5f, 0f); // 오렌지색 (RGB)
+        Gizmos.DrawWireSphere(offsetPosition, 0.25f);
+        
+        // 현재 위치에서 offset 위치까지 선 그리기
+        Gizmos.color = new Color(1f, 0.5f, 0f); // 오렌지색 (RGB)
+        Gizmos.DrawLine(transform.position, offsetPosition);
+    }
+#endif
 }
 
 //Monster 부모 클래스에 monstrFSM이라는 변수가 있어서, 여기에 상태를 계속 업데이트 해나가며 EyeMonster를 대신 변경해줌.
@@ -596,6 +692,7 @@ public class EyeMonsterTrace : BaseState
         boss.ChangeToNormalSprite(); // 일반 스프라이트로 변경
         boss.isWatching = true;
         boss.SetIsMoving(true); // 걷는 애니메이션 시작
+        //boss.GetOutOfBlock();
 
         // 초기 경로 계산
         boss.UpdatePathToTarget(GameManager.Instance.player.transform.position);
@@ -660,9 +757,11 @@ public class EyeMonsterIrregularMove : BaseState
             //Vector3 endPosition = new Vector3(targetBlock.x, targetBlock.y, monsterTransform.position.z);//통일해야함
             //monsterTransform.position = endPosition;
             boss.Watch();
+            boss.SetIsMoving(false);
             boss.ChangeToAttackSprite();
             monsterTransform.position = targetBlock;
             isEnd = true;
+            Debug.Log("벽에 고정 성공");
             //position 이동해서 벽에 붙어있는 상태로 반환
             return;
         }
