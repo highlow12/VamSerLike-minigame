@@ -130,9 +130,10 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
                     if (monster != null)
                     {
                         patternInstance.spawnedMonsters.Add(monster);
-                        
+
                         // Add monster to wave if applicable
                         currentWave?.spawnedMonsters.Add(monster);
+                        Debug.LogWarning("MonsterSpawnManager: Spawned monster: " + monster.name + " at position: " + position);
                     }
                 }
             }
@@ -145,6 +146,7 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
     // Spawn the next pattern from the stage spawn pattern
     public void SpawnNextPattern()
     {
+        Debug.LogWarning("MonsterPatternManager: SpawnNextPattern called");
         if (stageSpawnPattern == null || currentPatternIndex >= stageSpawnPattern.patterns.Count)
             return;
 
