@@ -136,7 +136,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 50
-    duration: 60
+    duration: 666666
     monsterCount: 1
     radius: 5
     wiggle: 0
@@ -312,7 +312,7 @@ MonoBehaviour:
     monsterName: Knight
   - patternType: 3
     startTime: 480
-    duration: 60
+    duration: 666666
     monsterCount: 1
     radius: 5
     wiggle: 0
