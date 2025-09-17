@@ -7,7 +7,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -17,7 +18,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -27,7 +29,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -37,7 +40,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -47,7 +51,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -57,7 +62,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -67,7 +73,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -77,7 +84,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -87,7 +95,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -97,7 +106,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -107,7 +117,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -117,7 +128,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -127,7 +139,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -137,7 +150,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -147,7 +161,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -157,7 +172,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Queen"
+    "monsterName": "Queen",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -167,7 +183,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Bishop"
+    "monsterName": "Bishop",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -177,7 +194,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -187,7 +205,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Bishop"
+    "monsterName": "Bishop",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -197,7 +216,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -207,7 +227,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -217,7 +238,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Bishop"
+    "monsterName": "Bishop",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -227,7 +249,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -237,7 +260,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Bishop"
+    "monsterName": "Bishop",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -247,7 +271,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -257,7 +282,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Bishop"
+    "monsterName": "Bishop",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -267,7 +293,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -277,7 +304,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Bishop"
+    "monsterName": "Bishop",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -287,7 +315,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -297,7 +326,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -307,7 +337,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Bishop"
+    "monsterName": "Bishop",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -317,7 +348,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -327,7 +359,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -337,7 +370,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Pawn"
+    "monsterName": "Pawn",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -347,7 +381,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Bishop"
+    "monsterName": "Bishop",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -357,7 +392,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Bishop"
+    "monsterName": "Bishop",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -367,7 +403,8 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "Knight"
+    "monsterName": "Knight",
+    "isBossPattern": false
   },
   {
     "patternType": 3,
@@ -377,6 +414,7 @@
     "radius": 5.0,
     "wiggle": 0.0,
     "angle": 0.0,
-    "monsterName": "King"
+    "monsterName": "King",
+    "isBossPattern": true
   }
 ]

@@ -166,7 +166,7 @@ public class Player : MonoBehaviour
         if (health <= 0 && !isDead)
         {
             isDead = true;
-            //FadeManager.Instance.FadeOutAndRestart();
+            FadeManager.Instance.FadeOutAndRestart();
         }
     }
 
