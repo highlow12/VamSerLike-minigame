@@ -20,6 +20,8 @@ public struct SpawnPatternData
     public float angle;
     [Tooltip("몬스터 이름름")]
     public string monsterName;
+    [Tooltip("마지막 보스 패턴 여부")]
+    public bool isBossPattern;
 }
 
 [CreateAssetMenu(fileName = "StageSpawnPattern", menuName = "Scriptable Objects/StageSpawnPattern")]

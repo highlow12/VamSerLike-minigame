@@ -8,63 +8,65 @@ namespace UI.Stage
 {
     public class HomeScreenManager : MonoBehaviour
     {
-        [Header("È¨ È­¸é UI ¿ä¼Ò")]
-        public Button enterButton; // ÀÔÀå ¹öÆ°
-        public Button stageSelectButton; // ½ºÅ×ÀÌÁö ¼±ÅÃ ¹öÆ°
-        public GameObject homeScreenUI; // È¨ È­¸é UI ±×·ì
+        [Header("í™ˆ í™”ë©´ UI ìš”ì†Œ")]
+        public Button enterButton; // ì…ì¥ ë²„íŠ¼
+        public Button stageSelectButton; // ìŠ¤í…Œì´ì§€ ì„ íƒ ë²„íŠ¼
+        public GameObject homeScreenUI; // í™ˆ í™”ë©´ UI ê·¸ë£¹
 
-        [Header("½ºÅ×ÀÌÁö Æ÷ÅĞ")]
-        public GameObject portalVisual; // Æ÷ÅĞ ½Ã°¢ È¿°ú
-        public Text portalStageNameText; // Æ÷ÅĞ ½ºÅ×ÀÌÁö ÀÌ¸§
-        public Text portalStageDescriptionText; // Æ÷ÅĞ ½ºÅ×ÀÌÁö ¼³¸í
+        [Header("ìŠ¤í…Œì´ì§€ í¬í„¸")]
+        public GameObject portalVisual; // í¬í„¸ ì‹œê° íš¨ê³¼
+        public Text portalStageNameText; // í¬í„¸ ìŠ¤í…Œì´ì§€ ì´ë¦„
+        public Text portalStageDescriptionText; // í¬í„¸ ìŠ¤í…Œì´ì§€ ì„¤ëª…
 
-        [Header("¾Ö´Ï¸ŞÀÌ¼Ç")]
-        public float fadeSpeed = 1.0f; // ÆäÀÌµå ¼Óµµ
-        public Animator portalAnimator; // Æ÷ÅĞ ¾Ö´Ï¸ŞÀÌÅÍ
+        [Header("ì• ë‹ˆë©”ì´ì…˜")]
+        public float fadeSpeed = 1.0f; // í˜ì´ë“œ ì†ë„
+        public Animator portalAnimator; // í¬í„¸ ì• ë‹ˆë©”ì´í„° (ìˆëŠ” ê²½ìš°): í¬í„¸ ì„ íƒí•´ì„œ ë“¤ì–´ê°ˆë•Œ ì§€ì—°ì‹œí‚¤ë©´ì„œ ì• ë‹ˆë©”ì´ì…˜ íš¨ê³¼ ë„£ì–´ì¤Œ
 
-        // ½ºÅ×ÀÌÁö ¼±ÅÃ ¸Å´ÏÀú ÂüÁ¶
-        private StageSelectionManager stageSelectionManager;
 
-        // ÇöÀç ¼±ÅÃµÈ ½ºÅ×ÀÌÁö
+        // ìŠ¤í…Œì´ì§€ ì„ íƒ ë§¤ë‹ˆì € ì°¸ì¡°
+        [Header("Stage Selection Manager")]
+        [SerializeField] private StageSelectionManager stageSelectionManager;
+
+        // í˜„ì¬ ì„ íƒëœ ìŠ¤í…Œì´ì§€
         private int currentStageIndex = 0;
 
-        // Àá±İ ÇØÁ¦µÈ ½ºÅ×ÀÌÁö
+        // ì ê¸ˆ í•´ì œëœ ìŠ¤í…Œì´ì§€
         private List<bool> stageUnlocked = new List<bool>();
 
         void Start()
         {
-            stageSelectionManager = FindAnyObjectByType<StageSelectionManager>();
+            //stageSelectionManager = FindAnyObjectByType<StageSelectionManager>();
 
-            // ¹öÆ° ¸®½º³Ê ¼³Á¤
+            // ë²„íŠ¼ ë¦¬ìŠ¤ë„ˆ ì„¤ì •
             if (enterButton != null)
                 enterButton.onClick.AddListener(EnterSelectedStage);
 
             if (stageSelectButton != null)
                 stageSelectButton.onClick.AddListener(OpenStageSelectScreen);
 
-            // ½ºÅ×ÀÌÁö ÃÊ±âÈ­
+            // ìŠ¤í…Œì´ì§€ ì´ˆê¸°í™”
             InitializeStages();
 
-            // Æ÷ÅĞ Ç¥½Ã ¾÷µ¥ÀÌÆ®
-            UpdatePortalDisplay();
+            // í¬í„¸ í‘œì‹œ ì—…ë°ì´íŠ¸
+            //UpdatePortalDisplay();
         }
 
         private void InitializeStages()
         {
-            // ½ÇÁ¦ °ÔÀÓ¿¡¼­´Â ÀúÀå µ¥ÀÌÅÍ¿¡¼­ ·ÎµåÇÒ °Í
-            stageUnlocked = new List<bool>(10); // ÃÑ 10°³ ½ºÅ×ÀÌÁö °¡Á¤
+            // ì‹¤ì œ ê²Œì„ì—ì„œëŠ” ì €ì¥ ë°ì´í„°ì—ì„œ ë¡œë“œí•  ê²ƒ
+            //stageUnlocked = new List<bool>(10); // ì´ 10ê°œ ìŠ¤í…Œì´ì§€ ê°€ì •
 
-            // ÃÖ¼ÒÇÑ ½ºÅ×ÀÌÁö 1Àº Ç×»ó Àá±İ ÇØÁ¦
+            // ìµœì†Œí•œ ìŠ¤í…Œì´ì§€ 1ì€ í•­ìƒ ì ê¸ˆ í•´ì œ
             stageUnlocked.Add(true);
 
-            // PlayerPrefs ¶Ç´Â ´Ù¸¥ ÀúÀå µ¥ÀÌÅÍ¿¡¼­ Àá±İ ÇØÁ¦µÈ ½ºÅ×ÀÌÁö È®ÀÎ
+            // PlayerPrefs ë˜ëŠ” ë‹¤ë¥¸ ì €ì¥ ë°ì´í„°ì—ì„œ ì ê¸ˆ í•´ì œëœ ìŠ¤í…Œì´ì§€ í™•ì¸
             for (int i = 1; i < 10; i++)
             {
                 bool isUnlocked = PlayerPrefs.GetInt("Stage_" + i + "_Unlocked", 0) == 1;
                 stageUnlocked.Add(isUnlocked);
             }
 
-            // ÇöÀç ½ºÅ×ÀÌÁö¸¦ °¡Àå ÃÖ±Ù¿¡ Àá±İ ÇØÁ¦µÈ ½ºÅ×ÀÌÁö·Î ¼³Á¤
+            // í˜„ì¬ ìŠ¤í…Œì´ì§€ë¥¼ ê°€ì¥ ìµœê·¼ì— ì ê¸ˆ í•´ì œëœ ìŠ¤í…Œì´ì§€ë¡œ ì„¤ì •
             for (int i = stageUnlocked.Count - 1; i >= 0; i--)
             {
                 if (stageUnlocked[i])
@@ -77,14 +79,14 @@ namespace UI.Stage
 
         public void EnterSelectedStage()
         {
-            // ½ºÅ×ÀÌÁö°¡ Àá±İ ÇØÁ¦µÇ¾ú´ÂÁö È®ÀÎ
+            // ìŠ¤í…Œì´ì§€ê°€ ì ê¸ˆ í•´ì œë˜ì—ˆëŠ”ì§€ í™•ì¸
             if (currentStageIndex < stageUnlocked.Count && stageUnlocked[currentStageIndex])
             {
-                // Æ÷ÅĞ ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı (ÀÖ´Â °æ¿ì)
+                // í¬í„¸ ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ (ìˆëŠ” ê²½ìš°)
                 if (portalAnimator != null)
                 {
                     portalAnimator.SetTrigger("Enter");
-                    StartCoroutine(LoadStageAfterDelay(1.0f)); // ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ıÀ» À§ÇÑ Áö¿¬
+                    StartCoroutine(LoadStageAfterDelay(1.0f)); // ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒì„ ìœ„í•œ ì§€ì—°
                 }
                 else
                 {
@@ -93,8 +95,8 @@ namespace UI.Stage
             }
             else
             {
-                Debug.Log("½ºÅ×ÀÌÁö°¡ Àá°Ü ÀÖ½À´Ï´Ù!");
-                // ¿©±â¿¡ UI ¸Ş½ÃÁö¸¦ Ç¥½ÃÇÒ ¼ö ÀÖÀ½
+                Debug.Log("ìŠ¤í…Œì´ì§€ê°€ ì ê²¨ ìˆìŠµë‹ˆë‹¤!");
+                // ì—¬ê¸°ì— UI ë©”ì‹œì§€ë¥¼ í‘œì‹œí•  ìˆ˜ ìˆìŒ
             }
         }
 
@@ -106,62 +108,67 @@ namespace UI.Stage
 
         private void LoadSelectedStage()
         {
-            // ½ºÅ×ÀÌÁö ¾ÀÀº "Stage1", "Stage2" µîÀ¸·Î ÀÌ¸§ÀÌ ÁöÁ¤µÊ
+            // ìŠ¤í…Œì´ì§€ ì”¬ì€ "Stage1", "Stage2" ë“±ìœ¼ë¡œ ì´ë¦„ì´ ì§€ì •ë¨
             //SceneManager.LoadScene("Stage" + (currentStageIndex + 1));
-            //¾Àºôµå ÀÎµ¦½º »ç¿ë
-            SceneManager.LoadScene(currentStageIndex + 1);
+            //ì”¬ë¹Œë“œ ì¸ë±ìŠ¤ ì‚¬ìš©
+            //SceneManager.LoadScene(currentStageIndex + 1);
+            StageLoadManager.Instance.LoadSceneAsync("Stage " + currentStageIndex);//ë¡œë”©ì°½ê³¼ í•¨ê»˜ ì´ë™
         }
         public void OpenStageSelectScreen()
         {
-            // È¨ È­¸é ¼û±â±â
-            homeScreenUI.SetActive(false);
+            // í™ˆ í™”ë©´ ìˆ¨ê¸°ê¸°
+            //homeScreenUI.SetActive(false);//í˜„ì¬ ì½”ë“œìƒ ì´ëŸ¬ë©´ ìº”ë²„ìŠ¤ ìì²´ê°€ ë¹„í™œì„±í™”ë¼ì„œ uiê°€ ì•„ë¬´ê²ƒë„ ì•ˆë³´ì„;;
 
-            // ½ºÅ×ÀÌÁö ¼±ÅÃ È­¸é Ç¥½Ã
+            // ìŠ¤í…Œì´ì§€ ì„ íƒ í™”ë©´ í‘œì‹œ
             if (stageSelectionManager != null)
             {
                 stageSelectionManager.ShowStageSelection(currentStageIndex);
+            }
+            else
+            {
+                Debug.LogError("StageSelectionManager not found!");
             }
         }
 
         public void ReturnFromStageSelection(int selectedStage)
         {
-            // Àá±İ ÇØÁ¦µÈ °æ¿ì ÇöÀç ½ºÅ×ÀÌÁö ¾÷µ¥ÀÌÆ®
+            // ì ê¸ˆ í•´ì œëœ ê²½ìš° í˜„ì¬ ìŠ¤í…Œì´ì§€ ì—…ë°ì´íŠ¸
             if (selectedStage < stageUnlocked.Count && stageUnlocked[selectedStage])
             {
                 currentStageIndex = selectedStage;
             }
 
-            // È¨ È­¸é Ç¥½Ã
+            // í™ˆ í™”ë©´ í‘œì‹œ
             homeScreenUI.SetActive(true);
 
-            // Æ÷ÅĞ Ç¥½Ã ¾÷µ¥ÀÌÆ®
+            // í¬í„¸ í‘œì‹œ ì—…ë°ì´íŠ¸
             UpdatePortalDisplay();
         }
 
         private void UpdatePortalDisplay()
         {
-            // StageDataManager ¶Ç´Â À¯»çÇÑ °Í¿¡¼­ ½ºÅ×ÀÌÁö Á¤º¸¸¦ °¡Á¤
+            // StageDataManager ë˜ëŠ” ìœ ì‚¬í•œ ê²ƒì—ì„œ ìŠ¤í…Œì´ì§€ ì •ë³´ë¥¼ ê°€ì •
             StageData stageData = StageDataManager.GetStageData(currentStageIndex);
 
             if (stageData != null)
             {
-                portalStageNameText.text = stageData.stageName;
+                portalStageNameText.text = stageData.stageName;//portalStageNameTextê°€ nullì¸ ìƒíƒœë¡œ ì‹œì‘í•˜ëŠ”ë“¯. ê·¼ë° ì™œ ê²Œì„ ì‹œì‘í• ë•Œ ì´ ì½”ë“œê°€ ì‹¤í–‰ë˜ì§€?=>ì²˜ìŒë¶€í„° ìŠ¤í…Œì´ì§€ ì •ë³´ ë°›ì•„ì™€ì„œ ë„£ì–´ì£¼ë ¤ê³ 
                 portalStageDescriptionText.text = stageData.stageDescription;
 
-                // ½ºÅ×ÀÌÁö¿¡ µû¶ó Æ÷ÅĞ ½Ã°¢ È¿°úµµ ¾÷µ¥ÀÌÆ®ÇÒ ¼ö ÀÖÀ½
+                // ìŠ¤í…Œì´ì§€ì— ë”°ë¼ í¬í„¸ ì‹œê° íš¨ê³¼ë„ ì—…ë°ì´íŠ¸í•  ìˆ˜ ìˆìŒ
             }
         }
 
         public void StageCleared(int stageIndex)
         {
-            // ´ÙÀ½ ½ºÅ×ÀÌÁö Àá±İ ÇØÁ¦
+            // ë‹¤ìŒ ìŠ¤í…Œì´ì§€ ì ê¸ˆ í•´ì œ
             if (stageIndex < stageUnlocked.Count - 1)
             {
                 stageUnlocked[stageIndex + 1] = true;
                 PlayerPrefs.SetInt("Stage_" + (stageIndex + 1) + "_Unlocked", 1);
                 PlayerPrefs.Save();
 
-                // ÇöÀç ½ºÅ×ÀÌÁö¸¦ ´ÙÀ½ ½ºÅ×ÀÌÁö·Î ¾÷µ¥ÀÌÆ®
+                // í˜„ì¬ ìŠ¤í…Œì´ì§€ë¥¼ ë‹¤ìŒ ìŠ¤í…Œì´ì§€ë¡œ ì—…ë°ì´íŠ¸
                 currentStageIndex = stageIndex + 1;
                 UpdatePortalDisplay();
             }

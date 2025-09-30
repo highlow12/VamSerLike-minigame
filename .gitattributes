@@ -1,2 +1,18 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+
+#new lines
+
+
+# PNG 등 바이너리 파일은 줄 끝 변환 금지
+*.png binary
+
+# Unity .meta 파일은 항상 LF로 저장
+*.meta text eol=lf
+
+# 폰트 파일은 바이너리로 처리하여 줄 끝 변환 및 불필요한 변경 방지
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary

@@ -5,10 +5,10 @@ namespace UI.Stage
     [System.Serializable]
     public class StageData
     {
-        public string stageName; // ½ºÅ×ÀÌÁö ÀÌ¸§
-        public string stageDescription; // ½ºÅ×ÀÌÁö ¼³¸í
-        public string sceneName; // ¾À ÀÌ¸§
-        public Sprite portalImage; // Æ÷ÅĞ ÀÌ¹ÌÁö
-        public int difficulty; // ³­ÀÌµµ (1-5)
+        public string stageName; // ìŠ¤í…Œì´ì§€ ì´ë¦„
+        public string stageDescription; // ìŠ¤í…Œì´ì§€ ì„¤ëª…
+        public string sceneName; // ì”¬ ì´ë¦„
+        public Sprite portalImage; // í¬í„¸ ì´ë¯¸ì§€
+        public int difficulty; // ë‚œì´ë„ (1-5)
     }
 }

@@ -91,7 +91,7 @@ public class KingAttack : BaseState
     public override void OnStateEnter()
     {
         _monster.animator.SetTrigger("Attack");
-        VFXManager.Instance.AnimateShakeBack(0f, 1f, 300f);
+        VFXManager.Instance.AnimateShakeBack(0f, 0.7f, 3f);
         hasPlayedAttackSound = false;
     }
 

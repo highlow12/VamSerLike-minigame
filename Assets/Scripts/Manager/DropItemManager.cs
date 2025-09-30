@@ -22,7 +22,16 @@ public class DropItemManager : Singleton<DropItemManager>
             if (value != null)
             {
                 _probabilityTitle = value;
-                currentStageDropItemData = BackendDataManager.Instance.GetProbabilityData(value);
+                var data = BackendDataManager.Instance.GetProbabilityData(value);
+                if (data != null)
+                {
+                    currentStageDropItemData = data;
+                }
+                else
+                {
+                    Debug.LogError($"[DropItemManager] Failed to load probability data for: {value}");
+                    currentStageDropItemData = null;
+                }
             }
         }
     }
@@ -69,6 +78,12 @@ public class DropItemManager : Singleton<DropItemManager>
                 string itemId = currentStageDropItemData[i]["itemId"].ToString();
                 Item.DropItemType parsedItemId = (Item.DropItemType)Enum.Parse(typeof(Item.DropItemType), itemId);
                 string itemName = Enum.GetName(typeof(Item.DropItemType), parsedItemId);
+
+                if(itemName == null)
+                {
+                    Debug.LogError($"[DropItem] Item is null for itemId: {itemId}");
+                    return "Void";
+                }
 
                 if (parsedItemId == Item.DropItemType.Experience)
                 {

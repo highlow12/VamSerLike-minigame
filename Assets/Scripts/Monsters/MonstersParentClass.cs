@@ -50,6 +50,7 @@ public abstract class Monster : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            //Debug.LogWarning("Monster: " + gameObject.name + " is dead.");
             Die();
         }
     }
@@ -80,7 +81,7 @@ public abstract class Monster : MonoBehaviour
     protected virtual void DropLoot()
     {
         // 임시 로직
-        DropItemManager.Instance.DropItem(transform.position);
+        //DropItemManager.Instance.DropItem(transform.position);
     }
 
     //protected abstract void DropLoot();
@@ -343,7 +344,7 @@ public abstract class BossMonster : Monster
     [SerializeField] private float phaseChangeHealthThreshold;
     [SerializeField] private float berserkHealthThreshold;
     protected Dictionary<int, BaseState> states;
-    private float stateTimer;
+    protected float stateTimer;
     protected MonsterFSM monsterFSM;
 
 
@@ -366,7 +367,10 @@ public abstract class BossMonster : Monster
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
-
+        if (currentHealth <= 0)// 보스 몬스터는 죽는 애니메이션이 없으므로 바로 pool로 반환해줌
+        {
+            MonsterPoolManager.Instance.ReturnMonsterToPool(gameObject, GetComponent<MonsterIdentify>().monsterName);
+        }
         // 보스 특수 피해 처리
         if (currentHealth <= phaseChangeHealthThreshold)
         {

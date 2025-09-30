@@ -5,17 +5,17 @@ using System;
 public class GameTimer : MonoBehaviour
 {
     [Header("Timer Settings")]
-    [SerializeField] private TextMeshProUGUI timeText; // ½Ã°£À» Ç¥½ÃÇÒ TMP Text ÄÄÆ÷³ÍÆ®
-    [SerializeField] private bool countUp = true; // true: ½Ã°£ Áõ°¡, false: ½Ã°£ °¨¼Ò
-    [SerializeField] private float initialTime = 0f; // ÃÊ±â ½Ã°£ (ÃÊ ´ÜÀ§)
-    [SerializeField] private float totalTime = 900f; // 15ºĞ(900ÃÊ)
+    [SerializeField] private TextMeshProUGUI timeText; // ì‹œê°„ì„ í‘œì‹œí•  TMP Text ì»´í¬ë„ŒíŠ¸
+    [SerializeField] private bool countUp = true; // true: ì‹œê°„ ì¦ê°€, false: ì‹œê°„ ê°ì†Œ
+    [SerializeField] private float initialTime = 0f; // ì´ˆê¸° ì‹œê°„ (ì´ˆ ë‹¨ìœ„)
+    [SerializeField] private float totalTime = 900f; // 15ë¶„(900ì´ˆ)// ì´ ì‹œê°„ (ì¹´ìš´íŠ¸ë‹¤ìš´ ëª¨ë“œì—ì„œ ì‚¬ìš©)
 
-    private float currentTime; // ÇöÀç ½Ã°£ (ÃÊ ´ÜÀ§)
-    private bool isRunning; // Å¸ÀÌ¸Ó ÀÛµ¿ ¿©ºÎ
+    private float currentTime; // í˜„ì¬ ì‹œê°„ (ì´ˆ ë‹¨ìœ„)
+    private bool isRunning; // íƒ€ì´ë¨¸ ì‘ë™ ì—¬ë¶€
 
     private void Start()
     {
-        // °ÔÀÓ ½ÃÀÛ ½Ã ÀÚµ¿À¸·Î Å¸ÀÌ¸Ó ½ÃÀÛ
+        // ê²Œì„ ì‹œì‘ ì‹œ ìë™ìœ¼ë¡œ íƒ€ì´ë¨¸ ì‹œì‘
         ResetTimer();
         StartTimer();
     }
@@ -24,24 +24,25 @@ public class GameTimer : MonoBehaviour
     {
         if (isRunning)
         {
-            // ½Ã°£ ¾÷µ¥ÀÌÆ®
+            // ì‹œê°„ ì—…ë°ì´íŠ¸
             if (countUp)
             {
                 currentTime += Time.deltaTime;
 
-                // 15ºĞ(900ÃÊ)¿¡ µµ´ŞÇÏ¸é Å¸ÀÌ¸Ó Á¤Áö
+                /*ì‹œê°„ ì œí•œ í•„ìš” ì—†ìŒ
+                // 15ë¶„(900ì´ˆ)ì— ë„ë‹¬í•˜ë©´ íƒ€ì´ë¨¸ ì •ì§€
                 if (currentTime >= totalTime)
                 {
                     currentTime = totalTime;
                     StopTimer();
                     OnTimerComplete();
-                }
+                }*/
             }
             else
             {
                 currentTime -= Time.deltaTime;
 
-                // Ä«¿îÆ®´Ù¿î ¸ğµå¿¡¼­ ½Ã°£ÀÌ 0 ÀÌÇÏ·Î ³»·Á°¡¸é Å¸ÀÌ¸Ó Á¤Áö
+                // ì¹´ìš´íŠ¸ë‹¤ìš´ ëª¨ë“œì—ì„œ ì‹œê°„ì´ 0 ì´í•˜ë¡œ ë‚´ë ¤ê°€ë©´ íƒ€ì´ë¨¸ ì •ì§€
                 if (currentTime <= 0f)
                 {
                     currentTime = 0f;
@@ -50,24 +51,24 @@ public class GameTimer : MonoBehaviour
                 }
             }
 
-            // UI ¾÷µ¥ÀÌÆ®
+            // UI ì—…ë°ì´íŠ¸
             UpdateTimeDisplay();
         }
     }
 
-    // Å¸ÀÌ¸Ó ½ÃÀÛ
+    // íƒ€ì´ë¨¸ ì‹œì‘
     public void StartTimer()
     {
         isRunning = true;
     }
 
-    // Å¸ÀÌ¸Ó Á¤Áö
+    // íƒ€ì´ë¨¸ ì •ì§€
     public void StopTimer()
     {
         isRunning = false;
     }
 
-    // Å¸ÀÌ¸Ó ¸®¼Â
+    // íƒ€ì´ë¨¸ ë¦¬ì…‹
     public void ResetTimer()
     {
         if (countUp)
@@ -81,26 +82,26 @@ public class GameTimer : MonoBehaviour
         UpdateTimeDisplay();
     }
 
-    // ½Ã°£ Ç¥½Ã ¾÷µ¥ÀÌÆ® (ºĞ:ÃÊ Çü½ÄÀ¸·Î¸¸ Ç¥½Ã)
+    // ì‹œê°„ í‘œì‹œ ì—…ë°ì´íŠ¸ (ë¶„:ì´ˆ í˜•ì‹ìœ¼ë¡œë§Œ í‘œì‹œ)
     private void UpdateTimeDisplay()
     {
         if (timeText == null) return;
 
-        // ºĞ, ÃÊ °è»ê
+        // ë¶„, ì´ˆ ê³„ì‚°
         int minutes = (int)(currentTime / 60f);
         int seconds = (int)(currentTime % 60f);
 
-        // ºĞ:ÃÊ Çü½ÄÀ¸·Î Ç¥½Ã
+        // ë¶„:ì´ˆ í˜•ì‹ìœ¼ë¡œ í‘œì‹œ
         string timeString = string.Format("{0:00}:{1:00}", minutes, seconds);
 
-        // UI ÅØ½ºÆ® ¾÷µ¥ÀÌÆ®
+        // UI í…ìŠ¤íŠ¸ ì—…ë°ì´íŠ¸
         timeText.text = timeString;
     }
 
-    // Å¸ÀÌ¸Ó ¿Ï·á ½Ã È£ÃâµÇ´Â ¸Ş¼­µå (Ä«¿îÆ®´Ù¿î ¸ğµå)
+    // íƒ€ì´ë¨¸ ì™„ë£Œ ì‹œ í˜¸ì¶œë˜ëŠ” ë©”ì„œë“œ (ì¹´ìš´íŠ¸ë‹¤ìš´ ëª¨ë“œ)
     private void OnTimerComplete()
     {
         Debug.Log("Timer Complete!");
-        // ¿©±â¿¡ Å¸ÀÌ¸Ó°¡ ¿Ï·áµÇ¾úÀ» ¶§ ¼öÇàÇÒ µ¿ÀÛÀ» Ãß°¡ÇÏ¼¼¿ä
+        // ì—¬ê¸°ì— íƒ€ì´ë¨¸ê°€ ì™„ë£Œë˜ì—ˆì„ ë•Œ ìˆ˜í–‰í•  ë™ì‘ì„ ì¶”ê°€í•˜ì„¸ìš”
     }
 }

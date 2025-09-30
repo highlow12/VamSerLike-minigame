@@ -66,13 +66,24 @@ public class LocalDataManager : Singleton<LocalDataManager>
     {
         string filePath = Path.Combine(chartDataPath, $"{chartName}.json");
         string json = _LoadData(filePath);
+        if (string.IsNullOrEmpty(json))
+        {
+            Debug.LogError($"Failed to load chart data: {chartName}");
+            return null;
+        }
         return JsonMapper.ToObject(json);
     }
 
     public JsonData GetLocalProbabilityData(string probabilityName)
     {
         string filePath = Path.Combine(probabilityDataPath, $"{probabilityName}.json");
+        Debug.Log($"[LocalDataManager] Attempting to load probability data from: {filePath}");
         string json = _LoadData(filePath);
+        if (string.IsNullOrEmpty(json))
+        {
+            Debug.LogError($"Failed to load probability data: {probabilityName} from path: {filePath}");
+            return null;
+        }
         return JsonMapper.ToObject(json);
     }
 

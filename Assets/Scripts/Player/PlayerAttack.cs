@@ -14,7 +14,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private GameObject attackDirectionObject;
     private PlayerMove playerMove;
     public Vector2 attackDirection { get; private set; } = Vector2.right;
-    
+
 
     void Start()
     {
@@ -26,6 +26,9 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
+        TempOnAim(); //유니티6 input system오류로 임시 함수 사용
+
+
         attackDirection = CalculateAttackDirection(mainWeapon.weaponAttackDirectionType);
         attackDirectionObject.transform.rotation = CalculateAttackDirectionObjectRotation(attackDirection);
         if (!mainWeapon.isAttackCooldown)
@@ -37,6 +40,7 @@ public class PlayerAttack : MonoBehaviour
             mainWeapon.projectileCount = (int)GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackProjectileCount, mainWeapon.baseProjectileCount);
             mainWeapon.projectileSpeed = GameManager.Instance.GetPlayerStatValue(Player.BonusStat.AttackProjectileSpeed, mainWeapon.baseProjectileSpeed);
 
+            //풀 매니저와 드롭 매니저로 인해 테스트중 오류가 자꾸 떠서 일단 막아둠
             StartCoroutine(mainWeapon.Attack(attackDirection));
         }
         foreach (Weapon.SubWeapon subWeapon in subWeapons)
@@ -183,13 +187,28 @@ public class PlayerAttack : MonoBehaviour
         return Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
+    // - Control Type이 "Vector 2"로 설정: 마우스의 2D 위치 정보 전달
+    // - Action Type이 "Pass Through"로 설정된 경우: 마우스가 움직일 때마다 호출
     public void OnAim(InputValue value)
     {
         var mousePos = value.Get<Vector2>();
         Vector2 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
         Vector2 playerPos = transform.position;
         Vector2 direction = worldPos - playerPos;
-        
+
+        if (direction.magnitude > 0.1f)
+        {
+            Aimdirection = direction.normalized;
+        }
+    }
+    private void TempOnAim()//유니티6 input system오류로 임시 함수 사용
+    {
+        Vector2 worldPos
+        = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
+                Input.mousePosition.y, 0));
+        Vector2 playerPos = transform.position;
+        Vector2 direction = worldPos - playerPos;
+
         if (direction.magnitude > 0.1f)
         {
             Aimdirection = direction.normalized;

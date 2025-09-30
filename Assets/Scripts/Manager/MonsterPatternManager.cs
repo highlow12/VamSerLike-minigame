@@ -77,6 +77,8 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
     // Private fields
     private List<PatternInstance> activePatterns = new();
     private float nextWaveSpawnTime = 0f;
+    private PatternInstance bossPatternInstance = null;
+    private bool stageCleared = false;
 
     void Start()
     {
@@ -109,12 +111,14 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
     }
 
     // 스폰 패턴에 따라 몬스터들을 스폰하고 적절한 컬렉션에 추가
+    //실질적으로 이 코드만 사용되는 중인가?
+    
     private PatternInstance SpawnMonstersWithPattern(SpawnPatternData pattern, WaveInstance currentWave = null)
     {
         var patternInstance = new PatternInstance(pattern, Time.time);
         var formation = SpawnFormation.CreateFormation(pattern, pattern.wiggle);
         Vector2 playerPos = GameManager.Instance.player.transform.position;
-        
+
         if (pattern.patternType == SpawnPatternType.Random)
         {
             MonsterSpawner.Instance.StartRandomSpawning(pattern.monsterName);
@@ -130,14 +134,19 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
                     if (monster != null)
                     {
                         patternInstance.spawnedMonsters.Add(monster);
-                        
+
                         // Add monster to wave if applicable
                         currentWave?.spawnedMonsters.Add(monster);
+                        //Debug.LogWarning("MonsterSpawnManager: Spawned monster: " + monster.name + " at position: " + position);
                     }
                 }
             }
         }
-        
+
+        // 보스 패턴이면 추적
+        if (pattern.isBossPattern)
+            bossPatternInstance = patternInstance;
+
         activePatterns.Add(patternInstance);
         return patternInstance;
     }
@@ -145,6 +154,7 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
     // Spawn the next pattern from the stage spawn pattern
     public void SpawnNextPattern()
     {
+        Debug.LogWarning("MonsterPatternManager: SpawnNextPattern called");
         if (stageSpawnPattern == null || currentPatternIndex >= stageSpawnPattern.patterns.Count)
             return;
 
@@ -250,5 +260,24 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
         CheckWavePatternSpawns();
         CheckNewWaveStart();
         CleanupExpiredPatterns();
+
+        // 보스 패턴이 있고, 아직 스테이지 클리어 처리가 안 됐으며,
+        // 보스 패턴의 모든 몬스터가 사라졌으면 스테이지 종료 처리
+        if (!stageCleared && bossPatternInstance != null && bossPatternInstance.patternData.isBossPattern)
+        {
+            bool bossPatternEnded = bossPatternInstance.spawnedMonsters.TrueForAll(m => m == null || !m.activeInHierarchy);
+            if (bossPatternEnded)
+            {
+                stageCleared = true;
+                OnStageClear();
+            }
+        }
+    }
+
+    // 스테이지 종료 처리 함수
+    private void OnStageClear()
+    {
+        Debug.LogWarning("Stage Clear!"); // 팝업, 보상 등 원하는 처리 추가
+        // 예: StageClearPopup.Show();
     }
 }
