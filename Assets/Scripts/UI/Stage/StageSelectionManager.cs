@@ -55,8 +55,8 @@ namespace UI.Stage
             homeScreenManager = FindObjectOfType<HomeScreenManager>();
 
             // 초기에 선택 화면 숨기기
-            if (stageSelectionScreen != null)
-                stageSelectionScreen.SetActive(false);
+            //if (stageSelectionScreen != null)
+            //    stageSelectionScreen.SetActive(false);
 
             // 버튼 리스너 설정
             if (leftArrowButton != null)
@@ -73,6 +73,7 @@ namespace UI.Stage
 
             // 스테이지 데이터 로드
             stageDataList = StageDataManager.GetAllStageData();
+            Debug.Log("StageSelectionManager: Loaded " + stageDataList.Count + " stages");
             if (stageDataList.Count <= 0)
             {
                 Debug.LogError("StageSelectionManager: No stage data available!");
@@ -259,8 +260,8 @@ namespace UI.Stage
 
             for (int i = 0; i < stagePortalImageList.Count; i++)
             {
-                Debug.Log("StageSelectionManager: Target position for image " + i + " = " + targetPositions[i]);
-                Debug.Log("StageSelectionManager: Sliding, " + i + ": imageRect.rectTransform.anchoredPosition = " + stagePortalImageList[i].rectTransform.anchoredPosition);
+                //Debug.Log("StageSelectionManager: Target position for image " + i + " = " + targetPositions[i]);
+                //Debug.Log("StageSelectionManager: Sliding, " + i + ": imageRect.rectTransform.anchoredPosition = " + stagePortalImageList[i].rectTransform.anchoredPosition);
                 stagePortalImageList[i].rectTransform.anchoredPosition = targetPositions[i];
             }
 

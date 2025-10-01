@@ -169,13 +169,13 @@ public class StageLoadManager : Singleton<StageLoadManager>
         {
             string path = SceneUtility.GetScenePathByBuildIndex(i);
             string name = System.IO.Path.GetFileNameWithoutExtension(path);
-            
+
             if (name == sceneName)
             {
                 return true;
             }
         }
-        
+
         return false;
     }
 }

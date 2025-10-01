@@ -7,6 +7,8 @@ public class PoolAble : MonoBehaviour
 
     public void ReleaseObject()
     {
+        if (!gameObject.activeInHierarchy)
+            return;
         Pool.Release(gameObject);
     }
 }

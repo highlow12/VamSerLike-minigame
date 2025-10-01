@@ -4,50 +4,51 @@ using UnityEngine;
 
 namespace UI.Stage
 {
-    public class StageDataManager : MonoBehaviour
+    public class StageDataManager : Singleton<StageDataManager>
     {
-        private static StageDataManager _instance;
 
-        public static StageDataManager Instance
+        public struct StageResult
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindObjectOfType<StageDataManager>();
-
-                    if (_instance == null)
-                    {
-                        GameObject obj = new GameObject("StageDataManager");
-                        _instance = obj.AddComponent<StageDataManager>();
-                        DontDestroyOnLoad(obj);
-                    }
-                }
-                return _instance;
-            }
+            public bool isStageSuccess;
+            public string stagePlayTime;
+            //획득한 아이템 리스트
         }
 
+        private StageResult currentStageResult = new StageResult { isStageSuccess = false, stagePlayTime = "00:00" };
+        public bool hasStageResult = false;
         // 스테이지 데이터 목록
         [SerializeField]
         private List<StageData> stages = new List<StageData>();
+        
 
-        void Awake()
+        public override void Awake()
         {
-            if (_instance != null && _instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            _instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            // 데이터가 비어있으면 초기화
+            base.Awake();
             if (stages.Count == 0)
             {
                 InitializeStageData();
             }
         }
+
+        public void SetCurrentStageResult(StageResult result)
+        {
+            currentStageResult = result;
+            hasStageResult = true;
+        }
+
+        public StageResult GetCurrentStageResult()
+        {
+            hasStageResult = false; // 한번 가져가면 초기화
+            return currentStageResult;
+        }
+        /*
+        public void RemoveCurrentStageResult()
+        {
+            //결과에 따른 아이템 등을 처리하고 나서 결과를 지워줌
+            hasStageResult = false;
+            currentStageResult = new StageResult { isStageSuccess = false, stagePlayTime = -1f };
+        }*/
+        
 
         private void InitializeStageData()
         {
@@ -150,5 +151,8 @@ namespace UI.Stage
         {
             return Instance.stages;
         }
+
+
     }
+    
 }

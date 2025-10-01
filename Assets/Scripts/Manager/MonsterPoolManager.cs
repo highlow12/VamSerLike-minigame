@@ -6,8 +6,21 @@ using System;
 /// MonsterPoolManager는 몬스터 객체 풀을 관리하는 싱글톤 클래스입니다.
 /// 각 몬스터 타입별로 풀을 유지하고 몬스터 생성 및 재사용을 담당합니다.
 /// </summary>
-public class MonsterPoolManager : Singleton<MonsterPoolManager>
+public class MonsterPoolManager : MonoBehaviour//싱글톤 패턴 사용하면 씬 이동에도 파괴 안되는 문제 발생
 {
+    public static MonsterPoolManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+        // DontDestroyOnLoad(this.gameObject); // 싱글톤이지만 DontDestroyOnLoad는 사용하지 않음
+    }
+
     [HideInInspector]
     public StageMonsterData stageMonsterData;
     

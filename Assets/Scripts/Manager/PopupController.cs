@@ -3,34 +3,55 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.SceneManagement;
 
 public class PopupController : MonoBehaviour
 {
+
+    public static bool PopupController_isFirstStart = true;
+
+
     [System.Serializable]
     public class PopupData
     {
         public string popupName;
         public GameObject popupPanel;
-        public bool showOnStart = false; // 시작 시 열지 여부
+        private bool _showOnStart = false;
+        public bool showOnStart
+        {
+            get => _showOnStart;
+            set
+            {
+                if (_showOnStart != value)
+                {
+                    Debug.Log($"showOnStart이(가) 변경됨: {_showOnStart} → {value}");
+                    _showOnStart = value;
+                }
+            }
+        }
         public bool neverClose = false;  // 특정 팝업이 닫히지 않도록 보호
     }
 
     public List<PopupData> popupPanels = new List<PopupData>();
     private GraphicRaycaster raycaster;
     private EventSystem eventSystem;
-    private Dictionary<string, bool> popupStates = new Dictionary<string, bool>();
+    [SerializeField] private Dictionary<string, bool> popupStates = new Dictionary<string, bool>();
 
-    // StartPanel 참조를 명시적으로 추가
-    [SerializeField] private GameObject startPanel;
 
     // 디버그를 위한 로그 옵션
-    [SerializeField] private bool showDebugLogs = true;
+    [SerializeField]private bool showDebugLogs = true;
 
     // 다른 팝업을 열 때 현재 열린 팝업을 자동으로 닫을지 여부
-    [SerializeField] private bool closeOthersWhenOpening = false;
+    [SerializeField]private bool closeOthersWhenOpening = false;
 
     // 부모 Canvas 참조 추가
     private Canvas parentCanvas;
+
+
+    // 참조형식으로 코드를 통해 초기화 해줘야함
+    private PopupData startPanel;
+    private PopupData stageResultPanel;
+
 
     private void Awake()
     {
@@ -45,38 +66,69 @@ public class PopupController : MonoBehaviour
             Debug.LogWarning("PopupController에 부모 Canvas가 없습니다!");
         }
 
-        // StartPanel 참조가 없다면 자동으로 찾기
-        if (startPanel == null)
+        //실제 배열에 존재하는 팝업을 참조하여 초기화해야함
+        startPanel = popupPanels.Find(x => x.popupName.ToLower() == "startpanel");
+        stageResultPanel = popupPanels.Find(x => x.popupName.ToLower() == "stageresultpanel");
+
+        /*//var startPanelData = popupPanels.Find(x => x.popupName == "StartPanel");
+        if (startPanel == null || startPanel.popupPanel == null)
         {
-            // 먼저 팝업 목록에서 StartPanel 이름으로 된 항목 찾기
-            var startPanelData = popupPanels.Find(x => x.popupName == "StartPanel");
-            if (startPanelData != null && startPanelData.popupPanel != null)
-            {
-                startPanel = startPanelData.popupPanel;
-                // StartPanel은 닫히지 않도록 설정
-                startPanelData.neverClose = true;
-                if (showDebugLogs) Debug.Log("StartPanel을 팝업 목록에서 찾아 설정했습니다.");
-            }
-            else
-            {
-                // 씬에서 바로 찾기
-                startPanel = GameObject.Find("StartPanel");
-                if (startPanel != null && showDebugLogs)
-                    Debug.Log("StartPanel을 씬에서 찾아 설정했습니다.");
-            }
+            startPanel = popupPanels.Find(x => x.popupName.ToLower() == "startpanel");
+            // StartPanel은 닫히지 않도록 설정
+            //startPanel.neverClose = true;
+            if (showDebugLogs) Debug.Log("StartPanel을 팝업 목록에서 찾아 설정했습니다.");
         }
+        else
+        {
+            // 씬에서 바로 찾기
+            startPanel = new PopupData { popupName = "startpanel", popupPanel = GameObject.Find("StartPanel") };
+            popupPanels.Add(startPanel);
+            if (startPanel != null && showDebugLogs)
+                Debug.Log("StartPanel을 씬에서 찾아 설정했습니다.");
+        }*/
+
+
+
+
     }
 
     private void Start()
     {
+        //awake에서 초기화가 안되는 것 같아서 옮겨봄
+        if (PopupController_isFirstStart)//startPanel은 예외적으로 isFristStart 변수와 함께 관리함
+        {
+            startPanel.showOnStart = true;
+            //startPanel.SetActive(true);
+            Debug.Log("startPanel.showOnStart: " + startPanel.showOnStart + ", isFirstStart:" + PopupController_isFirstStart);
+            PopupController_isFirstStart = false;
+
+        }
+        else
+        {
+            startPanel.showOnStart = false;
+            Debug.Log("startPanel.showOnStart: " + startPanel.showOnStart + ", isFirstStart:" + PopupController_isFirstStart);
+            if (UI.Stage.StageDataManager.Instance.hasStageResult)
+            {
+                stageResultPanel.showOnStart = true;
+                stageResultPanel.popupPanel.GetComponent<StageResultUI>().Initialize(); // 결과 패널 초기화
+                Debug.Log("StageResult가 있어서 stageResultPanel.showOnStart를 true로 설정합니다.");
+            }
+        }
+
         // 모든 팝업 초기화 - StartPanel 제외
         foreach (var popup in popupPanels)
         {
             if (popup != null && popup.popupPanel != null && !string.IsNullOrEmpty(popup.popupName))
             {
                 // StartPanel은 항상 활성화, 다른 팝업은 비활성화
-                bool isStartPanel = (popup.popupName == "StartPanel" || popup.popupPanel == startPanel);
+                //bool isStartPanel = (popup.popupName == "StartPanel" || popup.popupPanel == startPanel);
 
+                popup.popupPanel.SetActive(popup.showOnStart); // showOnStart 플래그에 따라 활성화
+                popupStates[popup.popupName] = popup.showOnStart;
+                if (popup.showOnStart && showDebugLogs)
+                    Debug.Log($"팝업 '{popup.popupName}'이 showOnStart 설정으로 인해 시작 시 활성화되었습니다.");
+
+                /*
                 if (!isStartPanel)
                 {
                     popup.popupPanel.SetActive(popup.showOnStart); // showOnStart 플래그에 따라 활성화
@@ -92,7 +144,7 @@ public class PopupController : MonoBehaviour
                     popupStates[popup.popupName] = true;
 
                     if (showDebugLogs) Debug.Log("StartPanel이 활성화되었습니다.");
-                }
+                }*/
             }
             else if (popup != null)
             {

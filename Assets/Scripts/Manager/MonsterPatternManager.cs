@@ -1,8 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonsterPatternManager : Singleton<MonsterPatternManager>
+public class MonsterPatternManager : MonoBehaviour//싱글톤 패턴 사용하면 씬 이동에도 파괴 안되는 문제 발생
 {
+    public static MonsterPatternManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);// 3개가 하나의 오브젝트에 붙어있는 구조라 더 주의해야함.
+            return;
+        }
+        Instance = this;
+        // DontDestroyOnLoad(this.gameObject); // 필요 없으므로 주석 처리
+    }
     // Public properties for monitoring and UI access
     public float gameStartTime;
     public List<WaveInstance> activeWaves = new();
@@ -277,7 +289,8 @@ public class MonsterPatternManager : Singleton<MonsterPatternManager>
     // 스테이지 종료 처리 함수
     private void OnStageClear()
     {
-        Debug.LogWarning("Stage Clear!"); // 팝업, 보상 등 원하는 처리 추가
-        // 예: StageClearPopup.Show();
+        Debug.LogWarning("MonsterPatternManager: Stage Clear!"); // 팝업, 보상 등 원하는 처리 추가
+                                                                 // 예: StageClearPopup.Show();
+        GameManager.Instance.EndStage(true);
     }
 }

@@ -213,6 +213,24 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public void EndStage(bool isSuccess)
+    {
+        if (isSuccess)
+        {
+            Debug.Log($"[GameManager] Stage {currentStage} cleared!");
+        }
+        else
+        {
+            Debug.Log($"[GameManager] Stage {currentStage} failed.");
+        }
+        UI.Stage.StageDataManager.Instance.SetCurrentStageResult(new UI.Stage.StageDataManager.StageResult
+        {
+            isStageSuccess = isSuccess,
+            stagePlayTime = FindAnyObjectByType<GameTimer>()?.GetComponent<GameTimer>().timeString
+        });
+        StageLoadManager.Instance.LoadSceneAsync("wallpaper", true, "LoadingScene");
+    }
+    
     public bool SetStage(int stageNumber)
     {
         List<string> existingDropItems = DropItemManager.Instance.GetDropItems();

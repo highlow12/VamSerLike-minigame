@@ -4,10 +4,23 @@ using System.Collections.Generic;
 using System;
 
 /// <summary>
-/// 몬스터 생성을 관리하는 싱글톤 매니저
+/// MonsterSpawner는 몬스터 스폰을 관리하는 싱글톤 클래스입니다.
 /// </summary>
-public class MonsterSpawner : Singleton<MonsterSpawner>
+public class MonsterSpawner : MonoBehaviour//싱글톤 패턴 사용하면 씬 이동에도 파괴 안되는 문제 발생
 {
+    public static MonsterSpawner Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+        // DontDestroyOnLoad(this.gameObject); // 필요 없으므로 주석 처리
+    }
+    
     // 스테이지에서 사용할 몬스터 데이터 정보
     [Tooltip("몬스터 소환에 필요한 StageMonsterData")]
     public StageMonsterData stageMonsterData;

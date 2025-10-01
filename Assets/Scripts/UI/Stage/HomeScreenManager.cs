@@ -38,11 +38,11 @@ namespace UI.Stage
             //stageSelectionManager = FindAnyObjectByType<StageSelectionManager>();
 
             // 버튼 리스너 설정
-            if (enterButton != null)
-                enterButton.onClick.AddListener(EnterSelectedStage);
+            //if (enterButton != null)
+            //    enterButton.onClick.AddListener(EnterSelectedStage);
 
-            if (stageSelectButton != null)
-                stageSelectButton.onClick.AddListener(OpenStageSelectScreen);
+            //if (stageSelectButton != null)
+            //   stageSelectButton.onClick.AddListener(OpenStageSelectScreen);
 
             // 스테이지 초기화
             InitializeStages();

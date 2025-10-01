@@ -10,6 +10,8 @@ public class GameTimer : MonoBehaviour
     [SerializeField] private float initialTime = 0f; // 초기 시간 (초 단위)
     [SerializeField] private float totalTime = 900f; // 15분(900초)// 총 시간 (카운트다운 모드에서 사용)
 
+    public string timeString { get; private set; } = "00:00"; // 시간 문자열 (분:초 형식)
+    
     private float currentTime; // 현재 시간 (초 단위)
     private bool isRunning; // 타이머 작동 여부
 
@@ -92,7 +94,7 @@ public class GameTimer : MonoBehaviour
         int seconds = (int)(currentTime % 60f);
 
         // 분:초 형식으로 표시
-        string timeString = string.Format("{0:00}:{1:00}", minutes, seconds);
+        timeString = string.Format("{0:00}:{1:00}", minutes, seconds);
 
         // UI 텍스트 업데이트
         timeText.text = timeString;
