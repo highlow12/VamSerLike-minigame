@@ -8,6 +8,8 @@ namespace UI.Stage
 {
     public class HomeScreenManager : MonoBehaviour
     {
+        public static HomeScreenManager Instance { get; private set; }
+
         [Header("홈 화면 UI 요소")]
         public Button enterButton; // 입장 버튼
         public Button stageSelectButton; // 스테이지 선택 버튼
@@ -27,11 +29,50 @@ namespace UI.Stage
         [Header("Stage Selection Manager")]
         [SerializeField] private StageSelectionManager stageSelectionManager;
 
+        [Header("stageUnlocked 현황")]
+        [SerializeField] private List<bool> stageUnlocked = new List<bool>();
+
+
+
         // 현재 선택된 스테이지
+        //wallpaper 씬에서는 이 값만을 사용. stage 로드하면 그때 playerpref에 저장
+        //start에서 가장 최근 클리어한 스테이지 인덱스로 초기화됨
         private int currentStageIndex = 0;
+        private int highestClearedStageIndex = -1; // 클리어한 스테이지중 가장 높은 인덱스
 
         // 잠금 해제된 스테이지
-        private List<bool> stageUnlocked = new List<bool>();
+
+        
+        void Update(){
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                PlayerPrefs.DeleteAll();
+                Debug.Log("StageSelectionManager: PlayerPrefs deleted");
+            }
+ #endif
+        }
+
+        void Awake()
+        {
+            
+
+            PlayerPrefs.DeleteAll();
+            Debug.Log("PlayerPrefs has been reset.");
+
+            // 싱글톤 패턴 구현
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            InitializeStages();
+        }
 
         void Start()
         {
@@ -45,10 +86,10 @@ namespace UI.Stage
             //   stageSelectButton.onClick.AddListener(OpenStageSelectScreen);
 
             // 스테이지 초기화
-            InitializeStages();
+            
 
             // 포털 표시 업데이트
-            //UpdatePortalDisplay();
+            UpdatePortalDisplay();
         }
 
         private void InitializeStages()
@@ -57,13 +98,14 @@ namespace UI.Stage
             //stageUnlocked = new List<bool>(10); // 총 10개 스테이지 가정
 
             // 최소한 스테이지 1은 항상 잠금 해제
-            stageUnlocked.Add(true);
+            stageUnlocked[0] = true;
 
             // PlayerPrefs 또는 다른 저장 데이터에서 잠금 해제된 스테이지 확인
             for (int i = 1; i < 10; i++)
             {
                 bool isUnlocked = PlayerPrefs.GetInt("Stage_" + i + "_Unlocked", 0) == 1;
-                stageUnlocked.Add(isUnlocked);
+                stageUnlocked[i] = isUnlocked;
+                Debug.Log("HomeScreenManager: stage_" + i + ": isUnlocked=>" + stageUnlocked[i]);
             }
 
             // 현재 스테이지를 가장 최근에 잠금 해제된 스테이지로 설정
@@ -75,6 +117,7 @@ namespace UI.Stage
                     break;
                 }
             }
+            
         }
 
         public void EnterSelectedStage()
@@ -136,10 +179,11 @@ namespace UI.Stage
             if (selectedStage < stageUnlocked.Count && stageUnlocked[selectedStage])
             {
                 currentStageIndex = selectedStage;
+                Debug.Log("HomeScreenManager: returned from stage selection. currentStageIndex updated to: " + currentStageIndex);
             }
 
             // 홈 화면 표시
-            homeScreenUI.SetActive(true);
+            //homeScreenUI.SetActive(true);
 
             // 포털 표시 업데이트
             UpdatePortalDisplay();
@@ -152,25 +196,48 @@ namespace UI.Stage
 
             if (stageData != null)
             {
-                portalStageNameText.text = stageData.stageName;//portalStageNameText가 null인 상태로 시작하는듯. 근데 왜 게임 시작할때 이 코드가 실행되지?=>처음부터 스테이지 정보 받아와서 넣어주려고
-                portalStageDescriptionText.text = stageData.stageDescription;
+                //portalStageNameText.text = stageData.stageName;//portalStageNameText가 null인 상태로 시작하는듯. 근데 왜 게임 시작할때 이 코드가 실행되지?=>처음부터 스테이지 정보 받아와서 넣어주려고
+                //portalStageDescriptionText.text = stageData.stageDescription;
 
                 // 스테이지에 따라 포털 시각 효과도 업데이트할 수 있음
+
+                stageSelectButton.image.sprite = stageData.portalImage;
+                Debug.Log("Updated portal visuals for stage: " + stageData.portalImage);
             }
         }
 
         public void StageCleared(int stageIndex)
         {
+            Debug.Log("HomeScreenManager: StageCelared called");
+            Debug.Log("HomeScreenManager: stageUnlocked.Count: " + stageUnlocked.Count);
+            UpdatePortalDisplay();
+            if (stageIndex <= highestClearedStageIndex)//이미 클리어했던 스테이지면 무시
+            {
+                Debug.Log("HomeScreenManager: already cleared. " + stageIndex + " <= " + highestClearedStageIndex);
+                return;
+            }
+            highestClearedStageIndex = stageIndex;
             // 다음 스테이지 잠금 해제
             if (stageIndex < stageUnlocked.Count - 1)
             {
                 stageUnlocked[stageIndex + 1] = true;
+                Debug.Log("HomeScreenManager: stage celared=>" + stageIndex +
+                 ", next stage unlocked=>" + stageUnlocked[stageIndex + 1]);
                 PlayerPrefs.SetInt("Stage_" + (stageIndex + 1) + "_Unlocked", 1);
                 PlayerPrefs.Save();
 
                 // 현재 스테이지를 다음 스테이지로 업데이트
                 currentStageIndex = stageIndex + 1;
-                UpdatePortalDisplay();
+                Debug.Log("Stage " + (stageIndex + 1) + " unlocked!");
+
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
             }
         }
     }

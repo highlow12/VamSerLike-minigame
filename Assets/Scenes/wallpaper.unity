@@ -7981,7 +7981,81 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasStageResult: 0
-  stages: []
+  stages:
+  - stageName: "\uBC84\uB824\uC9C4 \uBB34\uB3C4\uD68C\uC7A5"
+    stageDescription: "\uD55C\uB54C \uD654\uB824\uD588\uB358 \uBB34\uB3C4\uD68C\uC7A5\uC5D0
+      \uACE0\uC694\uD568\uB9CC\uC774 \uB0A8\uC558\uB2E4. \uB0A1\uC740 \uC0F9\uB4E4\uB9AC\uC5D0
+      \uC8FC\uBCC0, \uCDA4\uC758 \uC545\uBABD \uC18D\uC73C\uB85C \uB04C\uB824\uB4E4\uC5B4\uAC04\uB2E4."
+    sceneName: Stage1
+    portalImage: {fileID: -855298285791758126, guid: c193d40414e0fd94cba2dc64d70d0e52, type: 3}
+    difficulty: 1
+  - stageName: "\uADC0\uC2E0\uB4E4\uB9B0 \uD559\uAD50"
+    stageDescription: "\uC775\uC219\uD558\uC9C0\uB9CC \uB0AF\uC120 \uAD50\uC2E4 \uC18D\uC5D0\uC11C
+      \uC774\uC0C1\uD558\uAC8C \uB4A4\uD2C0\uB824 \uAC00\uB294 \uD559\uAD50\uB97C
+      \uB9C8\uC8FC\uD55C\uB2E4."
+    sceneName: Stage2
+    portalImage: {fileID: 6937817954938267909, guid: 69bbed88074a64746b4fc638555b37a1, type: 3}
+    difficulty: 1
+  - stageName: "\uBD80\uD328\uC758 \uB465\uC9C0"
+    stageDescription: "\uC369\uC740 \uC545\uCDE8\uAC00 \uAC00\uB4DD\uD55C \uD3D0\uAE30\uBB3C,
+      \uBC8C\uB808\uB4E4\uC774 \uB4E4\uB053\uB294 \uC5B4\uB460 \uC18D \uBCF4\uC774\uC9C0
+      \uC54A\uB294 \uC2DC\uC120\uB4E4\uC774 \uB098\uB97C \uC9C0\uCF1C\uBCF4\uACE0
+      \uC788\uB2E4."
+    sceneName: Stage3
+    portalImage: {fileID: -6470460504253458178, guid: 195a8d7e3717d5e4babb29fe29508faa, type: 3}
+    difficulty: 2
+  - stageName: "\uC2EC\uD574\uC758 \uADF8\uB9BC\uC790"
+    stageDescription: "\uACE0\uC694\uD558\uACE0 \uC228 \uB9C9\uD788\uB294 \uC2EC\uD574,
+      \uC544\uB798\uB85C \uAC00\uB77C\uC549\uC744\uC218\uB85D \uC9D9\uC740 \uC5B4\uB460\uC774
+      \uB098\uB97C \uC0BC\uD0A8\uB2E4."
+    sceneName: Stage4
+    portalImage: {fileID: -4178046375966092550, guid: ab409163e35551e439aaaf943ed26811, type: 3}
+    difficulty: 2
+  - stageName: "\uB05D\uC5C6\uB294 \uC804\uCCA0"
+    stageDescription: "\uB2EC\uB9AC\uB294 \uC804\uCCA0 \uC548, \uB3C4\uCC29\uC9C0\uB294
+      \uBCF4\uC774\uC9C0 \uC54A\uB294\uB2E4. \uBAA9\uC801\uC9C0\uB97C \uC783\uC5B4\uBC84\uB9B0
+      \uCC44 \uB05D\uC5C6\uB294 \uC5EC\uC815 \uC18D\uC5D0\uC11C \uC5B4\uB514\uB85C
+      \uD5A5\uD574\uC57C \uD560 \uAC83\uC778\uAC00."
+    sceneName: Stage5
+    portalImage: {fileID: 4130640169021434097, guid: 26d15bbde10b23f44847b790d53981ef, type: 3}
+    difficulty: 3
+  - stageName: "\uC5BC\uC5B4\uBD99\uC740 \uD638\uC218"
+    stageDescription: "\uCD94\uACA9\uD558\uB294 \uBAAC\uC2A4\uD130\uB4E4\uC744 \uD53C\uD574
+      \uC5BC\uC5B4\uBD99\uC740 \uD638\uC218\uB97C \uAC74\uB108\uC57C \uD55C\uB2E4."
+    sceneName: Stage6
+    portalImage: {fileID: 3465286685962602723, guid: 506ec77969ecdc14bacef17406dd1106, type: 3}
+    difficulty: 3
+  - stageName: "\uC9C0\uD558 \uCC3D\uACE0"
+    stageDescription: "\uCE5C\uAD6C\uC640 \uD568\uAED8 \uC228\uBC14\uAF2D\uC9C8\uC744
+      \uD558\uBA70 \uB180\uC558\uB358 \uC7A5\uC18C. \uADF8\uB7EC\uB098 \uC774\uACF3\uC740
+      \uB354 \uC774\uC0C1 \uC990\uAC70\uC6B4 \uB180\uC774\uC758 \uACF5\uAC04\uC774
+      \uC544\uB2C8\uB2E4."
+    sceneName: Stage7
+    portalImage: {fileID: 7028616704906629411, guid: 63260df8f5581d84b9db9fcac2a2f02b, type: 3}
+    difficulty: 4
+  - stageName: "\uBCBD\uC7A5 \uC18D\uC758 \uB098"
+    stageDescription: "\uBCF5\uC9D1\uD558\uAC8C \uC5BD\uD78C \uBCBD\uC7A5 \uC18D
+      \uBBF8\uB85C\uC5D0\uC11C \uAD34\uBB3C\uB4E4\uC744 \uD53C\uD574 \uD0C8\uCD9C\uD574\uB77C."
+    sceneName: Stage8
+    portalImage: {fileID: 8288426215254106694, guid: c497c7ca69c2a11459c4429ffc599943, type: 3}
+    difficulty: 4
+  - stageName: "\uC78A\uD600\uC9C4 \uC790\uB4E4\uC758 \uC815\uC6D0"
+    stageDescription: "\uB204\uAD70\uAC00\uC758 \uBB34\uB364 \uC55E\uC5D0 \uB098\uD0C0\uB09C
+      \uC783\uC5B4\uBC84\uB9B0 \uAE30\uC5B5\uC744 \uCC3E\uC544\uC57C \uD55C\uB2E4."
+    sceneName: Stage9
+    portalImage: {fileID: 4113829005332862926, guid: d56e3c6e8b5eb3c4286119d258c57b5f, type: 3}
+    difficulty: 5
+  - stageName: "\uBCC4\uC774 \uD750\uB974\uB294 \uC5B8\uB355"
+    stageDescription: "\uB9C8\uCE68\uB0B4 \uCC3E\uAC8C\uB41C \uCE5C\uAD6C, \uADF8\uB9AC\uACE0
+      \uACFC\uAC70\uC5D0 \uB9C8\uC8FC\uD588\uB358 \uBAA8\uB4E0 \uC874\uC7AC\uB4E4\uC774
+      \uB2E4\uC2DC \uB098\uD0C0\uB098 \uAE38\uC744 \uB9C9\uB294\uB2E4. \uBCC4\uBE5B
+      \uC544\uB798 \uD3BC\uCCD0\uC9C0\uB294 \uCD5C\uD6C4\uC758 \uACB0\uC804, \uC8FC\uC778\uACF5\uC740
+      \uC790\uC2E0\uC774 \uCAD3\uC544\uC628 \uC9C4\uC2E4\uC744 \uBC1B\uC544\uB4E4\uC77C
+      \uAC83\uC778\uAC00, \uC544\uB2C8\uBA74 \uB2E4\uC2DC \uAE38\uC744 \uC783\uC744
+      \uAC83\uC778\uAC00?"
+    sceneName: Stage10
+    portalImage: {fileID: -5099292496197868168, guid: 3ea3fd748ed0a7546b9af36047972e5a, type: 3}
+    difficulty: 5
 --- !u!1 &1522797827
 GameObject:
   m_ObjectHideFlags: 0
@@ -10724,6 +10798,7 @@ MonoBehaviour:
   fadeSpeed: 1
   portalAnimator: {fileID: 0}
   stageSelectionManager: {fileID: 477495137}
+  stageUnlocked: 01000000000000000000
 --- !u!1 &1943466660
 GameObject:
   m_ObjectHideFlags: 0
@@ -10817,7 +10892,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1948429104
 RectTransform:
   m_ObjectHideFlags: 0

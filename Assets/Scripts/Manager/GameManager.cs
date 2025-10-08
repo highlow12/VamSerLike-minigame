@@ -92,7 +92,8 @@ public class GameManager : Singleton<GameManager>
         //    gameObject.AddComponent<DebugGUI_GameManager>().enabled = true;
         //    Debug.Log("DebugGUI_GameManager was automatically added to GameManager object");
         //}
-        SetStage(SceneManager.GetActiveScene().buildIndex); // 현재 씬의 빌드 인덱스를 사용하여 스테이지 설정
+        //잘못된 코드. 싱글톤 구조면 Awake로 초기화하면 안됨
+        //SetStage(SceneManager.GetActiveScene().buildIndex); // 현재 씬의 빌드 인덱스를 사용하여 스테이지 설정
 #endif
     }
 
@@ -225,9 +226,11 @@ public class GameManager : Singleton<GameManager>
         }
         UI.Stage.StageDataManager.Instance.SetCurrentStageResult(new UI.Stage.StageDataManager.StageResult
         {
+            stageIndex = currentStage,
             isStageSuccess = isSuccess,
             stagePlayTime = FindAnyObjectByType<GameTimer>()?.GetComponent<GameTimer>().timeString
         });
+        gameState = GameState.GameOver;
         StageLoadManager.Instance.LoadSceneAsync("wallpaper", true, "LoadingScene");
     }
     
@@ -258,6 +261,7 @@ public class GameManager : Singleton<GameManager>
         else
         {
             currentStage = stageNumber;
+            Debug.Log("GameManager: currentStage==" + currentStage);
             List<string> dropItems = DropItemManager.Instance.GetDropItems();
             foreach (string dropItem in dropItems)
             {

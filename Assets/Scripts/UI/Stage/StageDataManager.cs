@@ -9,6 +9,7 @@ namespace UI.Stage
 
         public struct StageResult
         {
+            public int stageIndex;
             public bool isStageSuccess;
             public string stagePlayTime;
             //획득한 아이템 리스트
@@ -26,7 +27,8 @@ namespace UI.Stage
             base.Awake();
             if (stages.Count == 0)
             {
-                InitializeStageData();
+                //InitializeStageData();
+                Debug.Log("StageDataManager: No stage data found on Awake.");
             }
         }
 
@@ -39,6 +41,7 @@ namespace UI.Stage
         public StageResult GetCurrentStageResult()
         {
             hasStageResult = false; // 한번 가져가면 초기화
+            HomeScreenManager.Instance.StageCleared(currentStageResult.stageIndex);
             return currentStageResult;
         }
         /*
@@ -52,9 +55,6 @@ namespace UI.Stage
 
         private void InitializeStageData()
         {
-            // 문서에서 추출한 스테이지 데이터로 초기화//근데 왜 하드코딩 돼있지?
-            //일단 이미지는 굳이 전달 안해도 될 것 같음.
-            //왜냐면, 이미 이미지를 활용해서 스테이지 정보들을 표시해놨기 때문에, 이미지 받아서 새로 생성할 일 없음. 그냥 생성 되어있는 이미지 미리 받아와서 그 이미지들을 움직여줘야함
             stages.Add(new StageData()
             {
                 stageName = "버려진 무도회장",

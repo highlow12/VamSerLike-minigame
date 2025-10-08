@@ -21,6 +21,10 @@ namespace UI.Stage
         public Text stageTitleText; // 스테이지 제목 텍스트
         public Text stageDescriptionText; // 스테이지 설명 텍스트
         public CanvasGroup infoPanel; // 정보 패널 캔버스 그룹
+        
+        
+        // 스테이지 잠금 상태
+        private List<bool> stageUnlocked = new List<bool>();
 
         [Header("애니메이션 설정")]
         public float slideSpeed = 0.5f; // 슬라이드 속도
@@ -46,13 +50,10 @@ namespace UI.Stage
         // 스테이지 데이터 목록
         private List<StageData> stageDataList = new List<StageData>();
 
-        // 스테이지 잠금 상태
-        private List<bool> stageUnlocked = new List<bool>();
+
 
         void Awake()
         {
-            Debug.Log("StageSelectionManager: Awake called");
-            homeScreenManager = FindObjectOfType<HomeScreenManager>();
 
             // 초기에 선택 화면 숨기기
             //if (stageSelectionScreen != null)

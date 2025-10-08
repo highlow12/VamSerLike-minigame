@@ -159,6 +159,20 @@ public class StageLoadManager : Singleton<StageLoadManager>
     {
         OnLoadingCompleted += callback;
     }
+
+    /// <summary>
+    /// 로딩 완료 후 한 번만 실행되고 자동으로 제거되는 콜백을 추가합니다.
+    /// </summary>
+    public void AddLoadingCompletedCallbackOnce(Action callback)
+    {
+        Action onceCallback = null;
+        onceCallback = () =>
+        {
+            callback?.Invoke();
+            OnLoadingCompleted -= onceCallback;
+        };
+        OnLoadingCompleted += onceCallback;
+    }
     
     /// <summary>
     /// 씬 이름으로 씬이 유효한지 확인합니다.
