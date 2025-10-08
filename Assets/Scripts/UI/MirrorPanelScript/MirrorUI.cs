@@ -46,6 +46,9 @@ public partial class MirrorUI : MonoBehaviour
     [Header("Data")]
     public WeaponDataLoader weaponDataLoader;
 
+    
+
+
     protected List<EquipmentItem> equipmentItems = new List<EquipmentItem>();
     
     
@@ -104,8 +107,10 @@ public partial class MirrorUI : MonoBehaviour
 
         if (weaponDataLoader != null)
         {
-            List<EquipmentItem> weapons = weaponDataLoader.GetWeapons();
-
+            //List<EquipmentItem> weapons = weaponDataLoader.GetWeapons();//임시코드인듯. weapons는 실제로 보유하고 있는 무기 리스트임. GetWeapons()는 가능한 모든 무기들의 리스트임
+            List<EquipmentItem> weapons = HomeInventoryManager.Instance != null ? 
+                HomeInventoryManager.Instance.GetAllItems() : null;
+            
             if (weapons != null && weapons.Count > 0)
             {
                 Debug.Log($"WeaponDataLoader에서 {weapons.Count}개의 무기 데이터를 로드했습니다.");
@@ -189,8 +194,8 @@ public partial class MirrorUI : MonoBehaviour
 
                 try
                 {
-                    itemSlot.SetItem(equipmentItems[i]);
-                    Debug.Log($"아이템 바인딩 성공: {equipmentItems[i].itemName}");
+                    itemSlot.SetItem(equipmentItems[i], weaponDataLoader.GetItemSprite(equipmentItems[i].itemName));
+                    Debug.Log($"아이템 바인딩 성공: {equipmentItems[i].itemName}, {weaponDataLoader.GetItemSprite(equipmentItems[i].itemName)}");
                 }
                 catch (System.Exception ex)
                 {

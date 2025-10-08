@@ -9,9 +9,46 @@ public class WeaponDataLoader : MonoBehaviour
 
     public List<EquipmentItem> LoadedWeapons => loadedWeapons;
 
+    [System.Serializable]
+    public class ItemSpritePair
+    {
+        public string itemName;
+        public Sprite sprite;
+    }
+    [SerializeField]
+    public List<ItemSpritePair> itemSpriteList;
+    private Dictionary<string, Sprite> itemSpritesDict = new Dictionary<string, Sprite>();
+
+
     private void Awake()
     {
         LoadWeaponData();
+        itemSpritesDict.Clear();
+        foreach (var pair in itemSpriteList)
+        {
+            if (!itemSpritesDict.ContainsKey(pair.itemName))
+            {
+                itemSpritesDict.Add(pair.itemName, pair.sprite);
+            }
+            else
+            {
+                Debug.LogWarning($"중복된 itemName: {pair.itemName}이(가) itemSpriteList에 있습니다.");
+            }
+        }
+    }
+
+    public Sprite GetItemSprite(string itemName)
+    {
+        // 아이템 이름으로 스프라이트 가져오기
+        if (itemSpritesDict.TryGetValue(itemName, out Sprite sprite))
+        {
+            return sprite;
+        }
+        else
+        {
+            Debug.LogWarning($"{itemName}에 해당하는 스프라이트가 없습니다.");
+            return null;
+        }
     }
 
     public void LoadWeaponData()
@@ -260,7 +297,7 @@ public class WeaponDataLoader : MonoBehaviour
         return result;
     }
 
-    // MirrorUI에서 무기 데이터 가져오기
+    // MirrorUI에서 무기 데이터 가져오기//MirrorUI에서 이코드를 활용하여 무기 데이터를 받으로 온다는 뜻인듯
     public List<EquipmentItem> GetWeapons()
     {
         if (loadedWeapons.Count == 0)

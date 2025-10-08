@@ -39,7 +39,7 @@ namespace UI.Stage
         private Vector3[] targetPositions;
 
         // 홈 화면 매니저 참조
-        private HomeScreenManager homeScreenManager;
+        //private HomeScreenManager homeScreenManager;
 
         // 현재 표시된 스테이지 인덱스
         private int currentStageIndex = 0;
@@ -60,17 +60,17 @@ namespace UI.Stage
             //    stageSelectionScreen.SetActive(false);
 
             // 버튼 리스너 설정
-            if (leftArrowButton != null)
-                leftArrowButton.onClick.AddListener(SlideLeft);
+            //if (leftArrowButton != null)
+            //    leftArrowButton.onClick.AddListener(SlideLeft);
 
-            if (rightArrowButton != null)
-                rightArrowButton.onClick.AddListener(SlideRight);
+            //if (rightArrowButton != null)
+            //    rightArrowButton.onClick.AddListener(SlideRight);
 
-            if (confirmButton != null)
-                confirmButton.onClick.AddListener(ConfirmStageSelection);
+            //if (confirmButton != null)
+            //    confirmButton.onClick.AddListener(ConfirmStageSelection);
 
-            if (backButton != null)
-                backButton.onClick.AddListener(ReturnToHomeScreen);
+            //if (backButton != null)
+            //    backButton.onClick.AddListener(ReturnToHomeScreen);
 
             // 스테이지 데이터 로드
             stageDataList = StageDataManager.GetAllStageData();
@@ -400,9 +400,13 @@ namespace UI.Stage
             stageSelectionScreen.SetActive(false);
 
             // 홈 화면에 선택 알림
-            if (homeScreenManager != null)
+            if (HomeScreenManager.Instance != null)
             {
-                homeScreenManager.ReturnFromStageSelection(currentStageIndex);
+                HomeScreenManager.Instance.ReturnFromStageSelection(currentStageIndex);
+            }
+            else
+            {
+                Debug.LogError("StageSelectionManager: HomeScreenManager reference is null!");
             }
         }
     }

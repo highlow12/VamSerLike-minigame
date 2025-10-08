@@ -37,28 +37,28 @@ namespace UI.Stage
         // 현재 선택된 스테이지
         //wallpaper 씬에서는 이 값만을 사용. stage 로드하면 그때 playerpref에 저장
         //start에서 가장 최근 클리어한 스테이지 인덱스로 초기화됨
-        private int currentStageIndex = 0;
+        public int currentStageIndex { get; private set; } = 0;
         private int highestClearedStageIndex = -1; // 클리어한 스테이지중 가장 높은 인덱스
 
         // 잠금 해제된 스테이지
 
-        
-        void Update(){
+
+        void Update()
+        {
 #if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.D))
             {
                 PlayerPrefs.DeleteAll();
                 Debug.Log("StageSelectionManager: PlayerPrefs deleted");
             }
- #endif
+#endif
         }
 
         void Awake()
         {
-            
 
-            PlayerPrefs.DeleteAll();
-            Debug.Log("PlayerPrefs has been reset.");
+            //PlayerPrefs.DeleteAll();
+            //Debug.Log("PlayerPrefs has been reset.");
 
             // 싱글톤 패턴 구현
             if (Instance == null)
@@ -86,7 +86,7 @@ namespace UI.Stage
             //   stageSelectButton.onClick.AddListener(OpenStageSelectScreen);
 
             // 스테이지 초기화
-            
+
 
             // 포털 표시 업데이트
             UpdatePortalDisplay();
@@ -105,7 +105,7 @@ namespace UI.Stage
             {
                 bool isUnlocked = PlayerPrefs.GetInt("Stage_" + i + "_Unlocked", 0) == 1;
                 stageUnlocked[i] = isUnlocked;
-                Debug.Log("HomeScreenManager: stage_" + i + ": isUnlocked=>" + stageUnlocked[i]);
+                Debug.Log("HomeScreenManager: stage index " + i + ": isUnlocked=>" + stageUnlocked[i]);
             }
 
             // 현재 스테이지를 가장 최근에 잠금 해제된 스테이지로 설정
@@ -117,7 +117,7 @@ namespace UI.Stage
                     break;
                 }
             }
-            
+
         }
 
         public void EnterSelectedStage()
@@ -175,10 +175,12 @@ namespace UI.Stage
 
         public void ReturnFromStageSelection(int selectedStage)
         {
+            Debug.Log((selectedStage < stageUnlocked.Count && stageUnlocked[selectedStage]) + " is unlocked.");
             // 잠금 해제된 경우 현재 스테이지 업데이트
             if (selectedStage < stageUnlocked.Count && stageUnlocked[selectedStage])
             {
                 currentStageIndex = selectedStage;
+                //SaveCurrentStageIndex(currentStageIndex);
                 Debug.Log("HomeScreenManager: returned from stage selection. currentStageIndex updated to: " + currentStageIndex);
             }
 
@@ -228,6 +230,7 @@ namespace UI.Stage
 
                 // 현재 스테이지를 다음 스테이지로 업데이트
                 currentStageIndex = stageIndex + 1;
+                //SaveCurrentStageIndex(currentStageIndex);
                 Debug.Log("Stage " + (stageIndex + 1) + " unlocked!");
 
             }
@@ -239,6 +242,16 @@ namespace UI.Stage
             {
                 Instance = null;
             }
+        }
+
+        void SaveCurrentStageIndex(int cur_value)
+        {
+            PlayerPrefs.SetInt("CurrentStageIndex", cur_value);
+            PlayerPrefs.Save();
+        }
+        int LoadCurrentStageIndex()
+        {
+            return PlayerPrefs.GetInt("CurrentStageIndex", 0); // 기본값 0
         }
     }
 }
