@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
+    protected override bool useDontDestroyOnLoad { get { return true; } }
+
     public enum GameState
     {
         InGame,

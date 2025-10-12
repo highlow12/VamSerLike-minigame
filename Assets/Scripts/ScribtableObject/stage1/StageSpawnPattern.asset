@@ -22,7 +22,7 @@ MonoBehaviour:
     wiggle: 0
     angle: 0
     monsterName: Pawn
-    isBossPattern: 1
+    isBossPattern: 0
   - patternType: 3
     startTime: 5
     duration: 5
@@ -157,7 +157,7 @@ MonoBehaviour:
     wiggle: 0
     angle: 0
     monsterName: Queen
-    isBossPattern: 0
+    isBossPattern: 1
   - patternType: 3
     startTime: 90
     duration: 12

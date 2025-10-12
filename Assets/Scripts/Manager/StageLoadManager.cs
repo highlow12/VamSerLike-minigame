@@ -5,6 +5,8 @@ using System.Collections;
 
 public class StageLoadManager : Singleton<StageLoadManager>
 {
+    protected override bool useDontDestroyOnLoad { get { return true; } }
+
     // 로딩 상태를 추적하기 위한 변수들
     private bool isLoading = false;
     private float loadingProgress = 0f;

@@ -6,6 +6,8 @@ namespace UI.Stage
 {
     public class StageDataManager : Singleton<StageDataManager>
     {
+        protected override bool useDontDestroyOnLoad { get { return true; } }
+
 
         public struct StageResult
         {

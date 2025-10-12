@@ -6,6 +6,8 @@ using UnityEngine.Pool; // 유니티 내장 풀 네임스페이스 추가
 
 public class SoundManager : Singleton<SoundManager>
 {
+    protected override bool useDontDestroyOnLoad { get { return true; } }
+
     [System.Serializable]
     public class SoundGroup
     {

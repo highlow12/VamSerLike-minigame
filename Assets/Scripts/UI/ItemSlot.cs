@@ -8,6 +8,8 @@ public class ItemSlot : MonoBehaviour
 {
     public Image itemImage;
     public TextMeshProUGUI rarityText;
+    public TextMeshProUGUI enchancementText;
+
     public EquipmentItem item;
 
     public void SetItem(EquipmentItem newItem, Sprite itemSprite = null)
@@ -42,6 +44,7 @@ public class ItemSlot : MonoBehaviour
             }
             itemImage.enabled = true;
             rarityText.text = item.rarity.ToString();
+            enchancementText.text = item.enhancementValue > 0 ? $"+{item.enhancementValue}" : "";
         }
         else
         {

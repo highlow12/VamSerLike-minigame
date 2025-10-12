@@ -108,9 +108,9 @@ public partial class MirrorUI : MonoBehaviour
         if (weaponDataLoader != null)
         {
             //List<EquipmentItem> weapons = weaponDataLoader.GetWeapons();//임시코드인듯. weapons는 실제로 보유하고 있는 무기 리스트임. GetWeapons()는 가능한 모든 무기들의 리스트임
-            List<EquipmentItem> weapons = HomeInventoryManager.Instance != null ? 
-                HomeInventoryManager.Instance.GetAllItems() : null;
-            
+            List<EquipmentItem> weapons = HomeInventoryManager.Instance != null ? HomeInventoryManager.Instance.GetAllItems() : null;
+            //List<EquipmentItem> weapons = HomeInventoryManager.Instance != null ? HomeInventoryManager.Instance.GetAllWeaponsDataList() : null;
+
             if (weapons != null && weapons.Count > 0)
             {
                 Debug.Log($"WeaponDataLoader에서 {weapons.Count}개의 무기 데이터를 로드했습니다.");

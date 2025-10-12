@@ -4,6 +4,8 @@ using LitJson;
 
 public class BackendDataManager : Singleton<BackendDataManager>
 {
+    protected override bool useDontDestroyOnLoad { get { return true; } }
+
     public JsonData GetChartData(string chartName)
     {
         Debug.Log($"[BackendDataManager] GetChartData: {chartName} using local storage");

@@ -7,6 +7,9 @@ using System.Text;
 
 public class LocalDataManager : Singleton<LocalDataManager>
 {
+    protected override bool useDontDestroyOnLoad { get { return true; } }
+
+
     private const string m_key = "EnRBcwL791f3oEf/AH2D0D2EhbajQ0yBimSUbLHDTA8=";
     private string localDataPath => Application.streamingAssetsPath + "/LocalData/";
     private string chartDataPath => localDataPath + "Chart/";

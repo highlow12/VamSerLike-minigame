@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
+    protected virtual bool useDontDestroyOnLoad
+    {
+        get { return false; }
+    }
+
     private static T instance;
     public static T Instance
     {
@@ -29,7 +34,10 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
     public virtual void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        if(useDontDestroyOnLoad)
+        {
+            DontDestroyOnLoad(gameObject);
+        }
     }
 }
 //출처: https://sillyknight.tistory.com/30 [실리의 프로그램 사이트:티스토리]
