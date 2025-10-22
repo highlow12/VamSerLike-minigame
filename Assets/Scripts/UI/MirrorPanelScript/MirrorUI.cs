@@ -4,12 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public partial class MirrorUI : MonoBehaviour
+public partial class MirrorUI : Singleton<MirrorUI>
 {
     [Header("References")]
     public GameObject mirrorPanel;
     public Button closeButton;
-    public Image playerPreviewImage;
     public GameObject weaponSlot;
     public GameObject cloakSlot;
 
@@ -46,7 +45,12 @@ public partial class MirrorUI : MonoBehaviour
     [Header("Data")]
     public WeaponDataLoader weaponDataLoader;
 
-    
+    [Header("Player Preview")]
+    public Image playerPreviewImage;
+    public float idleMultiplier = 1.2f;
+
+
+
 
 
     protected List<EquipmentItem> equipmentItems = new List<EquipmentItem>();
@@ -88,7 +92,7 @@ public partial class MirrorUI : MonoBehaviour
         if (weaponDataLoader != null)
         {
             Debug.Log("Main_LoadEquipmentItems 호출 준비 완료.");
-            // Main_LoadEquipmentItems(); // Start에서 호출하지 않도록 수정
+            // Main_LoadEquipmentItems(); // Start에서 호출하지 않도록 수정. OnEnable에서 호출함.
         }
         else
         {
@@ -160,7 +164,8 @@ public partial class MirrorUI : MonoBehaviour
         }
 
         // 슬롯 동적 생성
-        int totalSlots = Mathf.Max(itemCount, minItems);
+        //장착된 아이템은 그리드에서 제외. equipmentItems에서 장착된 아이템 수만큼 빼주고, 해당하는 인덱스는 건너뜀
+        int totalSlots = Mathf.Max(itemCount - (equippedWeapon != null ? 1 : 0) - (equippedCloak != null ? 1 : 0), minItems);
         Debug.Log($"생성할 슬롯 개수: {totalSlots}");
 
         for (int i = 0; i < totalSlots; i++)
@@ -192,9 +197,17 @@ public partial class MirrorUI : MonoBehaviour
                     continue;
                 }
 
+                if(equipmentItems[i].isEquipped)
+                {
+                    Debug.Log($"장착된 아이템 건너뜀: {equipmentItems[i].itemName}");
+                    continue; // 이미 장착된 아이템은 건너뜁니다.
+                }
+
                 try
                 {
                     itemSlot.SetItem(equipmentItems[i], weaponDataLoader.GetItemSprite(equipmentItems[i].itemName));
+                    itemSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equipmentItems[i], itemSlot.transform.position));
+                    
                     Debug.Log($"아이템 바인딩 성공: {equipmentItems[i].itemName}, {weaponDataLoader.GetItemSprite(equipmentItems[i].itemName)}");
                 }
                 catch (System.Exception ex)
@@ -214,8 +227,8 @@ public partial class MirrorUI : MonoBehaviour
         raritySort.onClick.AddListener(() => Grid_SortItems(SortType.ByRarity));
         acquiredSort.onClick.AddListener(() => Grid_SortItems(SortType.ByAcquired));
         enhancementButton.onClick.AddListener(ToggleEnhancementPanel);
-        weaponSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedWeapon, EquipmentCategory.Weapon));
-        cloakSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedCloak, EquipmentCategory.Cloak));
+        weaponSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedWeapon, weaponSlot.transform.position));
+        cloakSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedCloak, cloakSlot.transform.position));
     }
 
     private void ToggleEnhancementPanel()

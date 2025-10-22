@@ -52,8 +52,8 @@ public class MirrorUIFunctions : MonoBehaviour
             // 실제 구현에서는 획득 시간 데이터 사용
         }
     }
-    
-    // 아이템 정보 패널 생성
+
+    /*// 아이템 정보 패널 생성
     public GameObject CreateItemInfoPanel(EquipmentItem item, bool isEquipped, GameObject prefab, Transform parent)
     {
         GameObject panel = Instantiate(prefab, parent);
@@ -68,7 +68,7 @@ public class MirrorUIFunctions : MonoBehaviour
         
         return panel;
     }
-    
+    */
     // 그리드 크기 조정
     public void AdjustGridSize(GameObject gridContainer, int itemCount, int columns)
     {

@@ -23,6 +23,7 @@ public class EquipmentItem
     public int attackRangeValue;         // 공격 범위 정수값
     public float attackRange;            // 공격 범위 실수값
     public string displayAttackTarget;   // 표시용 공격 대상
+
     public int attackTarget;             // 공격 대상
     public int projectileCount;          // 발사체 수
     public int projectileSpeed;          // 발사체 속도
@@ -36,6 +37,8 @@ public class EquipmentItem
 
     // 강화 기능을 만들어봅시다..!
     public int enhancementValue = 0;        // 강화 수치
+
+    public bool isEquipped = false;       // 장착 여부
 
     // 기본 생성자
     public EquipmentItem() { }

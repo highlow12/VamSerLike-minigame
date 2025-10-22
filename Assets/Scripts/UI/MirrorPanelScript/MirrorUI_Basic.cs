@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public partial class MirrorUI : MonoBehaviour
+public partial class MirrorUI
 {
     // Awake 메서드 제거 (다른 클래스에 이미 있음)
 

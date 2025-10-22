@@ -6,7 +6,7 @@ using TMPro;
 using System;
 
 // 아이템 정보 패널 컴포넌트
-public class ItemInfoPanel : MonoBehaviour
+public class ItemInfoPanel : Singleton<ItemInfoPanel>
 {
     [Header("UI References")]
     public TextMeshProUGUI itemNameText;         // 아이템 이름
@@ -32,20 +32,43 @@ public class ItemInfoPanel : MonoBehaviour
     private Action<EquipmentItem> onUnequip;
     
     // 패널 초기화
-    public void Initialize(EquipmentItem item, bool equipped, Action<EquipmentItem> equipAction, Action<EquipmentItem> unequipAction)
+    public void Initialize(EquipmentItem item, bool equipped, Action<EquipmentItem> equipAction, Action<EquipmentItem> unequipAction, Vector3 position)
     {
         currentItem = item;
         isEquipped = equipped;
         onEquip = equipAction;
         onUnequip = unequipAction;
+
+        // 패널 위치 설정
+        transform.position = position;
+        RectTransform rt = GetComponent<RectTransform>();
+        Debug.Log($"아이템 정보 패널 피봇 설정. isEquipped: {isEquipped},  rt.pivot: {rt.pivot}");
+        if (equipped)
+        {
+            rt.pivot = new Vector2(0.5f, -0.1f); // 위로
+            //rt.rotation = Quaternion.Euler(0, 0, 0); // 회전 초기화
+        }
+        else
+        {
+            rt.pivot = new Vector2(0.5f, 1f); // 아래로
+            //rt.rotation = Quaternion.Euler(0, 0, 180); // 180도 회전
+        }
         
         // 기본 정보 설정
         itemNameText.text = item.itemName;
         descriptionText.text = item.description;
         
         // 무기 유형 설정 (실제 구현에서는 weaponType에 따라 다른 텍스트 표시)
-        weaponTypeText.text = GetWeaponTypeText(item.weaponType);
-        
+        if(item.category == EquipmentCategory.Weapon)
+        {
+            weaponTypeText.text = GetWeaponTypeText(item.weaponType);
+            weaponTypeText.gameObject.SetActive(true);
+        }
+        else
+        {
+            weaponTypeText.gameObject.SetActive(false);
+        }
+
         // 스탯 설정
         attackDamageText.text = $"공격력: {item.attackDamage}";
         attackSpeedText.text = $"공격속도: {item.attackSpeed}";
@@ -111,6 +134,7 @@ public class ItemInfoPanel : MonoBehaviour
     // 패널 닫기
     public void Close()
     {
-        Destroy(gameObject);
+        //Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }

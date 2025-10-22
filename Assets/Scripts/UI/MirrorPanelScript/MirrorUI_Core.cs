@@ -10,6 +10,7 @@ public partial class MirrorUI
     // 장착된 장비 기반으로 스탯 업데이트 (MirrorUI_Core)
     protected void Core_UpdateEquippedStats()
     {
+        Debug.Log("Core_UpdateEquippedStats 호출됨");
         int baseHealth = 500;
         int baseDefense = 5;
         int baseAttack = 5;
@@ -74,6 +75,7 @@ public partial class MirrorUI
     {
         if (item != null)
         {
+            slot.GetComponent<ItemSlot>().SetItem(item, weaponDataLoader.GetItemSprite(item.itemName));
             // 아이템 이미지 및 등급 표시
             Image itemImage = slot.transform.GetChild(0).GetComponent<Image>();
             TextMeshProUGUI rarityText = slot.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
@@ -107,7 +109,7 @@ public partial class MirrorUI
     private IEnumerator PlayerIdleAnimation()
     {
         Vector3 originalScale = playerPreviewImage.transform.localScale;
-        Vector3 targetScale = originalScale * 1.05f;
+        Vector3 targetScale = originalScale * idleMultiplier;
         float duration = 1.5f;
         
         while (true)
@@ -120,6 +122,7 @@ public partial class MirrorUI
                 float normalizedTime = t / duration;
                 float scaleValue = Mathf.Sin(normalizedTime * Mathf.PI) * 0.5f + 0.5f;
                 playerPreviewImage.transform.localScale = Vector3.Lerp(originalScale, targetScale, scaleValue);
+                Debug.Log($"플레이어 미리보기 애니메이션 스케일: {playerPreviewImage.transform.localScale}");
                 yield return null;
             }
             
