@@ -41,7 +41,7 @@ public partial class MirrorUI
     }
 
     // 장착된 아이템 정보 표시 (MirrorUI_ItemFunctions)
-    protected void Item_ShowEquippedItemInfo(EquipmentItem item, Vector3 position)
+    public void Item_ShowEquippedItemInfo(EquipmentItem item, Vector3 position)
     {
         if (item == null) return;
 

@@ -50,7 +50,7 @@ public class ItemInfoPanel : Singleton<ItemInfoPanel>
         }
         else
         {
-            rt.pivot = new Vector2(0.5f, 1f); // 아래로
+            rt.pivot = new Vector2(1.24f, 0.77f); // 왼쪽으로
             //rt.rotation = Quaternion.Euler(0, 0, 180); // 180도 회전
         }
         

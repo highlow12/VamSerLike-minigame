@@ -81,7 +81,8 @@ public partial class MirrorUI
             TextMeshProUGUI rarityText = slot.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
             
             // 실제 구현에서는 Resources.Load 또는 에셋 관리 시스템 사용
-            itemImage.enabled = true;
+            //itemImage.enabled = true;
+            slot.GetComponent<ItemSlot>().SetItem(item, weaponDataLoader.GetItemSprite(item.itemName));
             rarityText.text = item.rarity.ToString();
         }
         else
@@ -90,7 +91,8 @@ public partial class MirrorUI
             Image itemImage = slot.transform.GetChild(0).GetComponent<Image>();
             TextMeshProUGUI rarityText = slot.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
             
-            itemImage.enabled = false;
+            //itemImage.enabled = false;
+            slot.GetComponent<ItemSlot>().ClearSlot();
             rarityText.text = "";
         }
     }
@@ -110,19 +112,19 @@ public partial class MirrorUI
     {
         Vector3 originalScale = playerPreviewImage.transform.localScale;
         Vector3 targetScale = originalScale * idleMultiplier;
-        float duration = 1.5f;
+        Vector3 imagePos = playerPreviewImage.transform.localPosition;
         
         while (true)
         {
-            // 약간 위아래로 흔들리는 애니메이션
             float t = 0;
-            while (t < duration)
+            while (t < idleInterval)
             {
                 t += Time.deltaTime;
-                float normalizedTime = t / duration;
-                float scaleValue = Mathf.Sin(normalizedTime * Mathf.PI) * 0.5f + 0.5f;
+                float normalizedTime = t / idleInterval;
+                float scaleValue = Mathf.Sin(normalizedTime * Mathf.PI);
                 playerPreviewImage.transform.localScale = Vector3.Lerp(originalScale, targetScale, scaleValue);
-                Debug.Log($"플레이어 미리보기 애니메이션 스케일: {playerPreviewImage.transform.localScale}");
+                playerPreviewImage.transform.localPosition = imagePos + new Vector3(0, Mathf.Sin(normalizedTime * Mathf.PI), 0) * idleMovingMultiplier;
+                //Debug.Log($"플레이어 미리보기 애니메이션 스케일: {playerPreviewImage.transform.localScale}");
                 yield return null;
             }
             

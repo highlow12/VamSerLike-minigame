@@ -48,6 +48,8 @@ public partial class MirrorUI : Singleton<MirrorUI>
     [Header("Player Preview")]
     public Image playerPreviewImage;
     public float idleMultiplier = 1.2f;
+    public float idleMovingMultiplier = 2f;
+    public float idleInterval = 5f;
 
 
 
@@ -206,7 +208,9 @@ public partial class MirrorUI : Singleton<MirrorUI>
                 try
                 {
                     itemSlot.SetItem(equipmentItems[i], weaponDataLoader.GetItemSprite(equipmentItems[i].itemName));
-                    itemSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equipmentItems[i], itemSlot.transform.position));
+
+                    //아이템 프리팹에서 관리?
+                    //itemSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equipmentItems[i], itemSlot.transform.position));
                     
                     Debug.Log($"아이템 바인딩 성공: {equipmentItems[i].itemName}, {weaponDataLoader.GetItemSprite(equipmentItems[i].itemName)}");
                 }

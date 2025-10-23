@@ -59,4 +59,14 @@ public class ItemSlot : MonoBehaviour
         itemImage.enabled = false;
         rarityText.text = "";
     }
+
+    public void OnClick()
+    {
+        if (item != null)
+        {
+            MirrorUI.Instance.Item_ShowEquippedItemInfo(item, transform.position);
+            Debug.Log($"ItemSlot 클릭됨: {item.itemName}");
+            // 아이템 정보 패널 표시 로직 추가 가능
+        }
+    }
 }

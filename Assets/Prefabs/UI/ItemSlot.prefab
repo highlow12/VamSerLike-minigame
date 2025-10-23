@@ -253,6 +253,7 @@ MonoBehaviour:
     moveSpeedBonus: 0
     visionRangeBonus: 0
     enhancementValue: 0
+    isEquipped: 0
 --- !u!114 &8653102328968802857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,7 +363,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -1760538891187450219, guid: ab5fca28802e5d74fb8343fa19adb09e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -389,7 +390,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5677493085736052056
 RectTransform:
   m_ObjectHideFlags: 0

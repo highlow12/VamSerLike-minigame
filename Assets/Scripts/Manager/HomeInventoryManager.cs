@@ -28,16 +28,18 @@ public class HomeInventoryManager : MonoBehaviour
         Instance = this;
 
         allWeaponsDataList = weaponDataLoader.GetWeapons();
-        
-    }
 
-    void Start()
-    {
+
         LoadInventory();
         AddItem("망치", ItemRarity.C, 1, 1);
         AddItem("망치", ItemRarity.C, 2, 1);
         AddItem("십자가", ItemRarity.B, 4, 1);
         PrintInventory();
+
+    }
+
+    void Start()
+    {
     }
 
     // 저장
@@ -65,11 +67,12 @@ public class HomeInventoryManager : MonoBehaviour
     // 로그 출력
     public void PrintInventory()
     {
-        Debug.Log("Current Inventory:");
+        Debug.Log("=====Current Inventory=====");
         foreach (var kvp in inventoryDict)
         {
             Debug.Log($"ItemKey: {kvp.Key}, ItemName: {kvp.Value.itemName}, Rarity: {kvp.Value.rarity}, Enhancement: {kvp.Value.enhancementValue}, Count: {kvp.Value.count}");
         }
+        Debug.Log("==========================");
     }
 
     // 아이템 추가 (중복 처리)
@@ -104,10 +107,10 @@ public class HomeInventoryManager : MonoBehaviour
     public List<EquipmentItem> GetAllItems()
     {
         List<EquipmentItem> inventoryItemList = new List<EquipmentItem>();
-        Debug.Log("GetAllItems: " + inventoryDict.Count + " items in inventoryDict.");
+        Debug.Log("GetAllItems: " + inventoryDict.Count + " items types in inventoryDict.");
         foreach (var kvp in inventoryDict)
         {
-            Debug.Log("GetAllItem: test");
+            //Debug.Log("GetAllItem: test");
             Debug.Log("GetAllItems: weaponData found->" + allWeaponsDataList.FirstOrDefault(w =>
             (w.itemName == kvp.Value.itemName) && (w.rarity == kvp.Value.rarity)));
 
@@ -118,7 +121,7 @@ public class HomeInventoryManager : MonoBehaviour
                 Debug.Log($"GetAllItems: created weapon {weapon.itemName} with rarity {weapon.rarity} and enhancement {kvp.Value.enhancementValue}, count: {kvp.Value.count}");
                 weapon.enhancementValue = kvp.Value.enhancementValue;
                 //enhancementValue 수치만큼 능력치 증가 적용 필요=> 모든 Get 함수에 반영 필요
-                weapon.SetValuesWithEnhancement();
+                //weapon.SetValuesWithEnhancement();//이 함수를 사용하지 않고, enhancement를 ui상으로 표시 안하면 강화는 없는거나 마찬가지. 당장은 강화를 구현 안함.
                 for (int i = 0; i < kvp.Value.count; i++)//중복된 아이템 수 만큼 추가
                 {
                     inventoryItemList.Add(weapon.Clone());

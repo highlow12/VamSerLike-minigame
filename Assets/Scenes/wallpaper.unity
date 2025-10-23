@@ -7453,7 +7453,9 @@ MonoBehaviour:
   itemInfoPanelPrefab: {fileID: 940366718}
   weaponDataLoader: {fileID: 919616109}
   playerPreviewImage: {fileID: 918807217}
-  idleMultiplier: 1.2
+  idleMultiplier: 1.05
+  idleMovingMultiplier: 10
+  idleInterval: 3
 --- !u!1 &1260477843
 GameObject:
   m_ObjectHideFlags: 0
@@ -12341,7 +12343,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 71543050}
   m_HandleRect: {fileID: 71543049}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

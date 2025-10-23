@@ -26,7 +26,7 @@ public class AudioManager : MonoBehaviour
                 // DontDestroyOnLoad 적용
                 DontDestroyOnLoad(gameObject);
                 
-                Debug.Log("AudioManager가 루트 레벨로 이동되었습니다.");
+                //Debug.Log("AudioManager가 루트 레벨로 이동되었습니다.");
             }
             else
             {
