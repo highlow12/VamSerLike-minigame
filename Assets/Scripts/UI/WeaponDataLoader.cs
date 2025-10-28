@@ -24,6 +24,11 @@ public class WeaponDataLoader : MonoBehaviour
     {
         LoadWeaponData();
         itemSpritesDict.Clear();
+        if(itemSpriteList == null || itemSpriteList.Count == 0)
+        {
+            Debug.LogWarning("WeaponDataLoader: itemSpriteList가 비어 있습니다.");
+            return;
+        }
         foreach (var pair in itemSpriteList)
         {
             if (!itemSpritesDict.ContainsKey(pair.itemName))

@@ -105,7 +105,7 @@ namespace UI.Stage
             {
                 bool isUnlocked = PlayerPrefs.GetInt("Stage_" + i + "_Unlocked", 0) == 1;
                 stageUnlocked[i] = isUnlocked;
-                Debug.Log("HomeScreenManager: stage index " + i + ": isUnlocked=>" + stageUnlocked[i]);
+                //Debug.Log("HomeScreenManager: stage index " + i + ": isUnlocked=>" + stageUnlocked[i]);
             }
 
             // 현재 스테이지를 가장 최근에 잠금 해제된 스테이지로 설정

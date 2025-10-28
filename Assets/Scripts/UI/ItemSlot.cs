@@ -36,6 +36,7 @@ public class ItemSlot : MonoBehaviour
             }
             else
             {
+                Debug.LogWarning("ItemSlot: itemSprite가 null입니다. 기본 스프라이트로 설정합니다.");
                 itemImage.sprite = Resources.Load<Sprite>("graybox"); // 기본 스프라이트 설정
                 if (itemImage.sprite == null)
                 {
@@ -60,13 +61,28 @@ public class ItemSlot : MonoBehaviour
         rarityText.text = "";
     }
 
-    public void OnClick()
+    public void OnClickFunction()
     {
         if (item != null)
         {
-            MirrorUI.Instance.Item_ShowEquippedItemInfo(item, transform.position);
+            MirrorUI.Instance.Item_ShowEquippedItemInfo(this, transform.position);
             Debug.Log($"ItemSlot 클릭됨: {item.itemName}");
             // 아이템 정보 패널 표시 로직 추가 가능
         }
+    }
+
+    public bool SwitchItem(ItemSlot targetSlot)
+    {
+        if (targetSlot == null)
+        {
+            Debug.LogError("SwitchItem: targetSlot이 null입니다.");
+            return false;
+        }
+        EquipmentItem tempItem = targetSlot.item;
+        Sprite tempSprite = targetSlot.itemImage.sprite;
+
+        targetSlot.SetItem(this.item, this.itemImage.sprite);
+        this.SetItem(tempItem, tempSprite);
+       return true;
     }
 }

@@ -164,7 +164,7 @@ public class EquipmentItem
             () => attackRange += Mathf.RoundToInt(attackRange * rarityMultiplier)
         };
 
-        if(category == EquipmentCategory.Cloak)
+        if (category == EquipmentCategory.Cloak)
         {
             // 망토는 공격 외의 스탯도 강화
             statUpdaters.Add(() => healthBonus += Mathf.RoundToInt(healthBonus * rarityMultiplier));
@@ -179,4 +179,6 @@ public class EquipmentItem
             statUpdaters[idx](); // 무작위로 하나 선택해서 강화
         }
     }
+    
+    
 }

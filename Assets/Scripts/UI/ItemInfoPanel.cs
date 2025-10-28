@@ -28,14 +28,14 @@ public class ItemInfoPanel : Singleton<ItemInfoPanel>
     
     private EquipmentItem currentItem;
     private bool isEquipped;
-    private Action<EquipmentItem> onEquip;
+    private Action<ItemSlot, EquipmentItem> onEquip;
     private Action<EquipmentItem> onUnequip;
     
     // 패널 초기화
-    public void Initialize(EquipmentItem item, bool equipped, Action<EquipmentItem> equipAction, Action<EquipmentItem> unequipAction, Vector3 position)
+    public void Initialize(EquipmentItem item, ItemSlot itemSlot, Action<ItemSlot, EquipmentItem> equipAction, Action<EquipmentItem> unequipAction, Vector3 position)
     {
         currentItem = item;
-        isEquipped = equipped;
+        isEquipped = item.isEquipped;
         onEquip = equipAction;
         onUnequip = unequipAction;
 
@@ -43,7 +43,7 @@ public class ItemInfoPanel : Singleton<ItemInfoPanel>
         transform.position = position;
         RectTransform rt = GetComponent<RectTransform>();
         Debug.Log($"아이템 정보 패널 피봇 설정. isEquipped: {isEquipped},  rt.pivot: {rt.pivot}");
-        if (equipped)
+        if (isEquipped)
         {
             rt.pivot = new Vector2(0.5f, -0.1f); // 위로
             //rt.rotation = Quaternion.Euler(0, 0, 0); // 회전 초기화
@@ -99,7 +99,7 @@ public class ItemInfoPanel : Singleton<ItemInfoPanel>
         else
         {
             actionButtonText.text = "장착";
-            actionButton.onClick.AddListener(() => onEquip(currentItem));
+            actionButton.onClick.AddListener(() => onEquip(itemSlot, currentItem));
         }
         
         // 닫기 버튼 설정

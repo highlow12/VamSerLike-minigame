@@ -25,7 +25,7 @@ public partial class MirrorUI : Singleton<MirrorUI>
     public GameObject itemGridContainer;
     public GameObject itemSlotPrefab;
     public int gridColumns = 4;
-    public ScrollRect itemScrollRect;
+    //public ScrollRect itemScrollRect;
 
     [Header("Sort Buttons")]
     public Button raritySort;
@@ -90,20 +90,8 @@ public partial class MirrorUI : Singleton<MirrorUI>
 
         InitializeUI();
 
-        // weaponDataLoader에서 실제 무기 데이터 로드
-        if (weaponDataLoader != null)
-        {
-            Debug.Log("Main_LoadEquipmentItems 호출 준비 완료.");
-            // Main_LoadEquipmentItems(); // Start에서 호출하지 않도록 수정. OnEnable에서 호출함.
-        }
-        else
-        {
-            Debug.LogWarning("WeaponDataLoader가 null입니다. LoadMockItems를 호출합니다.");
-            LoadMockItems();
-        }
-
         Core_UpdateEquippedStats();
-        Grid_PopulateItemGrid();
+        Grid_PopulateItemGrid();//초기 그리드 카테고리와 정렬 기준에 따라 그리드 채우기
     }
     // 장비 아이템 로드 (WeaponDataLoader 사용)
     protected void Main_LoadEquipmentItems()
@@ -114,7 +102,7 @@ public partial class MirrorUI : Singleton<MirrorUI>
         if (weaponDataLoader != null)
         {
             //List<EquipmentItem> weapons = weaponDataLoader.GetWeapons();//임시코드인듯. weapons는 실제로 보유하고 있는 무기 리스트임. GetWeapons()는 가능한 모든 무기들의 리스트임
-            List<EquipmentItem> weapons = HomeInventoryManager.Instance != null ? HomeInventoryManager.Instance.GetAllItems() : null;
+            List<EquipmentItem> weapons = HomeInventoryManager.Instance != null ? HomeInventoryManager.Instance.GetOrderedItems() : null;
             //List<EquipmentItem> weapons = HomeInventoryManager.Instance != null ? HomeInventoryManager.Instance.GetAllWeaponsDataList() : null;
 
             if (weapons != null && weapons.Count > 0)
@@ -127,25 +115,56 @@ public partial class MirrorUI : Singleton<MirrorUI>
                     equipmentItems.Add(weapons[i]);
                 }
 
-                EquipmentItem firstWeapon = weapons.Find(item => item.category == EquipmentCategory.Weapon);
-                if (firstWeapon != null)
+                string equippedWeaponCode = PlayerPrefs.GetString("EquippedWeapon", "");
+                for (int i = 0; i < equipmentItems.Count; i++)
                 {
-                    equippedWeapon = firstWeapon;
-                    Debug.Log($"기본 무기 '{firstWeapon.itemName}'이(가) 장착되었습니다.");
+                    EquipmentItem item = equipmentItems[i];
+                    if (HomeInventoryManager.Instance.GetItemCode(item) == equippedWeaponCode)
+                    {
+                        EquipItem(weaponSlot.GetComponent<ItemSlot>(), item);
+                        break;
+                    }
+                    else if (i == equipmentItems.Count - 1)
+                    {
+                        Debug.Log("저장된 장착 무기 데이터를 찾을 수 없습니다.");
+                        //저장된 무기 데이터 없으면 장착 안함
+                        UnequipItem(equippedWeapon);
+                    }
+                }
+
+                string equippedCloakCode = PlayerPrefs.GetString("EquippedCloak", "");
+                for (int i = 0; i < equipmentItems.Count; i++)
+                {
+                    EquipmentItem item = equipmentItems[i];
+                    if (HomeInventoryManager.Instance.GetItemCode(item) == equippedCloakCode)
+                    {
+                        EquipItem(cloakSlot.GetComponent<ItemSlot>(), item);
+                        break;
+                    }
+                    else if (i == equipmentItems.Count - 1)
+                    {
+                        Debug.Log("저장된 장착 망토 데이터를 찾을 수 없습니다.");
+                        //저장된 무기 데이터 없으면 장착 안함
+                        UnequipItem(equippedCloak);
+                    }
                 }
             }
             else
             {
-                Debug.LogWarning("WeaponDataLoader에서 무기 데이터를 가져올 수 없습니다. 샘플 아이템을 사용합니다.");
-                LoadMockItems();
+                //Debug.LogWarning("WeaponDataLoader에서 무기 데이터를 가져올 수 없습니다. 샘플 아이템을 사용합니다.");
+                //LoadMockItems();
+                Debug.LogWarning("무기 데이터가 없습니다. 오류거나 HomeInventoryManager의 Inventory 데이터가 비어있습니다.");
             }
         }
         else
         {
-            Debug.LogWarning("WeaponDataLoader를 찾을 수 없어 샘플 아이템을 사용합니다.");
-            LoadMockItems();
+            //Debug.LogWarning("WeaponDataLoader를 찾을 수 없어 샘플 아이템을 사용합니다.");
+            //LoadMockItems();
+            Debug.LogWarning("WeaponDataLoader를 찾을 수 없습니다.");
         }
 
+        //필요 없는 코드인듯. 어짜피 카테고리와 정렬 기준에 따라 Grid_PopulateItemGrid에서 다시 채워짐
+        //아니 필요한 코드였네. 아이템 슬롯 자체를 만들어주는 코드구나. 근데 왜 equipmentItems mapping까지 여기서 하지?
         AdjustItemGrid();
     }
 
@@ -160,10 +179,20 @@ public partial class MirrorUI : Singleton<MirrorUI>
         int minItems = 16;
 
         // 기존 슬롯 제거
-        foreach (Transform child in itemGridContainer.transform)
+        if (itemGridContainer == null)
         {
-            Destroy(child.gameObject);
+            Debug.LogWarning("itemGridContainer가 null입니다. Prefab을 확인하세요.");
+            return;
         }
+        else
+        {
+            foreach (Transform child in itemGridContainer.transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        
 
         // 슬롯 동적 생성
         //장착된 아이템은 그리드에서 제외. equipmentItems에서 장착된 아이템 수만큼 빼주고, 해당하는 인덱스는 건너뜀
@@ -182,7 +211,9 @@ public partial class MirrorUI : Singleton<MirrorUI>
             Debug.Log($"슬롯 생성: {newSlot.name}");
             newSlot.name = $"ItemSlot_{i + 1}";
 
-            // 슬롯에 아이템 데이터 바인딩
+
+            //아이템 바인딩은 Grid_PopulateItemGrid에서 처리함
+            /*// 슬롯에 아이템 데이터 바인딩
             ItemSlot itemSlot = newSlot.GetComponent<ItemSlot>();
             if (itemSlot == null)
             {
@@ -218,7 +249,7 @@ public partial class MirrorUI : Singleton<MirrorUI>
                 {
                     Debug.LogError($"아이템 바인딩 중 오류 발생: {ex.Message}");
                 }
-            }
+            }*/
         }
     }
 
@@ -231,8 +262,9 @@ public partial class MirrorUI : Singleton<MirrorUI>
         raritySort.onClick.AddListener(() => Grid_SortItems(SortType.ByRarity));
         acquiredSort.onClick.AddListener(() => Grid_SortItems(SortType.ByAcquired));
         enhancementButton.onClick.AddListener(ToggleEnhancementPanel);
-        weaponSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedWeapon, weaponSlot.transform.position));
-        cloakSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedCloak, cloakSlot.transform.position));
+        //item만 할당해주면 자동 OnClick되게 설정해보자
+        //weaponSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedWeapon, weaponSlot.transform.position));
+        //cloakSlot.GetComponent<Button>().onClick.AddListener(() => Item_ShowEquippedItemInfo(equippedCloak, cloakSlot.transform.position));
     }
 
     private void ToggleEnhancementPanel()
@@ -254,38 +286,5 @@ public partial class MirrorUI : Singleton<MirrorUI>
         Debug.Log("망토 카테고리로 전환되었습니다.");
     }
 
-    // 샘플 아이템 로드 (테스트용)
-    private void LoadMockItems()
-    {
-        equipmentItems.Clear();
-        acquireOrderMap.Clear();
-
-        // 샘플 무기 아이템 추가
-        var crossWeapon = new EquipmentItem("십자가", EquipmentCategory.Weapon, ItemRarity.A, "신성한 십자가 무기", 10, 0, 5, 0, 0, 0);
-        var normalSword = new EquipmentItem("일반 검", EquipmentCategory.Weapon, ItemRarity.B, "평범한 검", 0, 0, 3, 5, 0, 0);
-        var bigSword = new EquipmentItem("대검", EquipmentCategory.Weapon, ItemRarity.D, "무거운 대검", 0, 10, 8, 0, -5, 0);
-        var dagger = new EquipmentItem("단검", EquipmentCategory.Weapon, ItemRarity.B, "가벼운 단검", 0, 0, 2, 15, 5, 0);
-        var shotgun = new EquipmentItem("암시장 샷건", EquipmentCategory.Weapon, ItemRarity.S, "강력한 샷건", 200, 0, 5, 20, 0, 13);
-
-        // 샘플 망토 아이템 추가
-        var normalCloak = new EquipmentItem("일반 망토", EquipmentCategory.Cloak, ItemRarity.B, "평범한 망토", 50, 5, 0, 0, 0, 0);
-        var leatherCloak = new EquipmentItem("가죽 망토", EquipmentCategory.Cloak, ItemRarity.C, "가죽 재질 망토", 30, 3, 0, 0, 5, 0);
-        var enhancedCloak = new EquipmentItem("강화 망토", EquipmentCategory.Cloak, ItemRarity.A, "강화된 망토", 100, 10, 0, 0, 0, 5);
-
-        // 아이템 추가 및 획득 순서 설정
-        equipmentItems.Add(crossWeapon); acquireOrderMap[crossWeapon] = 1;
-        equipmentItems.Add(normalSword); acquireOrderMap[normalSword] = 2;
-        equipmentItems.Add(bigSword); acquireOrderMap[bigSword] = 3;
-        equipmentItems.Add(dagger); acquireOrderMap[dagger] = 4;
-        equipmentItems.Add(shotgun); acquireOrderMap[shotgun] = 5;
-        equipmentItems.Add(normalCloak); acquireOrderMap[normalCloak] = 6;
-        equipmentItems.Add(leatherCloak); acquireOrderMap[leatherCloak] = 7;
-        equipmentItems.Add(enhancedCloak); acquireOrderMap[enhancedCloak] = 8;
-
-        // 기본 장착 아이템 설정
-        equippedWeapon = shotgun;       // 암시장 샷건
-        equippedCloak = normalCloak;    // 일반 망토
-
-        Debug.Log("테스트 아이템 데이터를 사용합니다.");
-    }
+    
 }

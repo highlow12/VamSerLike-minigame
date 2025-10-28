@@ -20,7 +20,7 @@ public partial class MirrorUI
 
         // 현재 카테고리에 맞는 아이템 필터링
         List<EquipmentItem> filteredItems = equipmentItems
-            .Where(item => item.category == currentCategory)
+            .Where(item => (item.category == currentCategory) && !item.isEquipped)//장착된 아이템 제외
             .ToList();
 
         // 정렬 로직 추가
@@ -28,21 +28,23 @@ public partial class MirrorUI
         {
             filteredItems = filteredItems.OrderBy(item => item.rarity).ToList();
         }
+        //기본이 획득 순서 정렬이므로 else if문 불필요
+        /*
         else if (currentSortType == SortType.ByAcquired)
         {
             filteredItems = filteredItems.OrderBy(item => acquireOrderMap[item]).ToList();
-        }
+        }*/
 
         // 아이템 슬롯 채우기
         for (int i = 0; i < itemGridContainer.transform.childCount; i++)
         {
+            
+            
             ItemSlot itemSlot = itemGridContainer.transform.GetChild(i).GetComponent<ItemSlot>();
 
             if (i < filteredItems.Count)
             {
-                // 스프라이트 로드 로직 (임시)
-                Sprite itemSprite = Resources.Load<Sprite>($"Sprites/Weapons/{filteredItems[i].itemName}");
-
+                Sprite itemSprite = weaponDataLoader.GetItemSprite(filteredItems[i].itemName);
                 itemSlot.SetItem(filteredItems[i], itemSprite);
                 itemSlot.gameObject.SetActive(true);
             }
