@@ -11,7 +11,6 @@ public partial class MirrorUI
     void OnEnable()//게임 시작할때와, 미러 패널 열릴때마다 호출됨
     {
         Debug.Log("MirrorUI: OnEnable called");
-        Basic_InitializeUI();
 
         // weaponDataLoader 사용
         if (weaponDataLoader != null)
@@ -36,10 +35,6 @@ public partial class MirrorUI
         }
     }
 
-    private void Basic_InitializeUI()
-    {
-
-    }
 
     
 }

@@ -30,7 +30,10 @@ public class ItemInfoPanel : Singleton<ItemInfoPanel>
     private bool isEquipped;
     private Action<ItemSlot, EquipmentItem> onEquip;
     private Action<EquipmentItem> onUnequip;
-    
+
+    [Header("Added Stats")]
+    public List<TextMeshProUGUI> addedStatTexts; // 희귀도에 따른 추가 스탯 텍스트들
+
     // 패널 초기화
     public void Initialize(EquipmentItem item, ItemSlot itemSlot, Action<ItemSlot, EquipmentItem> equipAction, Action<EquipmentItem> unequipAction, Vector3 position)
     {
@@ -73,6 +76,19 @@ public class ItemInfoPanel : Singleton<ItemInfoPanel>
         attackDamageText.text = $"공격력: {item.attackDamage}";
         attackSpeedText.text = $"공격속도: {item.attackSpeed}";
         attackRangeText.text = $"공격범위: {item.attackRange}";
+
+        for(int i = 0; i < addedStatTexts.Count; i++)
+        {
+            if(i < item.enhancedByRarityDescriptions.Count)
+            {
+                addedStatTexts[i].text = item.enhancedByRarityDescriptions[i];
+                addedStatTexts[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                addedStatTexts[i].gameObject.SetActive(false);
+            }
+        }
         
         // 추가 스탯 설정 (있는 경우에만)
         if (item.attackTarget > 0)
@@ -111,11 +127,11 @@ public class ItemInfoPanel : Singleton<ItemInfoPanel>
     {
         switch (weaponType)
         {
-            case 0: return "근접 무기";
-            case 1: return "원거리 무기";
-            case 2: return "마법 무기";
-            case 3: return "특수 무기";
-            default: return "기타 무기";
+            case 0: return "근접\n무기";
+            case 1: return "원거리\n무기";
+            case 2: return "마법\n무기";
+            case 3: return "특수\n무기";
+            default: return "기타\n무기";
         }
     }
     

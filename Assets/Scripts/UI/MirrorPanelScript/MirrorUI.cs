@@ -47,6 +47,7 @@ public partial class MirrorUI : Singleton<MirrorUI>
 
     [Header("Player Preview")]
     public Image playerPreviewImage;
+    public Image weaponPreviewImage;
     public float idleMultiplier = 1.2f;
     public float idleMovingMultiplier = 2f;
     public float idleInterval = 5f;
@@ -115,7 +116,7 @@ public partial class MirrorUI : Singleton<MirrorUI>
                     equipmentItems.Add(weapons[i]);
                 }
 
-                string equippedWeaponCode = PlayerPrefs.GetString("EquippedWeapon", "");
+                string equippedWeaponCode = HomeInventoryManager.Instance.LoadEquippedItemCode(EquipmentCategory.Weapon);
                 for (int i = 0; i < equipmentItems.Count; i++)
                 {
                     EquipmentItem item = equipmentItems[i];

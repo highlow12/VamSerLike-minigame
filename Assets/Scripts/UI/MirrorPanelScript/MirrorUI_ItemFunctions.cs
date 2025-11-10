@@ -96,7 +96,7 @@ public partial class MirrorUI
             equippedWeapon = item;
             equippedWeapon.isEquipped = true;
 
-            HomeInventoryManager.Instance.SaveItemCode("EquippedWeapon", HomeInventoryManager.Instance.GetItemCode(equippedWeapon));
+            HomeInventoryManager.Instance.SaveEquippedItem(EquipmentCategory.Weapon, HomeInventoryManager.Instance.GetItemCode(equippedWeapon));
         }
         else if(item.category == EquipmentCategory.Cloak)
         {
@@ -111,7 +111,7 @@ public partial class MirrorUI
                 equippedCloak.isEquipped = false;
             equippedCloak = item;
             equippedCloak.isEquipped = true;
-            HomeInventoryManager.Instance.SaveItemCode("EquippedCloak", HomeInventoryManager.Instance.GetItemCode(equippedCloak));
+            HomeInventoryManager.Instance.SaveEquippedItem(EquipmentCategory.Cloak, HomeInventoryManager.Instance.GetItemCode(equippedCloak));
         }
 
         // 스탯 및 시각적 요소 업데이트
@@ -122,6 +122,7 @@ public partial class MirrorUI
         Grid_PopulateItemGrid();
         // 정보 패널 닫기
         Item_CloseItemInfoPanel();
+        ChangeEquippedWeaponPreview();
     }
 
     // 아이템 해제
@@ -134,14 +135,14 @@ public partial class MirrorUI
             equippedWeapon.isEquipped = false;
             weaponSlot.GetComponent<ItemSlot>().ClearSlot();
             equippedWeapon = null;
-            HomeInventoryManager.Instance.SaveItemCode("EquippedWeapon", "");
+            HomeInventoryManager.Instance.SaveEquippedItem(EquipmentCategory.Weapon, "");
         }
         else if (item.category == EquipmentCategory.Cloak && equippedCloak != null && item == equippedCloak)
         {
             equippedCloak.isEquipped = false;
             cloakSlot.GetComponent<ItemSlot>().ClearSlot();
             equippedCloak = null;
-            HomeInventoryManager.Instance.SaveItemCode("EquippedCloak", "");
+            HomeInventoryManager.Instance.SaveEquippedItem(EquipmentCategory.Cloak, "");
         }
 
         // 스탯 및 시각적 요소 업데이트
@@ -152,6 +153,7 @@ public partial class MirrorUI
         Grid_PopulateItemGrid();
         // 정보 패널 닫기
         Item_CloseItemInfoPanel();
+        ChangeEquippedWeaponPreview();
     }
     
     public void UnequipAllItems()

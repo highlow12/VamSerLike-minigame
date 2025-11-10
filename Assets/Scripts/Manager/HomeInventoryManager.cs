@@ -4,9 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 
-public class HomeInventoryManager : MonoBehaviour
+
+
+public class HomeInventoryManager : Singleton<HomeInventoryManager>
 {
-    public static HomeInventoryManager Instance { get; private set; }
+
+    /// <summary>
+    /// 솔직히 말하자면, SaveManager 구현되어있는 줄 모르고 저장 시스템 따로 더 만들어서 이것만 사용중.. ㅈㅅ요;;
+    /// docmost 서버 터져서 인벤토리 개발할 때 관련 코드가 있는지 확인을 못했던거라 양해 바람...
+    /// 이 클래스는 플레이어의 인벤토리를 관리하며, 아이템 추가, 제거, 저장 및 로드를 담당합니다.
+    /// </summary>
 
     public WeaponDataLoader weaponDataLoader;
 
@@ -22,16 +29,12 @@ public class HomeInventoryManager : MonoBehaviour
     private List<InventoryItem> orderedInventoryItems = new List<InventoryItem>();
 
 
+    const string EQUIPPED_WEAPON_KEY = "EquippedWeapon";
+    const string EQUIPPED_CLOAK_KEY = "EquippedCloak";
+
 
     void Awake()
     {
-        // DontDestroyOnLoad 없이 싱글톤 구현
-        if (Instance != null && Instance != this)
-        {
-            Destroy(this.gameObject);
-            return;
-        }
-        Instance = this;
 
         allWeaponsDataList = weaponDataLoader.GetWeapons();
 
@@ -47,9 +50,18 @@ public class HomeInventoryManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.I))
         {
             Debug.Log("Adding test items to inventory");
-            AddItem("망치", ItemRarity.C, 1, 1);
+            InventoryItem item1 = AddItem("망치", ItemRarity.C, 1, 1);
             AddItem("도끼", ItemRarity.D, 2, 1);
             AddItem("십자가", ItemRarity.B, 4, 1);
+            AddItem("도끼", ItemRarity.S, 1, 1);
+            RemoveItem(item1, 1);
+        }
+        else if(Input.GetKeyDown(KeyCode.O))
+        {
+            Debug.Log("Saving and loading inventory");
+            SaveInventory();
+            LoadInventory();
+            PrintInventory();
         }
 #endif
     }
@@ -66,6 +78,7 @@ public class HomeInventoryManager : MonoBehaviour
         string json = JsonUtility.ToJson(new InventoryListWrapper { items = list });
         PlayerPrefs.SetString(INVENTORY_KEY, json);
         PlayerPrefs.Save();
+
     }
 
     // 불러오기
@@ -82,7 +95,7 @@ public class HomeInventoryManager : MonoBehaviour
             {
                 orderedInventoryItems.Add(item);
                 //inventoryDict은 참조만 할 뿐 데이터는 orderedInventoryItems가 실제로 보유
-                inventoryDict[GetItemCodeByInventoryItem(item)] = orderedInventoryItems[orderedInventoryItems.Count - 1];
+                inventoryDict[GetItemCode(item)] = orderedInventoryItems[orderedInventoryItems.Count - 1];
                 curr_inventorySize += item.amount;
             }
         }
@@ -94,13 +107,13 @@ public class HomeInventoryManager : MonoBehaviour
         Debug.Log("=====Current Inventory=====");
         foreach (var kvp in inventoryDict)
         {
-            Debug.Log($"ItemKey: {kvp.Key}, ItemName: {kvp.Value.itemName}, Rarity: {kvp.Value.rarity}, Enhancement: {kvp.Value.enhancementValue}, Count: {kvp.Value.amount}");
+            Debug.Log($"ItemKey: {kvp.Key}, ItemName: {kvp.Value.itemName}, Rarity: {kvp.Value.rarity}, RarityEnhance: {kvp.Value.enhanceActions.Count}, Count: {kvp.Value.amount}");
         }
         Debug.Log("==========================");
     }
 
     // 아이템 추가 (중복 처리)
-    public void AddItem(string itemName, ItemRarity rarity, int enhancementValue, int amount = 1)
+    public InventoryItem AddItem(string itemName, ItemRarity rarity, int enhancementValue, int amount = 1)
     {
         //itemName이 정확한 이름인지 확인 필요. 일단 임시로 정확하다고 가정
         curr_inventorySize += amount;
@@ -111,7 +124,7 @@ public class HomeInventoryManager : MonoBehaviour
             enhancementValue = enhancementValue,
             amount = amount
         };
-        string itemKey = GetItemCodeByInventoryItem(item);
+        string itemKey = GetItemCode(item);
 
         if (inventoryDict.TryGetValue(itemKey, out var existingItem))
         {
@@ -123,29 +136,36 @@ public class HomeInventoryManager : MonoBehaviour
             inventoryDict[itemKey]
              = new InventoryItem(item);
         }
-        for(int i=0; i<amount; i++)
+        for (int i = 0; i < amount; i++)
         {
             orderedInventoryItems.Add(new InventoryItem(item));
         }
-        SaveInventory();
+        //SaveInventory(); //저장 호출은 외부에서 필요할 때 호출하도록 변경
+        return item;
     }
 
     // 아이템 제거 (중복 처리)
-    public bool RemoveItem(string itemName, ItemRarity rarity, int enhancementValue, int amount = 1)
+    public bool RemoveItem(InventoryItem item, int deleteAmount = 1)
     {
-        if (inventoryDict.TryGetValue(GetItemCode(new InventoryItem(itemName, rarity, enhancementValue)), out var item) && item.amount >= amount)
+        Debug.Log($"RemoveItem: Trying to remove {deleteAmount} of {item.itemName} (Rarity: {item.rarity}, Enhancement: {item.enhancementValue})");
+        if (inventoryDict.TryGetValue(GetItemCode(item), out var existingItem)
+         && existingItem.amount >= deleteAmount)
         {
-            item.amount -= amount;
-            if (item.amount <= 0)
+            existingItem.amount -= deleteAmount;
+            if (existingItem.amount <= 0)
                 inventoryDict.Remove(GetItemCode(item));
-            curr_inventorySize -= amount;
-            SaveInventory();
+            Debug.Log($"RemoveItem: Removed {deleteAmount} of {item.itemName}. Remaining: {existingItem.amount}");
+            curr_inventorySize -= deleteAmount;
+            //SaveInventory();
             return true;
         }
         return false;
     }
 
-    public List<EquipmentItem> GetOrderedItems()//생각보다 자주 호출하는중.. 이 함수를 호출하는 코드를 변경하자. 캐시 개념 활용
+
+    public List<EquipmentItem> GetOrderedItems()
+    //생각보다 자주 호출하는중.. 이 함수를 호출하는 코드를 변경하자. 캐시 개념 활용
+    //근데 최대 35번 반복이니 충분히 괜찮을지도?
     {
         List<EquipmentItem> itemList = new List<EquipmentItem>();
         foreach (var invItem in orderedInventoryItems)
@@ -161,7 +181,7 @@ public class HomeInventoryManager : MonoBehaviour
     }
 
 
-    //아이템 전체 목록 반환
+    /*//아이템 전체 목록 반환
     public List<EquipmentItem> GetAllItems()
     {
         List<EquipmentItem> inventoryItemList = new List<EquipmentItem>();
@@ -187,31 +207,41 @@ public class HomeInventoryManager : MonoBehaviour
         }
         Debug.Log($"GetAllItems: {inventoryItemList.Count} items found.");
         return inventoryItemList;
-    }
+    }*/
 
     public List<EquipmentItem> GetAllWeaponsDataList()//test용 전체 무기 데이터 반환
     {
         return allWeaponsDataList;
     }
 
-    public void SaveItemCode(string key, string itemCode)
+    public void SaveEquippedItem(EquipmentCategory equippedItem, string itemCode)
     {
+        string key = equippedItem == EquipmentCategory.Weapon ? EQUIPPED_WEAPON_KEY : EQUIPPED_CLOAK_KEY;
         PlayerPrefs.SetString(key, itemCode);
         PlayerPrefs.Save();
     }
 
+    public string LoadEquippedItemCode(EquipmentCategory equippedItem)
+    {
+        string key = equippedItem == EquipmentCategory.Weapon ? EQUIPPED_WEAPON_KEY : EQUIPPED_CLOAK_KEY;
+        if (PlayerPrefs.HasKey(key))
+        {
+            return PlayerPrefs.GetString(key);
+        }
+        return "";
+    }
 
 
 
     public string GetItemCode(EquipmentItem item)//핵심 함수. 코드 = key. 같은 코드의 아이템은 모든 값이 동일함.(획득 순서 제외) 
     {
-        if (item.category == EquipmentCategory.Weapon)//category 구분은 사실 필요 없는듯
+        if (item.category == EquipmentCategory.Weapon)//category 구분은 현재는 필요 없음. 나중에 망토에 추가 기능 생기면 필요
         {
-            return $"{item.itemName}{(int)item.rarity}{(int)item.enhancementValue}";
+            return GetItemCode(new InventoryItem(item));
         }
         else if (item.category == EquipmentCategory.Cloak)
         {
-            return $"{item.itemName}{(int)item.rarity}{(int)item.enhancementValue}";
+            return GetItemCode(new InventoryItem(item));
         }
         else
         {
@@ -221,24 +251,35 @@ public class HomeInventoryManager : MonoBehaviour
 
     private string GetItemCode(InventoryItem item)//핵심 함수. 코드 = key. 같은 코드의 아이템은 모든 값이 동일함.(획득 순서 제외) 
     {
-        return $"{item.itemName}{(int)item.rarity}{(int)item.enhancementValue}";
+        return $"{item.itemName}{(int)item.rarity}{(int)item.enhancementValue}{item.enhanceActions}";
     }
-    private EquipmentItem CreateEquipmentItem(InventoryItem item)
+
+
+    private EquipmentItem CreateEquipmentItem(InventoryItem item) //핵심 함수. 실제로 필요한 객체인 EquipmentItem 생성
     {
         EquipmentItem weapon = allWeaponsDataList.FirstOrDefault(w =>
             (w.itemName == item.itemName) && (w.rarity == item.rarity)).Clone();
         if (weapon != null)
         {
             weapon.enhancementValue = item.enhancementValue;
+            if (item.enhanceActions == null)
+            {
+                item.enhanceActions = weapon.GetRandomEnhanceByRarity();
+            }
+            else
+            {
+                Debug.Log($"CreateEquipmentItem: Using existing enhanceActions for item {weapon.itemName} with rarity {weapon.rarity}");
+            }
+            
+            Debug.Log($"CreateEquipmentItem: Creating item {weapon.itemName} with rarityEnhances {item.enhanceActions.Count}");
+            weapon.AddStatByType(item.enhanceActions);
+
+            //weapon.SetValuesWithEnhancement(); 임시로 주석 처리. 강화 기능 구현 전까지는 필요 없음
             return weapon;
         }
         return null;
     }
-
-    private string GetItemCodeByInventoryItem(InventoryItem item)
-    {
-        return $"{item.itemName}{(int)item.rarity}{(int)item.enhancementValue}";
-    }
+    
 
     [System.Serializable]
     private class InventoryListWrapper
@@ -253,28 +294,41 @@ public class HomeInventoryManager : MonoBehaviour
         public ItemRarity rarity;
         public int enhancementValue;
         public int amount;
+        public List<AddedStatType> enhanceActions = null;//강화 수치에 따른 능력치 증가 액션 리스트
         //public int acquiredIndex;//획득 순서 추적용
 
         public InventoryItem()
         {
         }
-
-        public InventoryItem(string itemName, ItemRarity rarity, int enhancementValue)
-        {
-            this.itemName = itemName;
-            this.rarity = rarity;
-            this.enhancementValue = enhancementValue;
-            this.amount = 0;
-            //this.acquiredIndex = -1;
-        }
-
+        /*
+                public InventoryItem(string itemName, ItemRarity rarity, int enhancementValue)
+                {
+                    this.itemName = itemName;
+                    this.rarity = rarity;
+                    this.enhancementValue = enhancementValue;
+                    this.amount = 0;
+                    //this.acquiredIndex = -1;
+                }
+        */
         public InventoryItem(InventoryItem item)
         {
             itemName = item.itemName;
             rarity = item.rarity;
             enhancementValue = item.enhancementValue;
             amount = item.amount;
+            enhanceActions = item.enhanceActions;
             //acquiredIndex = item.acquiredIndex;
         }
+
+        public InventoryItem(EquipmentItem item)
+        {
+            itemName = item.itemName;
+            rarity = item.rarity;
+            enhancementValue = item.enhancementValue;
+            amount = 0;
+            //acquiredIndex = -1;
+        }
     }
+
 }
+

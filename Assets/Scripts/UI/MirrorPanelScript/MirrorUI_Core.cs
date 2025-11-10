@@ -96,15 +96,34 @@ public partial class MirrorUI
             rarityText.text = "";
         }
     }
-    
+
     // 플레이어 미리보기 업데이트
     private void UpdatePlayerPreview()
     {
         // 실제 구현에서는 플레이어 모델/애니메이션 업데이트
         Debug.Log("플레이어 미리보기 업데이트됨");
-        
+        ChangeEquippedWeaponPreview();
+
         // 대기 애니메이션 효과 (간단한 예시)
         StartCoroutine(PlayerIdleAnimation());
+    }
+    
+    public void ChangeEquippedWeaponPreview()
+    {
+        if (weaponPreviewImage == null) return;
+        
+        if (equippedWeapon != null)
+        {
+            Debug.Log("장착된 무기 미리보기 업데이트: " + equippedWeapon.itemName);
+            weaponPreviewImage.sprite = weaponDataLoader.GetItemSprite(equippedWeapon.itemName);
+            weaponPreviewImage.enabled = true;
+        }
+        else
+        {
+            Debug.Log("장착된 무기 없음 - 미리보기 비활성화");
+            weaponPreviewImage.enabled = false;
+            weaponPreviewImage.sprite = null;
+        }
     }
     
     // 대기 애니메이션 (간단한 예시)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,6 +40,9 @@ public class EquipmentItem
     public int enhancementValue = 0;        // 강화 수치
 
     public bool isEquipped = false;       // 장착 여부
+
+    public List<string> enhancedByRarityDescriptions = new List<string>(); // 희귀도에 따른 강화 설명 리스트
+    public bool isEnhancedByRarity = false; //희귀도에 따른 강화 적용 여부
 
     // 기본 생성자
     public EquipmentItem() { }
@@ -132,7 +136,7 @@ public class EquipmentItem
             default: rarityEnhancement = 0; break;
         }
         float rarityMultiplier = 1 + (0.2f * rarityEnhancement); // 예:  희귀도 수치당 20% 증가. 일단 임시 코드임
-        
+
         attackDamage = Mathf.RoundToInt(attackDamage * rarityMultiplier);
         attackSpeed = Mathf.RoundToInt(attackSpeed * rarityMultiplier);
         attackRange = attackRange * rarityMultiplier;
@@ -143,7 +147,7 @@ public class EquipmentItem
         visionRangeBonus = Mathf.RoundToInt(visionRangeBonus * rarityMultiplier);
     }
 
-    public void RandomEnhanceByRarity()
+    public List<AddedStatType> GetRandomEnhanceByRarity()
     {
         int rarityEnhancement;
         switch (rarity)
@@ -154,31 +158,145 @@ public class EquipmentItem
             default: rarityEnhancement = 0; break;
         }
 
-        float rarityMultiplier = 1 + (0.2f * rarityEnhancement); // 예:  희귀도 수치당 20% 증가. 일단 임시 코드임
 
         // 강화할 변수들을 배열로 묶음 (참조를 위해 람다 사용)
-        List<System.Action> statUpdaters = new List<System.Action>
+        /* List<System.Action> statUpdaters = new List<System.Action>
+         {
+             () => { attackDamage += Mathf.RoundToInt(attackDamage * rarityMultiplier);
+                     enhancedByRarityDescriptions.Add($"공격력: +{Mathf.RoundToInt(attackDamage * rarityMultiplier)}"); },
+             () => { attackSpeed += Mathf.RoundToInt(attackSpeed * rarityMultiplier);
+                     enhancedByRarityDescriptions.Add($"공격속도: +{Mathf.RoundToInt(attackSpeed * rarityMultiplier)}"); },
+             () => { attackRange += Mathf.RoundToInt(attackRange * rarityMultiplier);
+                     enhancedByRarityDescriptions.Add($"공격범위: +{Mathf.RoundToInt(attackRange * rarityMultiplier)}"); }
+         };*/
+
+        List<AddedStatType> statUpdaters = new List<AddedStatType>
         {
-            () => attackDamage += Mathf.RoundToInt(attackDamage * rarityMultiplier),
-            () => attackSpeed += Mathf.RoundToInt(attackSpeed * rarityMultiplier),
-            () => attackRange += Mathf.RoundToInt(attackRange * rarityMultiplier)
+            AddedStatType.AttackDamage,
+            AddedStatType.AttackSpeed,
+            AddedStatType.AttackRange
         };
 
         if (category == EquipmentCategory.Cloak)
         {
             // 망토는 공격 외의 스탯도 강화
-            statUpdaters.Add(() => healthBonus += Mathf.RoundToInt(healthBonus * rarityMultiplier));
-            statUpdaters.Add(() => defenseBonus += Mathf.RoundToInt(defenseBonus * rarityMultiplier));
-            statUpdaters.Add(() => moveSpeedBonus += Mathf.RoundToInt(moveSpeedBonus * rarityMultiplier));
-            statUpdaters.Add(() => visionRangeBonus += Mathf.RoundToInt(visionRangeBonus * rarityMultiplier));
+            //statUpdaters.Add(() => healthBonus += Mathf.RoundToInt(healthBonus * rarityMultiplier));
+            /*statUpdaters.Add(
+                () =>
+                {
+                    defenseBonus += Mathf.RoundToInt(defenseBonus * rarityMultiplier);
+                    enhancedByRarityDescriptions.Add($"방어력: +{Mathf.RoundToInt(defenseBonus * rarityMultiplier)}");
+                });
+            statUpdaters.Add(
+                () =>
+                {
+                    moveSpeedBonus += Mathf.RoundToInt(moveSpeedBonus * rarityMultiplier);
+                    enhancedByRarityDescriptions.Add($"이동속도: +{Mathf.RoundToInt(moveSpeedBonus * rarityMultiplier)}");
+                });
+            statUpdaters.Add(
+                () =>
+                {
+                    visionRangeBonus += Mathf.RoundToInt(visionRangeBonus * rarityMultiplier);
+                    enhancedByRarityDescriptions.Add($"시야범위: +{Mathf.RoundToInt(visionRangeBonus * rarityMultiplier)}");
+                });*/
+            statUpdaters.Add(AddedStatType.DefenseBonus);
+            statUpdaters.Add(AddedStatType.MoveSpeedBonus);
+            statUpdaters.Add(AddedStatType.VisionRangeBonus);
         }
 
+        var result = new List<AddedStatType>();
         for (int i = 0; i < rarityEnhancement; i++)
         {
-            int idx = Random.Range(0, statUpdaters.Count);
-            statUpdaters[idx](); // 무작위로 하나 선택해서 강화
+            int idx = UnityEngine.Random.Range(0, statUpdaters.Count);
+            result.Add(statUpdaters[idx]); // 무작위로 선택해서 추가
+        }
+
+        Debug.Log($"GetRandomEnhanceByRarity: rarity={rarity}, enhancement count={result.Count}");
+        return result;
+    }
+
+    public void AddStatByType(List<AddedStatType> statTypes)
+    {
+        if(!isEnhancedByRarity)
+        {
+            isEnhancedByRarity = true;
+        }
+        else
+        {
+            Debug.LogWarning("AddStatByType: 이미 희귀도 강화가 적용된 아이템에 다시 적용 시도됨. 중복 적용 방지.");
+            return;
+        }
+
+        int rarityEnhancement;
+        switch (rarity)
+        {
+            case ItemRarity.S: rarityEnhancement = 3; break;
+            case ItemRarity.A: rarityEnhancement = 2; break;
+            case ItemRarity.B: rarityEnhancement = 1; break;
+            default: rarityEnhancement = 0; break;
+        }
+        float rarityMultiplier = 0.2f * rarityEnhancement; // 예:  희귀도 수치당 20% 증가. 일단 임시 코드임
+
+        int attackDamageDelta = Mathf.RoundToInt(attackDamage * rarityMultiplier);
+        int attackSpeedDelta = Mathf.RoundToInt(attackSpeed * rarityMultiplier);
+        int attackRangeDelta = Mathf.RoundToInt(attackRange * rarityMultiplier);
+        int defenseBonusDelta = Mathf.RoundToInt(defenseBonus * rarityMultiplier);
+        int moveSpeedBonusDelta = Mathf.RoundToInt(moveSpeedBonus * rarityMultiplier);
+        int visionRangeBonusDelta = Mathf.RoundToInt(visionRangeBonus * rarityMultiplier);
+
+        foreach (var statType in statTypes)
+        {
+            switch (statType)
+            {
+                case AddedStatType.AttackDamage:
+                    {
+                        attackDamage += attackDamageDelta;
+                        enhancedByRarityDescriptions.Add($"공격력: +{attackDamageDelta}");
+                        break;
+                    }
+                case AddedStatType.AttackSpeed:
+                    {
+                        attackSpeed += attackSpeedDelta;
+                        enhancedByRarityDescriptions.Add($"공격속도: +{attackSpeedDelta}");
+                        break;
+                    }
+                case AddedStatType.AttackRange:
+                    {
+                        attackRange += attackRangeDelta;
+                        enhancedByRarityDescriptions.Add($"공격범위: +{attackRangeDelta}");
+                        break;
+                    }
+                case AddedStatType.DefenseBonus:
+                    {
+                        defenseBonus += defenseBonusDelta;
+                        enhancedByRarityDescriptions.Add($"방어력: +{defenseBonusDelta}");
+                        break;
+                    }
+                case AddedStatType.MoveSpeedBonus:
+                    {
+                        moveSpeedBonus += moveSpeedBonusDelta;
+                        enhancedByRarityDescriptions.Add($"이동속도: +{moveSpeedBonusDelta}");
+                        break;
+                    }
+                case AddedStatType.VisionRangeBonus:
+                    {
+                        visionRangeBonus += visionRangeBonusDelta;
+                        enhancedByRarityDescriptions.Add($"시야범위: +{visionRangeBonusDelta}");
+                        break;
+                    }
+            }
         }
     }
-    
-    
+
+
+}
+
+public enum AddedStatType
+{
+    AttackDamage,
+    AttackSpeed,
+    AttackRange,
+    DefenseBonus,
+    MoveSpeedBonus,
+    VisionRangeBonus
 }
